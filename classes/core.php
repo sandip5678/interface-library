@@ -1357,7 +1357,7 @@ abstract class ShopgatePlugin extends ShopgateObject {
 	 * @return mixed[] An array with additional information.
 	 */
 	public function createPluginInfo() { return array(); }
-	
+
 	/**
 	 * This performs the necessary queries to build a ShopgateCustomer object for the given log in credentials.
 	 *

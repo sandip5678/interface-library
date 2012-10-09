@@ -269,7 +269,7 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 	 * @var string description to be displayed to the left of the button
 	 */
 	protected $buttonDescription;
-	
+
 	/**
 	 * Instantiates the Shopgate mobile redirector.
 	 *
@@ -360,7 +360,7 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 	public function setAlwaysUseSSL() {
 		$this->useSecureConnection = true;
 	}
-	
+
 	public function isMobileRequest() {
 		// try loading keywords
 		$this->updateRedirectKeywords();
@@ -418,7 +418,7 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 		$html = str_replace('{$buttonOnImageSource}',  $this->buttonOnImageSource,  $html);
 		$html = str_replace('{$buttonOffImageSource}', $this->buttonOffImageSource, $html);
 		$html = str_replace('{$buttonDescription}', $this->buttonDescription, $html);
-		
+
 		return $html;
 	}
 

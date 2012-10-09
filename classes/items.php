@@ -7,12 +7,12 @@
  * @see http://wiki.shopgate.com/Merchant_API_get_categories/de
  */
 class ShopgateCategory extends ShopgateContainer {
-	private $category_number			= null;
-	private $name						= null;
-	private $parent_category_number	= null;
-	private $url_image					= null;
-	private $order_index				= null;
-	private $is_active					= null;
+	protected $category_number = null;
+	protected $name = null;
+	protected $parent_category_number = null;
+	protected $url_image = null;
+	protected $order_index = null;
+	protected $is_active = null;
 
 	public function accept(ShopgateContainerVisitor $v) {
 		$v->visitCategory($this);
