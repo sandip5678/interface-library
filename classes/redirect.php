@@ -20,7 +20,7 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 	/**
 	 * @var string[] list of strings that deny redirection if they occur in the client's user agent; overrides $this->redirectKeywords
 	 */
-	protected $skipRedirectKeywords = array('Shopgate');
+	protected $skipRedirectKeywords = array();
 
 
 	/**
@@ -46,7 +46,7 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 	/**
 	 * @var string redirectCode used for creating a mobile product url
 	 */
-	protected $redirectCode;
+	protected $redirectType;
 	
 	/**
 	 * @var string itemNumber used for creating a mobile product url
@@ -69,9 +69,9 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 	protected $cmsPage;
 	
 	/**
-	 * @var string manufactererName used for creating a mobile brand url  / mobile head js
+	 * @var string manufacturerName used for creating a mobile brand url  / mobile head js
 	 */
-	protected $manufactererName;
+	protected $manufacturerName;
 	
 	/**
 	 * @var string searchQuery used for creating a mobile search url  / mobile head js
@@ -90,6 +90,11 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 		$this->merchantApi = $merchantApi;
 		$this->config = $shopgateConfig;
 		
+		if($this->config->getEnableRedirectKeywordUpdate()){
+			// try loading keywords
+			$this->updateRedirectKeywords();
+		}	
+		
 		$this->redirectKeywordCacheTime = ShopgateMobileRedirectInterface::DEFAULT_CACHE_TIME;
 		
 		$this->useSecureConnection = isset($_SERVER["HTTPS"]) && ($_SERVER["HTTPS"] === "on" || $_SERVER["HTTPS"] == "1") || $this->config->getAlwaysUseSsl();
@@ -104,9 +109,6 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 	####################
 
 	public function isMobileRequest() {
-		// try loading keywords
-		$this->updateRedirectKeywords();
-		
 		// find user agent
 		$userAgent = '';
 		if(!empty($_SERVER['HTTP_USER_AGENT'])){
@@ -210,13 +212,13 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 				$mobileRedirectUrl = $this->getCmsUrl($this->cmsPage);
 				break;
 			case 'brand':
-				if(!isset($this->manufactererName) || $this->manufactererName == ''){
+				if(!isset($this->manufacturerName) || $this->manufacturerName == ''){
 					$this->redirectType = 'start';
 					break;
 				}
 				$redirectCode = 'brand';
-				$additionalParameters .= '_shopgate.brand_name = "'.$this->manufactererName.'";';
-				$mobileRedirectUrl = $this->getBrandUrl($this->manufactererName);
+				$additionalParameters .= '_shopgate.brand_name = "'.$this->manufacturerName.'";';
+				$mobileRedirectUrl = $this->getBrandUrl($this->manufacturerName);
 				break;
 			case 'search':
 				if(!isset($this->searchQuery) || $this->searchQuery == ''){
@@ -336,8 +338,8 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 		}
 		
 		// set keywords
-		if (!empty($redirectKeywords)) $this->redirectKeywords = $redirectKeywords;
-		if (!empty($skipRedirectKeywords)) $this->skipRedirectKeywords = $skipRedirectKeywords;
+		$this->redirectKeywords = $redirectKeywords;
+		$this->skipRedirectKeywords = $skipRedirectKeywords;
 	}
 	
 	/**
@@ -420,7 +422,7 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 	}
 	
 	public function buildScriptBrand($manufacturerName, $autoRedirect = true){
-		$this->manufactererName = $manufacturerName;
+		$this->manufacturerName = $manufacturerName;
 		$this->redirectType = 'brand';
 		return $this->redirect($this->getBrandUrl($manufacturerName), $autoRedirect);
 	}
@@ -634,7 +636,7 @@ interface ShopgateMobileRedirectInterface {
 	/**
 	 * Create a mobile-cms-url to a cms-page
 	 *
-	 * @param string $key
+	 * @param string $cmsPage
 	 */
 	public function getCmsUrl($cmsPage);
 
@@ -648,7 +650,7 @@ interface ShopgateMobileRedirectInterface {
 	/**
 	 * Create a mobile-search-url to a page with search results
 	 *
-	 * @param string $searchString
+	 * @param string $searchQuery
 	 */
 	public function getSearchUrl($searchQuery);
 }
