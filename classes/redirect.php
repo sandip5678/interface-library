@@ -2,6 +2,8 @@
 
 class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRedirectInterface {
 	
+	const HTTP_REDIRECT_CODE = 301;
+	
 	/**
 	 * @var ShopgateMerchantApiInterface
 	 */
@@ -93,7 +95,7 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 		if($this->config->getEnableRedirectKeywordUpdate()){
 			// try loading keywords
 			$this->updateRedirectKeywords();
-		}	
+		}
 		
 		$this->redirectKeywordCacheTime = ShopgateMobileRedirectInterface::DEFAULT_CACHE_TIME;
 		
@@ -145,7 +147,7 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 		}
 		
 		// perform redirect
-		header("Location: ". $url, true, 301);
+		header("Location: ". $url, true, ShopgateMobileRedirect::HTTP_REDIRECT_CODE);
 		exit;
 	}
 	
