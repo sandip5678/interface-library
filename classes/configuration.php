@@ -97,6 +97,11 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 	protected $enable_redirect_keyword_update;
 	
 	/**
+	 * @var bool true to enable default redirect for mobile devices from content sites to mobile website (homepage)
+	 */
+	protected $enable_default_redirect;
+	
+	/**
 	 * @var string the encoding the shop system is using internally
 	 */
 	protected $encoding;
@@ -310,6 +315,7 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 		$this->shop_is_active = 0;
 		$this->always_use_ssl = 0;
 		$this->enable_redirect_keyword_update = 0;
+		$this->enable_default_redirect = 1;
 		$this->encoding = 'UTF-8';
 		$this->export_convert_encoding = 1;
 		
@@ -677,6 +683,10 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 		return $this->enable_redirect_keyword_update;
 	}
 	
+	public function getEnableDefaultRedirect() {
+		return $this->enable_default_redirect;
+	}
+	
 	public function getEncoding() {
 		return $this->encoding;
 	}
@@ -911,6 +921,10 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 	
 	public function setEnableRedirectKeywordUpdate($value) {
 		$this->enable_redirect_keyword_update = $value;
+	}
+	
+	public function setEnableDefaultRedirect($value) {
+		$this->enable_default_redirect = $value;
 	}
 	
 	public function setEncoding($value) {
@@ -1798,7 +1812,7 @@ interface ShopgateConfigInterface {
 	
 	/**
 	 * Checks if there is more than one configuration file available.
-	 * 
+	 *
 	 * @return bool true if multiple configuration files are available, false otherwise.
 	 */
 	public function checkMultipleConfigs();
