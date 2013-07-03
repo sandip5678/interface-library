@@ -3,7 +3,7 @@
 ###################################################################################
 # define constants
 ###################################################################################
-define('SHOPGATE_LIBRARY_VERSION', '2.2.0');
+define('SHOPGATE_LIBRARY_VERSION', '2.1.26');
 define('SHOPGATE_LIBRARY_ENCODING' , 'UTF-8');
 define('SHOPGATE_BASE_DIR', realpath(dirname(__FILE__).'/../'));
 
@@ -377,7 +377,7 @@ class ShopgateLogger {
 	
 	/**
 	 * Sets the paths to the log files.
-	 * 
+	 *
 	 * @param string $accessLogPath
 	 * @param string $requestLogPath
 	 * @param string $errorLogPath
@@ -787,16 +787,16 @@ abstract class ShopgateObject {
 	
 	/**
 	 * Converts a string's encoding to another.
-	 * 
+	 *
 	 * This wraps the mb_convert_encoding() and iconv() functions of PHP. If the mb_string extension is not installed,
 	 * iconv() will be used instead.
-	 * 
+	 *
 	 * If iconv() must be used and an array is passed as $sourceEncoding all encodings will be tested and the (probably)
 	 * best encoding will be used for conversion.
 	 *
 	 * @see http://php.net/manual/en/function.mb-convert-encoding.php
 	 * @see http://php.net/manual/en/function.iconv.php
-	 * 
+	 *
 	 * @param string $string The string to decode.
 	 * @param string $destinationEncoding The desired encoding of the return value.
 	 * @param string|string[] $sourceEncoding The (possible) encoding(s) of $string.

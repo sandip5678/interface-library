@@ -3,6 +3,7 @@
 
 '''Version 2.1.27'''
 * Neuen Schalter für die Standard-Weiterleitung von Contentseiten zur mobilen Startseite in der Klasse ShopgateConfig hinzugefügt
+* Paramater send_customer_mail zu Merchant API Methode addOrderDeliveryNote() hinzugefügt 
 
 '''Version 2.1.26'''
 * die Konvertierung der Zeichensätze wird jetzt optional mit iconv durchgeführt, wenn die mb_string-Erweiterung für PHP nicht installiert ist
@@ -108,6 +109,7 @@
 
 '''Version 2.1.27'''
 * added switch for default redirect from content pages to mobile homepage in class ShopgateConfig
+* added paramater send_customer_mail to Merchant API method addOrderDeliveryNote()
 
 '''Version 2.1.26'''
 * conversion of encodings is now performed via iconv if the mb_string extension for PHP is not installed
