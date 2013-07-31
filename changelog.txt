@@ -1,6 +1,9 @@
 '''Deutsch'''
 
 
+'''Version 2.1.28'''
+* Die ShopgateOrder Klasse wurde um Shipping-Informationen erweitert, welche über die Shopgate Merchant API verfügbar sind 
+
 '''Version 2.1.27'''
 * Neuen Schalter für die Standard-Weiterleitung von Contentseiten zur mobilen Startseite in der Klasse ShopgateConfig hinzugefügt
 * Paramater send_customer_mail zu Merchant API Methode addOrderDeliveryNote() hinzugefügt 
@@ -106,6 +109,9 @@
 
 
 '''English'''
+
+'''Version 2.1.28'''
+* added additional information about shipping into the ShopgateOrder class, that is available by the Shopgate Merchant API
 
 '''Version 2.1.27'''
 * added switch for default redirect from content pages to mobile homepage in class ShopgateConfig
