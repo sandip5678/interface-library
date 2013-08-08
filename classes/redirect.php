@@ -92,10 +92,6 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 	 */
 	protected $redirectType;
 	
-	/**
-	 * @var bool true if redirecting unknown pages should be enabled
-	 */
-	protected $enableDefaultRedirect;
 	
 	/**
 	 * @var string itemNumber used for creating a mobile product url
@@ -260,7 +256,7 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 	}
 
 	public function redirect($url, $autoRedirect = true) {
-		if(!$this->isRedirectAllowed() || !$this->isMobileRequest() || !$autoRedirect || (($this->redirectType == 'default') && !$this->enableDefaultRedirect)) {
+		if(!$this->isRedirectAllowed() || !$this->isMobileRequest() || !$autoRedirect || (($this->redirectType == 'default') && !$this->config->getEnableDefaultRedirect())) {
 			return $this->getJsHeader($url);
 		}
 		
@@ -377,7 +373,7 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 		}
 		
 		if($redirectCode == 'default') {
-			$additionalParameters .= '_shopgate.is_default_redirect_disabled = '.((!$this->enableDefaultRedirect) ? 'true' : 'false').';';
+			$additionalParameters .= '_shopgate.is_default_redirect_disabled = '.((!$this->config->getEnableDefaultRedirect()) ? 'true' : 'false').';';
 		}
 		
 		switch($this->config->getServer()){
@@ -550,7 +546,6 @@ class ShopgateMobileRedirect extends ShopgateObject implements ShopgateMobileRed
 	
 	public function buildScriptDefault($autoRedirect = true) {
 		$this->redirectType = 'default';
-		$this->enableDefaultRedirect = $this->config->getEnableDefaultRedirect();
 		return $this->redirect($this->getShopUrl(), $autoRedirect);
 	}
 	
