@@ -23,7 +23,7 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 		'apikey' => '/^[0-9a-f]{20}$/', // exactly 20 hexadecimal digits
 		'alias' => '/^[0-9a-zA-Z]+(([\.]?|[\-]+)[0-9a-zA-Z]+)*$/', // start and end with alpha-numerical characters, multiple dashes and single dots in between are ok
 		'cname' => '/^(http:\/\/\S+)?$/i', // empty or a string beginning with "http://" followed by any number of non-whitespace characters
-		'server' => '/^(live|pg|custom)$/', // "live" or "pg" or "custom"
+		'server' => '/^(live|pg|sl|custom)$/', // "live" or "pg" or "sl" or "custom"
 		'api_url' => '/^(https?:\/\/\S+)?$/i', // empty or a string beginning with "http://" or "https://" followed by any number of non-whitespace characters (this is used for testing only, thus the lose validation)
 	);
 	
@@ -673,6 +673,7 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 		switch ($this->getServer()) {
 			default: // fall through to 'live'
 			case 'live':   return ShopgateConfigInterface::SHOPGATE_API_URL_LIVE;
+			case 'sl':     return ShopgateConfigInterface::SHOPGATE_API_URL_SL;
 			case 'pg':     return ShopgateConfigInterface::SHOPGATE_API_URL_PG;
 			case 'custom': return $this->api_url;
 		}
@@ -1748,6 +1749,7 @@ class ShopgateConfigOld extends ShopgateObject {
  */
 interface ShopgateConfigInterface {
 	const SHOPGATE_API_URL_LIVE = 'https://api.shopgate.com/merchant/';
+	const SHOPGATE_API_URL_SL   = 'https://api.shopgatesl.com/merchant/';
 	const SHOPGATE_API_URL_PG   = 'https://api.shopgatepg.com/merchant/';
 	
 	const SHOPGATE_FILE_PREFIX = 'shopgate_';
@@ -1920,7 +1922,7 @@ interface ShopgateConfigInterface {
 	public function getAlwaysUseSsl();
 
 	/**
-	 * @return int (hours) The update period for keywords that identify mobile devices. Leave empty to download once and then always use the cached keywords
+	 * @return bool true to enable updates of keywords that identify mobile devices
 	 */
 	public function getEnableRedirectKeywordUpdate();
 	
@@ -2220,7 +2222,7 @@ interface ShopgateConfigInterface {
 	public function setAlwaysUseSsl($value);
 
 	/**
-	 * @param bool $value (hours) The update period for keywords that identify mobile devices. Leave empty to download once and then always use the cached keywords
+	 * @param bool $value true to enable updates of keywords that identify mobile devices
 	 */
 	public function setEnableRedirectKeywordUpdate($value);
 	
