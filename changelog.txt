@@ -1,5 +1,8 @@
 '''Deutsch'''
 
+'''Version 2.1.30'''
+* Standard-Wert für send_customer_email für Methode add_order_delifery_note auf false geändert.
+
 '''Version 2.1.29'''
 * die Header für die Authentifizierung werden jetzt bei jedem Request per ShopgateMerchantApi-Klasse neu generiert
 * die Einstellung "enable_get_redirect_keywords" wird jetzt konsequent als Boolean genutzt, die Nutzung als Zeitangabe für die Cache-Lifetime entfällt
@@ -115,6 +118,9 @@
 
 
 '''English'''
+
+'''Version 2.1.30'''
+* Standard value of send_customer_email for method add_order_delivery_note changed to false
 
 '''Version 2.1.29'''
 * the authentication headers are regenerated on every call via the ShopgateMerchantApi class
