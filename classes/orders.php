@@ -1,15 +1,36 @@
 <?php
 abstract class ShopgateCartBase extends ShopgateContainer {
+	
 	const SHOPGATE = "SHOPGATE";
 	const PREPAY = "PREPAY";
-	const CC = "CC";
-	const DT_CC = "DT_CC";
-	const INVOICE = "INVOICE";
+	
 	const DEBIT = "DEBIT";
 	const COD = "COD";
-	const PAYPAL = "PAYPAL";
+	
+	const INVOICE = "INVOICE";
 	const KLARNA_INV = "KLARNA_INV";
 	const BILLSAFE = "BILLSAFE";
+	const MSTPAY_INV = "MSTPAY_INV";
+	
+	const PAYPAL = "PAYPAL";
+	const MASTPAY_PP = "MASTPAY_PP";
+	const SAGEPAY_PP = "SAGEPAY_PP";
+	
+	const CC = "CC";
+	const DT_CC = "DT_CC";
+	const AUTHN_CC = "AUTHN_CC";
+	const FRSTDAT_CC = "FRSTDAT_CC";
+	const MASTPAY_CC = "MASTPAY_CC";
+	const BRAINTR_CC = "BRAINTR_CC";
+	const CYBRSRC_CC = "CYBRSRC_CC";
+	const DTCASH_CC = "DTCASH_CC";
+	const OGONE_CC = "OGONE_CC";
+	const SAGEPAY_CC = "SAGEPAY_CC";
+	const EWAY_CC = "EWAY_CC";
+	const PAYJUNC_CC = "PAYJUNC_CC";
+	const PP_WSPP_CC = "PP_WSPP_CC";
+	
+	const PAYU = "PAYU";
 	
 	protected $customer_number;
 
@@ -433,6 +454,10 @@ class ShopgateOrder extends ShopgateCartBase {
 	
 	protected $confirm_shipping_url;
 	
+	protected $shipping_group;
+	protected $shipping_type;
+	protected $shipping_infos;
+	
 	protected $created_time;
 	
 	protected $is_paid;
@@ -476,6 +501,39 @@ class ShopgateOrder extends ShopgateCartBase {
 		$this->confirm_shipping_url = $value;
 	}
 
+	/**
+	 *
+	 * @param string $value
+	 */
+	public function setShippingGroup($value) {
+		$this->shipping_group = $value;
+	}
+	
+	/**
+	 *
+	 * @param string $value
+	 */
+	public function setShippingType($value) {
+		$this->shipping_type = $value;
+	}
+	
+	/**
+	 *
+	 * @param ShopgateShippingInfo $value
+	 */
+	public function setShippingInfos($value) {
+		if (!is_object($value) && !($value instanceof ShopgateShippingInfo) && !is_array($value)) {
+			$this->shipping_infos = null;
+			return;
+		}
+	
+		if (is_array($value)) {
+			$value = new ShopgateShippingInfo($value);
+		}
+	
+		$this->shipping_infos = $value;
+	}
+	
 	/**
 	 * @see http://www.php.net/manual/de/function.date.php
 	 * @see http://en.wikipedia.org/wiki/ISO_8601
@@ -633,6 +691,30 @@ class ShopgateOrder extends ShopgateCartBase {
 	 */
 	public function getConfirmShippingUrl() {
 		return $this->confirm_shipping_url;
+	}
+	
+	/**
+	 *
+	 * @return string
+	 */
+	public function getShippingGroup() {
+		return $this->shipping_group;
+	}
+	
+	/**
+	 *
+	 * @return string
+	 */
+	public function getShippingType() {
+		return $this->shipping_type;
+	}
+	
+	/**
+	 *
+	 * @return ShopgateShippingInfo
+	 */
+	public function getShippingInfos() {
+		return $this->shipping_infos;
 	}
 	
 	/**
@@ -1304,19 +1386,117 @@ class ShopgateOrderItemAttribute extends ShopgateContainer {
 	}
 }
 
-class ShopgateDeliveryNote extends ShopgateContainer {
-	const DHL = "DHL"; // DHL
-	const DHLEXPRESS = "DHLEXPRESS"; // DHLEXPRESS
-	const DP = "DP"; // Deutsche Post
-	const DPD = "DPD"; // Deutscher Paket Dienst
-	const FEDEX = "FEDEX"; // FedEx
-	const GLS = "GLS"; // GLS
-	const HLG = "HLG"; // Hermes
-	const OTHER = "OTHER"; // Anderer Lieferant
-	const TNT = "TNT"; // TNT
-	const TOF = "TOF"; // Trnas-o-Flex
-	const UPS = "UPS"; // UPS
+class ShopgateShippingInfo extends ShopgateContainer {
+	protected $name;
+	protected $description;
+	protected $amount;
+	protected $weight;
+	protected $api_response;
+	
+	public function accept(ShopgateContainerVisitor $v) {
+		$v->visitOrderShipping($this);
+	}
+	
+	/**
+	 *
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
+	/**
+	 *
+	 * @param string $value
+	 */
+	public function setName($value) {
+		$this->name = $value;
+	}
+	
+	/**
+	 *
+	 * @return string
+	 */
+	public function getDescription() {
+		return $this->description;
+	}
+	/**
+	 *
+	 * @param string $value
+	 */
+	public function setDescription($value) {
+		$this->description = $value;
+	}
+	
+	/**
+	 *
+	 * @return float
+	 */
+	public function getAmount() {
+		return $this->amount;
+	}
+	/**
+	 *
+	 * @param float $value
+	 */
+	public function setAmount($value) {
+		$this->amount = $value;
+	}
+	
+	/**
+	 *
+	 * @return int
+	 */
+	public function getWeight() {
+		return $this->weight;
+	}
+	/**
+	 *
+	 * @param int $value
+	 */
+	public function setWeight($value) {
+		$this->weight = $value;
+	}
+	
+	/**
+	 *
+	 * @return mixed[]
+	 */
+	public function getApiResponse() {
+		return $this->api_response;
+	}
+	/**
+	 *
+	 * @param string|mixed[] $value
+	 */
+	public function setApiResponse($value) {
+		if(is_string($value)) {
+			$value = $this->jsonDecode($value, true);
+		}
+		
+		$this->api_response = $value;
+	}
+}
 
+class ShopgateDeliveryNote extends ShopgateContainer {
+	// shipping groups
+	const DHL			= "DHL"; // DHL
+	const DHLEXPRESS	= "DHLEXPRESS"; // DHLEXPRESS
+	const DP			= "DP"; // Deutsche Post
+	const DPD			= "DPD"; // Deutscher Paket Dienst
+	const FEDEX			= "FEDEX"; // FedEx
+	const GLS			= "GLS"; // GLS
+	const HLG			= "HLG"; // Hermes
+	const OTHER			= "OTHER"; // Anderer Lieferant
+	const TNT			= "TNT"; // TNT
+	const TOF			= "TOF"; // Trnas-o-Flex
+	const UPS			= "UPS"; // UPS
+	const USPS			= "USPS"; // USPS
+
+	// shipping types
+	const MANUAL		= "MANUAL";
+	const USPS_API_V1	= "USPS_API_V1";
+	const UPS_API_V1	= "UPS_API_V1";
+	
 	protected $shipping_service_id = ShopgateDeliveryNote::DHL;
 	protected $tracking_number = "";
 	protected $shipping_time = null;

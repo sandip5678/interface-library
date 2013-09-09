@@ -3,7 +3,7 @@
 ###################################################################################
 # define constants
 ###################################################################################
-define('SHOPGATE_LIBRARY_VERSION', '2.1.27');
+define('SHOPGATE_LIBRARY_VERSION', '2.3.2');
 define('SHOPGATE_LIBRARY_ENCODING' , 'UTF-8');
 define('SHOPGATE_BASE_DIR', realpath(dirname(__FILE__).'/../'));
 
@@ -19,8 +19,25 @@ define('SHOPGATE_BASE_DIR', realpath(dirname(__FILE__).'/../'));
  * @see http://php.net/manual/en/function.set-error-handler.php
  */
 function ShopgateErrorHandler($errno, $errstr, $errfile, $errline) {
-	// make no difference between exceptions and E_WARNING
-	$msg = "Fatal PHP Error [Nr. $errno : $errfile / $errline] ";
+	switch ($errno) {
+		case E_NOTICE:
+		case E_USER_NOTICE:
+			$severity = "Notice";
+			break;
+		case E_WARNING:
+		case E_USER_WARNING:
+			$severity = "Warning";
+			break;
+		case E_ERROR:
+		case E_USER_ERROR:
+			$severity = "Fatal Error";
+			break;
+		default:
+			$severity = "Unknown Error";
+			break;
+	}
+
+	$msg = "$severity [Nr. $errno : $errfile / $errline] ";
 	$msg .= "$errstr";
 	$msg .= "\n". print_r(debug_backtrace(false), true);
 
@@ -347,11 +364,22 @@ class ShopgateLogger {
 	const LOGTYPE_DEBUG = 'debug';
 
 	const OBFUSCATION_STRING = 'XXXXXXXX';
+	const REMOVED_STRING = '<removed>';
 
 	/**
 	 * @var bool
 	 */
 	private $debug;
+	
+	/**
+	 * @var string[] Names of the fields that should be obfuscated on logging.
+	 */
+	private $obfuscationFields;
+	
+	/**
+	 * @var string Names of the fields that should be removed from logging.
+	 */
+	private $removeFields;
 	
 	/**
 	 * @var mixed[]
@@ -370,6 +398,8 @@ class ShopgateLogger {
 
 	private function __construct() {
 		$this->debug = false;
+		$this->obfuscationFields = array('pass');
+		$this->removeFields = array('cart');
 	}
 	
 	/**
@@ -553,6 +583,24 @@ class ShopgateLogger {
 	}
 
 	/**
+	 * Adds field names to the list of fields that should be obfuscated in the logs.
+	 *
+	 * @param string[] $fieldNames
+	 */
+	public function addObfuscationFields(array $fieldNames) {
+		$this->obfuscationFields = array_merge($fieldNames, $this->obfuscationFields);
+	}
+
+	/**
+	 * Adds field names to the list of fields that should be removed from the logs.
+	 *
+	 * @param string[] $fieldNames
+	 */
+	public function addRemoveFields(array $fieldNames) {
+		$this->removeFields = array_merge($fieldNames, $this->removeFields);
+	}
+
+	/**
 	 * Function to prepare the parameters of an API request for logging.
 	 *
 	 * Strips out critical request data like the password of a get_customer request.
@@ -562,8 +610,12 @@ class ShopgateLogger {
 	 */
 	public function cleanParamsForLog($data) {
 		foreach ($data as $key => &$value) {
-			switch ($key) {
-				case 'pass': $value = self::OBFUSCATION_STRING;
+			if (in_array($key, $this->obfuscationFields)) {
+				$value = self::OBFUSCATION_STRING;
+			}
+			
+			if (in_array($key, $this->removeFields)) {
+				$value = self::REMOVED_STRING;
 			}
 		}
 
@@ -1111,9 +1163,11 @@ abstract class ShopgatePlugin extends ShopgateObject {
 			/* responsible fields */
 			'item_number' 				=> "",
 			'item_name' 				=> "",
-			'unit_amount_net' 			=> "",
+			'unit_amount' 			=> "",
+//			'unit_amount_net' 			=> "",
 			'currency' 					=> "EUR",
-			'tax_class'					=> "",
+			'tax_percent'					=> "",
+//			'tax_class'					=> "",
 			'description' 				=> "",
 			'urls_images' 				=> "",
 			'categories' 				=> "",
@@ -1125,7 +1179,8 @@ abstract class ShopgatePlugin extends ShopgateObject {
 			'url_deeplink' 				=> "",
 			/* additional fields */
 			'item_number_public'		=> "",
-			'old_unit_amount_net'		=> "",
+			'old_unit_amount'			=> "",
+//			'old_unit_amount_net'		=> "",
 			'properties'				=> "",
 			'msrp' 						=> "",
 			'shipping_costs_per_order' 	=> "0",
@@ -1356,7 +1411,7 @@ abstract class ShopgatePlugin extends ShopgateObject {
 	 * @param array $shopgateItemArray
 	 * @param mixed $dataObject or $dataArray to access
 	 */
-	protected final function executeLoaders(array $loaders)
+	protected final function executeLoaders(array $loaders/*, &$csvArray, $item[, ...]*/)
 	{
 		$arguments = func_get_args();
 		array_shift($arguments);
@@ -1367,6 +1422,7 @@ abstract class ShopgatePlugin extends ShopgateObject {
 				$result = call_user_func_array( array( $this, $method ), $arguments );
 
  				if($result) {
+ 					// put back the result into argument-list (&$csvArray)
 					$arguments[0] = $result;
  				}
 			}
@@ -1384,7 +1440,6 @@ abstract class ShopgatePlugin extends ShopgateObject {
 		$actions = array();
 		$subjectName = trim($subjectName);
 		if(!empty($subjectName)) {
-			$subjectName = ($subjectName);
 			$methodName = 'buildDefault'.$this->camelize($subjectName, true).'Row';
 			if(method_exists($this, $methodName)) {
 				foreach(array_keys($this->{$methodName}() ) as $sKey) {
@@ -1508,6 +1563,55 @@ abstract class ShopgatePlugin extends ShopgateObject {
 	 * @throws ShopgateLibraryException if an error occurs.
 	 */
 	public abstract function updateOrder(ShopgateOrder $order);
+
+	/**
+	 * Redeems coupons that are passed along with a ShopgateCart object.
+	 *
+	 * @see http://wiki.shopgate.com/Shopgate_Plugin_API_redeem_coupons#API_Response
+	 *
+	 * @param ShopgateCart $cart The ShopgateCart object containing the coupons that should be redeemed.
+	 * @return array('external_coupons' => ShopgateExternalCoupon[])
+	 * @throws ShopgateLibraryException if an error occurs.
+	 */
+	public abstract function redeemCoupons(ShopgateCart $cart);
+	
+	/**
+	 * Checks the content of a cart to be valid and returns necessary changes if applicable.
+	 *
+	 * This currently only supports the validation of coupons.
+	 *
+	 * @see http://wiki.shopgate.com/Shopgate_Plugin_API_check_cart#API_Response
+	 *
+	 * @param ShopgateCart $cart The ShopgateCart object to be checked and validated.
+	 * @return array(
+	 *          <ul>
+	 *          	<li>'external_coupons' => ShopgateExternalCoupon[], # list of all coupons</li>
+	 *          	<li>'items' => array(...), # list of item changes (not supported yet)</li>
+	 *          	<li>'shippings' => array(...), # list of available shipping services for this cart (not supported yet)</li>
+	 *          </ul>)
+	 * @throws ShopgateLibraryException if an error occurs.
+	*/
+	public abstract function checkCart(ShopgateCart $cart);
+	
+	/**
+	 * Returns an array of certain settings of the shop. (Currently mainly tax settings.)
+	 *
+	 * @see http://wiki.shopgate.com/Shopgate_Plugin_API_get_settings#API_Response
+	 *
+	 * @return array(
+	 *          <ul>
+	 *						<li>'tax' => Contains the tax settings as follows:
+	 *							<ul>
+	 *								<li>'tax_classes_products' => A list of product tax class identifiers.</li>
+	 *								<li>'tax_classes_customers' => A list of customer tax classes.</li>
+	 *								<li>'tax_rates' => A list of tax rates.</li>
+	 *								<li>'tax_rules' => A list of tax rule containers.</li>
+	 *							</ul>
+	 *						</li>
+	 *          </ul>)
+	 * @throws ShopgateLibraryException on invalid log in data or hard errors like database failure.
+	*/
+	public abstract function getSettings();
 	
 	/**
 	 * Loads the products of the shop system's database and passes them to the buffer.
@@ -1768,7 +1872,7 @@ abstract class ShopgateContainer extends ShopgateObject {
 	/**
 	 * Creates a new object of the same type with every value recursively utf-8 encoded.
 	 *
-	 * @param string $sourceEncoding The source Encoding of the strings
+	 * @param String $sourceEncoding The source Encoding of the strings
 	 * @param bool $force Set this true to enforce encoding even if the source encoding is already UTF-8.
 	 * @return ShopgateContainer The new object with utf-8 encoded values.
 	 */
@@ -1781,7 +1885,7 @@ abstract class ShopgateContainer extends ShopgateObject {
 	/**
 	 * Creates a new object of the same type with every value recursively utf-8 decoded.
 	 *
-	 * @param string $destinationEncoding The destination Encoding for the strings
+	 * @param String $destinationEncoding The destination Encoding for the strings
 	 * @param bool $force Set this true to enforce encoding even if the destination encoding is set to UTF-8.
 	 * @return ShopgateContainer The new object with utf-8 decoded values.
 	 */
@@ -1833,6 +1937,7 @@ interface ShopgateContainerVisitor {
 	public function visitOrderItemOption(ShopgateOrderItemOption $o);
 	public function visitOrderItemInput(ShopgateOrderItemInput $i);
 	public function visitOrderItemAttribute(ShopgateOrderItemAttribute $o);
+	public function visitOrderShipping(ShopgateShippingInfo $o);
 	public function visitOrderDeliveryNote(ShopgateDeliveryNote $d);
 	public function visitExternalCoupon(ShopgateExternalCoupon $c);
 	public function visitShopgateCoupon(ShopgateShopgateCoupon $c);
@@ -1973,6 +2078,12 @@ class ShopgateContainerUtf8Visitor implements ShopgateContainerVisitor {
 			$properties['invoice_address'] = $this->object;
 		}
 
+		// visit shipping_infos
+		if (!empty($properties['shipping_infos']) && ($properties['shipping_infos'] instanceof ShopgateShippingInfo)) {
+			$properties['shipping_infos']->accept($this);
+			$properties['shipping_infos'] = $this->object;
+		}
+
 		// iterate lists of referred objects
 		$properties['external_coupons'] = $this->iterateObjectList($properties['external_coupons']);
 		$properties['shopgate_coupons'] = $this->iterateObjectList($properties['shopgate_coupons']);
@@ -2037,6 +2148,18 @@ class ShopgateContainerUtf8Visitor implements ShopgateContainerVisitor {
 		// create new object with utf-8 en- / decoded data
 		try {
 			$this->object = new ShopgateOrderItemAttribute($properties);
+		} catch (ShopgateLibraryException $e) {
+			$this->object = null;
+		}
+	}
+
+	public function visitOrderShipping(ShopgateShippingInfo $o) {
+		$properties = $o->buildProperties();
+		$this->iterateSimpleProperties($properties);
+		
+		// create new object with utf-8 en- / decoded data
+		try {
+			$this->object = new ShopgateShippingInfo($properties);
 		} catch (ShopgateLibraryException $e) {
 			$this->object = null;
 		}
@@ -2297,6 +2420,12 @@ class ShopgateContainerToArrayVisitor implements ShopgateContainerVisitor {
 			$properties['delivery_address'] = $this->array;
 		}
 
+		// visit shipping info
+		if (!empty($properties['shipping_infos']) && ($properties['shipping_infos'] instanceof ShopgateShippingInfo)) {
+			$properties['shipping_infos']->accept($this);
+			$properties['shipping_infos'] = $this->array;
+		}
+
 		// visit the items and delivery notes arrays
 		$properties['external_coupons'] = $this->iterateObjectList($properties['external_coupons']);
 		$properties['shopgate_coupons'] = $this->iterateObjectList($properties['shopgate_coupons']);
@@ -2333,6 +2462,11 @@ class ShopgateContainerToArrayVisitor implements ShopgateContainerVisitor {
 	}
 
 	public function visitOrderItemAttribute(ShopgateOrderItemAttribute $i) {
+		// get properties and iterate (no complex types in ShopgateOrderItemAttribute objects)
+		$this->array = $this->iterateSimpleProperties($i->buildProperties());
+	}
+
+	public function visitOrderShipping(ShopgateShippingInfo $i) {
 		// get properties and iterate (no complex types in ShopgateOrderItemAttribute objects)
 		$this->array = $this->iterateSimpleProperties($i->buildProperties());
 	}
@@ -2438,11 +2572,9 @@ class ShopgateContainerToArrayVisitor implements ShopgateContainerVisitor {
 	}
 
 	protected function sanitizeSimpleVar($v) {
-		if (is_int($v)) {
+		if (is_bool($v)) {
 			return (int) $v;
-		} elseif (is_bool($v)) {
-			return (int) $v;
-		} elseif (is_string($v)) {
+		} else {
 			return $v;
 		}
 	}
