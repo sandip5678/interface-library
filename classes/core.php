@@ -2199,6 +2199,7 @@ class ShopgateContainerUtf8Visitor implements ShopgateContainerVisitor {
 		$this->iterateSimpleProperties($properties);
 
 		// iterate ShopgateAddress objects
+		$properties['custom_fields'] = $this->iterateObjectList($properties['custom_fields']);
 		$properties['addresses'] = $this->iterateObjectList($properties['addresses']);
 
 		// create new object with utf-8 en- / decoded data
@@ -2578,6 +2579,7 @@ class ShopgateContainerToArrayVisitor implements ShopgateContainerVisitor {
 		$properties = $this->iterateSimpleProperties($properties);
 
 		// iterate ShopgateAddress objects
+		$properties['custom_fields'] = $this->iterateObjectList($properties['custom_fields']);
 		$properties['addresses'] = $this->iterateObjectList($properties['addresses']);
 
 		// set last value to converted array
