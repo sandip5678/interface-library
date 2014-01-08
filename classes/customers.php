@@ -325,6 +325,8 @@ class ShopgateAddress extends ShopgateContainer {
 	protected $phone;
 	protected $mobile;
 	protected $mail;
+	
+	protected $custom_fields;
 
 
 	##########
@@ -475,6 +477,13 @@ class ShopgateAddress extends ShopgateContainer {
 	public function setMail($value) {
 		$this->mail = $value;
 	}
+	
+	/**
+	 * @param ShopgateOrderCustomField[] $value
+	 */
+	public function setCustomFields($value) {
+		$this->custom_fields = $value;
+	}
 
 
 	##########
@@ -620,6 +629,13 @@ class ShopgateAddress extends ShopgateContainer {
 	 */
 	public function getMail() {
 		return $this->mail;
+	}
+	
+	/**
+	 * @return ShopgateOrderCustomField[]
+	 */
+	public function getCustomFields() {
+		return $this->custom_fields;
 	}
 
 	public function accept(ShopgateContainerVisitor $v) {
