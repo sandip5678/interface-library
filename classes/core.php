@@ -24,7 +24,7 @@
 ###################################################################################
 # define constants
 ###################################################################################
-define('SHOPGATE_LIBRARY_VERSION', '2.4.0');
+define('SHOPGATE_LIBRARY_VERSION', '2.4.1');
 define('SHOPGATE_LIBRARY_ENCODING' , 'UTF-8');
 define('SHOPGATE_BASE_DIR', realpath(dirname(__FILE__).'/../'));
 
@@ -129,6 +129,8 @@ class ShopgateLibraryException extends Exception {
 	const PLUGIN_UNKNOWN_COUNTRY_CODE = 84;
 	const PLUGIN_UNKNOWN_STATE_CODE = 85;
 	
+	const PLUGIN_EMAIL_SEND_ERROR = 90;
+	
 	const PLUGIN_CRON_UNSUPPORTED_JOB = 91;
 	
 	// Merchant API errors
@@ -206,6 +208,8 @@ class ShopgateLibraryException extends Exception {
 		self::PLUGIN_DATABASE_ERROR => 'database error',
 		self::PLUGIN_UNKNOWN_COUNTRY_CODE => 'unknown country code',
 		self::PLUGIN_UNKNOWN_STATE_CODE => 'unknown state code',
+		
+		self::PLUGIN_EMAIL_SEND_ERROR => 'error sending email',
 		
 		self::PLUGIN_CRON_UNSUPPORTED_JOB => 'unsupported job',
 		

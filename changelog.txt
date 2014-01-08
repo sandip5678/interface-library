@@ -1,5 +1,11 @@
 '''Deutsch'''
 
+'''Version 2.4.2'''
+* zusätzliche Benutzerangaben für Bestellungen und Adressen eingefügt (ShopgateCartBase::$custom_fields, ShopgateAddress::$custom_fields)
+
+'''Version 2.4.1'''
+* neuen Fehlercode hinzugefügt (90 - error sending mail)
+
 '''Version 2.4.0'''
 * Die Actions register_customer, get_debug_info und set_settings wurden hinzugefügt
 * Der <link>-Tag wird nur noch bei einem freigeschalteten Shop in den <head>-Tag ausgegeben
@@ -165,6 +171,12 @@
 
 
 '''English'''
+
+'''Version 2.4.2'''
+* added custom input fields for user details to orders and addresses (ShopgateOrder::$custom_fields, ShopgateAddress::$custom_fields)
+
+'''Version 2.4.1'''
+* added new error code (90 - error sending mail)
 
 '''Version 2.4.0'''
 * actions register_customer, get_debug_info and set_settings was added
