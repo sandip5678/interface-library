@@ -155,6 +155,21 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	 * @param ShopgateOrderCustomField[] $value
 	 */
 	public function setCustomFields($value) {
+		if (!is_array($value)) {
+			$this->custom_fields = null;
+		}
+		
+		foreach ($value as $index => &$element) {
+			if ((!is_object($element) || !($element instanceof ShopgateOrderCustomField)) && !is_array($element)) {
+				unset($value[$index]);
+				continue;
+			}
+			
+			if (is_array($element)) {
+				$element = new ShopgateOrderCustomField($element);
+			}
+		}
+		
 		$this->custom_fields = $value;
 	}
 	

@@ -170,6 +170,21 @@ class ShopgateCustomer extends ShopgateContainer {
 	 * @param ShopgateOrderCustomField[] $value
 	 */
 	public function setCustomFields($value) {
+		if (!is_array($value)) {
+			$this->custom_fields = null;
+		}
+		
+		foreach ($value as $index => &$element) {
+			if ((!is_object($element) || !($element instanceof ShopgateOrderCustomField)) && !is_array($element)) {
+				unset($value[$index]);
+				continue;
+			}
+			
+			if (is_array($element)) {
+				$element = new ShopgateOrderCustomField($element);
+			}
+		}
+		
 		$this->custom_fields = $value;
 	}
 	
@@ -184,6 +199,21 @@ class ShopgateCustomer extends ShopgateContainer {
 	 * @param ShopgateAddress[] $value List of customer's addresses.
 	 */
 	public function setAddresses($value) {
+		if (!is_array($value)) {
+			$this->addresses = null;
+		}
+		
+		foreach ($value as $index => &$element) {
+			if ((!is_object($element) || !($element instanceof ShopgateAddress)) && !is_array($element)) {
+				unset($value[$index]);
+				continue;
+			}
+			
+			if (is_array($element)) {
+				$element = new ShopgateAddress($element);
+			}
+		}
+		
 		$this->addresses = $value;
 	}
 	
@@ -498,6 +528,21 @@ class ShopgateAddress extends ShopgateContainer {
 	 * @param ShopgateOrderCustomField[] $value
 	 */
 	public function setCustomFields($value) {
+		if (!is_array($value)) {
+			$this->custom_fields = null;
+		}
+		
+		foreach ($value as $index => &$element) {
+			if ((!is_object($element) || !($element instanceof ShopgateOrderCustomField)) && !is_array($element)) {
+				unset($value[$index]);
+				continue;
+			}
+			
+			if (is_array($element)) {
+				$element = new ShopgateOrderCustomField($element);
+			}
+		}
+		
 		$this->custom_fields = $value;
 	}
 
