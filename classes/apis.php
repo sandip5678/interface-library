@@ -463,60 +463,63 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		}
 
 		$shippingMethods = array();
-		foreach ($cartData["shipping_methods"] as $shippingMethod) {
-			/** @var ShopgateShippingMethod $shippingMethod */
-			if (!is_object($shippingMethod) || !($shippingMethod instanceof ShopgateShippingMethod)) {
-				throw new ShopgateLibraryException(
-					ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT,
-					'Plugin Response: ' . var_export($shippingMethod, true)
-				);
+		if (!empty($cartData['shipping_methods'])) {
+			foreach ($cartData["shipping_methods"] as $shippingMethod) {
+				/** @var ShopgateShippingMethod $shippingMethod */
+				if (!is_object($shippingMethod) || !($shippingMethod instanceof ShopgateShippingMethod)) {
+					throw new ShopgateLibraryException(
+						ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT,
+						'Plugin Response: ' . var_export($shippingMethod, true)
+					);
+				}
+				$shippingMethods[] = $shippingMethod->toArray();
 			}
-			$shippingMethods[] = $shippingMethod->toArray();
 		}
 		$responseData["shipping_methods"] = $shippingMethods;
 
-		if (!empty($cartData['payment_methods'])) {
-			$responseData['payment_methods'] = $cartData['payment_methods'];
-		}
-
 		$paymentMethods = array();
-		foreach ($cartData["payment_methods"] as $paymentMethod) {
-			/** @var ShopgatePaymentMethod $paymentMethod */
-			if (!is_object($paymentMethod) || !($paymentMethod instanceof ShopgatePaymentMethod)) {
-				throw new ShopgateLibraryException(
-					ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT,
-					'Plugin Response: ' . var_export($paymentMethod, true));
-			}
-			$paymentMethods[] = $paymentMethod->toArray();
+		if (!empty($cartData['payment_methods'])) {
+			foreach ($cartData["payment_methods"] as $paymentMethod) {
+				/** @var ShopgatePaymentMethod $paymentMethod */
+				if (!is_object($paymentMethod) || !($paymentMethod instanceof ShopgatePaymentMethod)) {
+					throw new ShopgateLibraryException(
+						ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT,
+						'Plugin Response: ' . var_export($paymentMethod, true));
+				}
+				$paymentMethods[] = $paymentMethod->toArray();
+			}			
 		}
 		$responseData["payment_methods"] = $paymentMethods;
 
 		$cartItems = array();
-		foreach ($cartData["cart_items"] as $cartItem) {
-			/** @var ShopgateCartItem $cartItem */
-			if (!is_object($cartItem) || !($cartItem instanceof ShopgateCartItem)) {
-				throw new ShopgateLibraryException(
-					ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT,
-					'Plugin Response: ' . var_export($cartItem, true)
-				);
-			}
-			$cartItems[] = $cartItem->toArray();
+		if (!empty($cartData['cart_items'])) {
+			foreach ($cartData["cart_items"] as $cartItem) {
+				/** @var ShopgateCartItem $cartItem */
+				if (!is_object($cartItem) || !($cartItem instanceof ShopgateCartItem)) {
+					throw new ShopgateLibraryException(
+						ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT,
+						'Plugin Response: ' . var_export($cartItem, true)
+					);
+				}
+				$cartItems[] = $cartItem->toArray();
+			}			
 		}
 		$responseData["cart_items"] = $cartItems;
 
 		$coupons = array();
-		foreach ($cartData["external_coupons"] as $coupon) {
-			/** @var ShopgateExternalCoupon $coupon */
-			if (!is_object($coupon) || !($coupon instanceof ShopgateExternalCoupon)) {
-				throw new ShopgateLibraryException(
-					ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT,
-					'Plugin Response: ' . var_export($coupon, true)
-				);
+		if (!empty($cartData['external_coupons'])) {
+			foreach ($cartData["external_coupons"] as $coupon) {
+				/** @var ShopgateExternalCoupon $coupon */
+				if (!is_object($coupon) || !($coupon instanceof ShopgateExternalCoupon)) {
+					throw new ShopgateLibraryException(
+						ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT,
+						'Plugin Response: ' . var_export($coupon, true)
+					);
+				}
+				$coupon = $coupon->toArray();
+				unset($coupon["order_index"]);
+				$coupons[] = $coupon;
 			}
-
-			$coupon = $coupon->toArray();
-			unset($coupon["order_index"]);
-			$coupons[] = $coupon;
 		}
 		$responseData["external_coupons"] = $coupons;
 		
