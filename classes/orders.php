@@ -2289,6 +2289,10 @@ class ShopgateCartItem extends ShopgateContainer
 	protected $qty_buyable;
 	protected $unit_amount;
 	protected $unit_amount_with_tax;
+	protected $errors;
+	protected $options = array();
+	protected $inputs = array();
+	protected $attributes = array();
 
 	##########
 	# Setter #
@@ -2334,6 +2338,89 @@ class ShopgateCartItem extends ShopgateContainer
 		$this->unit_amount_with_tax = $value;
 	}
 
+	/**
+	 * @param array('id' => 'string') $value
+	 */
+	public function setErrors($value) {
+		if (empty($value) || !is_array($value)) {
+			$this->errors = array();
+			return;
+		}
+		$this->errors = $value;
+	}
+
+	/**
+	 * @param ShopgateOrderItemOption[]|mixed[][] $value
+	 */
+	public function setOptions($value) {
+		if (empty($value) || !is_array($value)) {
+			$this->options = array();
+			return;
+		}
+
+		// convert sub-arrays into ShopgateOrderItemOption objects if necessary
+		foreach ($value as $index => &$element) {
+			if ((!is_object($element) || !($element instanceof ShopgateOrderItemOption)) && !is_array($element)) {
+				unset($value[$index]);
+				continue;
+			}
+
+			if (is_array($element)) {
+				$element = new ShopgateOrderItemOption($element);
+			}
+		}
+
+		$this->options = $value;
+	}
+
+	/**
+	 * @param ShopgateOrderItemInput[]|mixed[][] $value
+	 */
+	public function setInputs($value) {
+		if (empty($value) || !is_array($value)) {
+			$this->inputs = array();
+			return;
+		}
+
+		// convert sub-arrays into ShopgateOrderItemInputs objects if necessary
+		foreach ($value as $index => &$element) {
+			if ((!is_object($element) || !($element instanceof ShopgateOrderItemInput)) && !is_array($element)) {
+				unset($value[$index]);
+				continue;
+			}
+
+			if (is_array(($element))) {
+				$element = new ShopgateOrderItemInput($element);
+			}
+		}
+
+		$this->inputs = $value;
+	}
+
+	/**
+	 * @param ShopgateOrderItemAttribute[]|mixed[][] $value
+	 */
+	public function setAttributes($value) {
+		if (empty($value) || !is_array($value)) {
+			$this->attributes = array();
+			return;
+		}
+
+		// convert sub-arrays into ShopgateOrderItemInputs objects if necessary
+		foreach ($value as $index => &$element) {
+			if ((!is_object($element) || !($element instanceof ShopgateOrderItemAttribute)) && !is_array($element)) {
+				unset($value[$index]);
+				continue;
+			}
+
+			if (is_array(($element))) {
+				$element = new ShopgateOrderItemAttribute($element);
+			}
+		}
+
+		$this->attributes = $value;
+	}
+
 	##########
 	# Getter #
 	##########
@@ -2376,6 +2463,34 @@ class ShopgateCartItem extends ShopgateContainer
 	public function getUnitAmountWithTax()
 	{
 		return $this->unit_amount_with_tax;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getErrors() {
+		return $this->errors;
+	}
+
+	/**
+	 * @return ShopgateOrderItemOption[]
+	 */
+	public function getOptions() {
+		return $this->options;
+	}
+
+	/**
+	 * @return ShopgateOrderItemInput[]
+	 */
+	public function getInputs() {
+		return $this->inputs;
+	}
+
+	/**
+	 * @return ShopgateOrderItemAttribute[]
+	 */
+	public function getAttributes() {
+		return $this->attributes;
 	}
 	
 	/**
