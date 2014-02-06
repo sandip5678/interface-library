@@ -1917,7 +1917,9 @@ class ShopgateExternalCoupon extends ShopgateCoupon {
 }
 
 class ShopgateShopgateCoupon extends ShopgateCoupon {
-
+	protected $error;
+	protected $error_text;
+	
 	public function accept(ShopgateContainerVisitor $v) {
 		$v->visitCoupon($this);
 	}
@@ -1925,11 +1927,38 @@ class ShopgateShopgateCoupon extends ShopgateCoupon {
 	##########
 	# Setter #
 	##########
+
+	/**
+	 * @param int $value
+	 */
+	public function setError($value) {
+		$this->error = $value;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setErrorText($value) {
+		$this->error_text = $value;
+	}
 	
 	##########
 	# Getter #
 	##########
 
+	/**
+	 * @return int
+	 */
+	public function getError() {
+		return $this->error;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getErrorText() {
+		return $this->error_text;
+	}
 }
 
 class ShopgateOrderCustomField extends ShopgateContainer {
@@ -2289,7 +2318,8 @@ class ShopgateCartItem extends ShopgateContainer
 	protected $qty_buyable;
 	protected $unit_amount;
 	protected $unit_amount_with_tax;
-	protected $errors;
+	protected $error;
+	protected $error_text;
 	protected $options = array();
 	protected $inputs = array();
 	protected $attributes = array();
@@ -2339,14 +2369,17 @@ class ShopgateCartItem extends ShopgateContainer
 	}
 
 	/**
-	 * @param array('id' => 'string') $value
+	 * @param int $value
 	 */
-	public function setErrors($value) {
-		if (empty($value) || !is_array($value)) {
-			$this->errors = array();
-			return;
-		}
-		$this->errors = $value;
+	public function setError($value) {
+		$this->error = $value;
+	}
+
+	/**
+	 * @param string $value
+	 */
+	public function setErrorText($value) {
+		$this->error = $value;
 	}
 
 	/**
@@ -2466,10 +2499,17 @@ class ShopgateCartItem extends ShopgateContainer
 	}
 
 	/**
-	 * @return array
+	 * @return int
 	 */
-	public function getErrors() {
-		return $this->errors;
+	public function getError() {
+		return $this->error;
+	}
+	
+	/**
+	 * @return int
+	 */
+	public function getErrorText() {
+		return $this->error_text;
 	}
 
 	/**
