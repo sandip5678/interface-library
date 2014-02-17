@@ -2031,6 +2031,7 @@ class ShopgateShippingMethod extends ShopgateContainer
 {
 	protected $id;
 	protected $title;
+	protected $shipping_group;
 	protected $description;
 	protected $sort_order;
 	protected $amount;
@@ -2057,6 +2058,14 @@ class ShopgateShippingMethod extends ShopgateContainer
 	public function setTitle($value)
 	{
 		$this->title = $value;
+	}
+	   
+	/**
+	 * @param string $value
+	 */
+	public function setShippingGroup($value)
+	{
+		$this->shipping_group = $value;
 	}
 
 	/**
@@ -2133,6 +2142,14 @@ class ShopgateShippingMethod extends ShopgateContainer
 	public function getTitle()
 	{
 		return $this->title;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getShippingGroup()
+	{
+		return $this->shipping_group;
 	}
 	
 	/**
