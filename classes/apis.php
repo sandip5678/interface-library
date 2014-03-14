@@ -1096,7 +1096,7 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 	
 	public function manageOrderPaymentStatus($orderNumber, $status) {
 		$request = array(
-			'action' => 'add_order_delivery_note',
+			'action' => 'manage_order_payment_status',
 			'order_number' => $orderNumber,
 			'status' => $status,
 		);
@@ -1725,6 +1725,16 @@ interface ShopgateMerchantApiInterface {
 	 * @see http://wiki.shopgate.com/Merchant_API_add_order_delivery_note
 	 */
 	public function addOrderDeliveryNote($orderNumber, $shippingServiceId, $trackingNumber, $markAsCompleted = false, $sendCustomerMail = true);
+	
+	/**
+	 * Represents the "manage_order_payment_status" action.
+	 *
+	 * @todo Document this as soon as it gets merged into the "real" library.
+	 *
+	 * @param string $orderNumber
+	 * @param string $status "accepted" or "denied"
+	 */
+	public function manageOrderPaymentStatus($orderNumber, $status);
 	
 	/**
 	 * Represents the "set_order_shipping_completed" action.
