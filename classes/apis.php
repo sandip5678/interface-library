@@ -1094,6 +1094,16 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 		return $this->sendRequest($request);
 	}
 	
+	public function manageOrderPaymentStatus($orderNumber, $status) {
+		$request = array(
+			'action' => 'add_order_delivery_note',
+			'order_number' => $orderNumber,
+			'status' => $status,
+		);
+		
+		return $this->sendRequest($request);
+	}
+	
 	public function setOrderShippingCompleted($orderNumber, $sendCustomerEmail = false) {
 		$request = array(
 			'action' => 'set_order_shipping_completed',
