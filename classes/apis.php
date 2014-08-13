@@ -116,6 +116,8 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 			'get_items',
 			'get_categories',
 			'receive_authorization',
+			'get_orders',
+			'sync_favourite_list',
 		);
 	}
 
@@ -249,9 +251,10 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 	protected function ping() {
 		// obfuscate data relevant for authentication
 		$config = $this->config->toArray();
-		$config['customer_number']	= ShopgateLogger::OBFUSCATION_STRING;
-		$config['shop_number']		= ShopgateLogger::OBFUSCATION_STRING;
-		$config['apikey']			= ShopgateLogger::OBFUSCATION_STRING;
+		$config['customer_number']		= ShopgateLogger::OBFUSCATION_STRING;
+		$config['shop_number']			= ShopgateLogger::OBFUSCATION_STRING;
+		$config['apikey']				= ShopgateLogger::OBFUSCATION_STRING;
+		$config['oauth_access_token']	= ShopgateLogger::OBFUSCATION_STRING;
 
 		// prepare response data array
 		$this->responseData['pong'] = 'OK';
@@ -489,8 +492,13 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 			);
 		}
 		
+		$responseData['currency'] = '';
+		if ($cart->getCurrency()) {
+			$responseData['currency'] = $cart->getCurrency();
+		}
+		
 		if (!empty($cartData['currency'])) {
-			$responseData["currency"] = $cartData['currency'];
+			$responseData['currency'] = $cartData['currency'];
 		}
 		
 		if (!empty($cartData['customer']) && $cartCustomer = $cartData['customer']) {
@@ -641,7 +649,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		$this->responseData = $responseData;
 	}
 	
-	/**	 
+	/**
 	 * Represents the "get_settings" action.
 	 *
 	 * @throws ShopgateLibraryException
@@ -715,7 +723,87 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		if (empty($this->response)) $this->response = new ShopgatePluginApiResponseAppJson($this->trace_id);
 		$this->responseData['shopgate_settings'] = $diff;
 	}
+
+	protected function getOrders() {
+		if (!isset($this->params['customer_token'])) {
+			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_NO_CUSTOMER_TOKEN);
+		}
+		if (!isset($this->params['customer_language'])) {
+			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_NO_CUSTOMER_LANGUAGE);
+		}
 	
+		if (empty($this->response)) {
+			$this->response = new ShopgatePluginApiResponseAppJson($this->trace_id);
+		}
+	
+		$orders = $this->plugin->getOrders(
+				$this->params['customer_token'],
+				$this->params['customer_language'],
+				isset($this->params['limit']) ? $this->params['limit'] : 10,
+				isset($this->params['offset']) ? $this->params['offset'] : 0,
+				isset($this->params['order_date_from']) ? $this->params['order_date_from'] : '',
+				isset($this->params['sort_order']) ? $this->params['sort_order'] : 'created_desc'
+		);
+		
+		if (!is_array($orders)) {
+			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT, 'Plugin Response: '.var_export($orders, true));
+		}
+		
+		$resOrders = array();
+		foreach ($orders as $order) {
+			if (!($order instanceof ShopgateExternalOrder)) {
+				throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT, 'Plugin Response: '.var_export($orders, true));
+			}
+			$resOrders[] = $order->toArray();
+		}
+
+		$this->responseData['orders'] = $resOrders;
+	}
+	
+	protected function syncFavouriteList(){
+		if (!isset($this->params['customer_token'])) {
+			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_NO_CUSTOMER_TOKEN);
+		}
+		if (empty($this->params['items'])) {
+			$this->params['items'] = array(); // a hack because there is no "empty array" representation in POST
+		}
+		if (empty($this->response)) {
+			$this->response = new ShopgatePluginApiResponseAppJson($this->trace_id);
+		}
+		
+		$syncItems = array();
+		foreach ($this->params['items'] as $syncItem) {
+			if (!isset($syncItem['item_number'])) {
+				throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_WRONG_ITEM_FORMAT, 'missing required param "item_number"');
+			}
+			if (!isset($syncItem['status'])) {
+				throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_WRONG_ITEM_FORMAT, 'missing required param "status"');
+			}
+		
+			$syncItems[] = new ShopgateSyncItem($syncItem);
+		}
+		
+		$updatedSyncItems = $this->plugin->syncFavouriteList($this->params['customer_token'], $syncItems);
+		
+		if (!is_array($updatedSyncItems)) {
+			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT, 'Plugin Response: '.var_export($updatedSyncItems, true));
+		}
+		
+		$resItems = array();
+		foreach ($updatedSyncItems as $updatedSyncItem) {
+			if (!($updatedSyncItem instanceof ShopgateSyncItem)) {
+				throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_WRONG_RESPONSE_FORMAT, 'Plugin Response: '.var_export($updatedSyncItem, true));
+			}
+			$resItem = $updatedSyncItem->toArray();
+			unset($resItem['status']);
+
+			$resItems[] = $resItem;
+		}
+		
+		$this->responseData['items'] = $resItems;
+	}
+
+
 	/**
 	 * Represents the "get_customer" action.
 	 *
@@ -1066,19 +1154,6 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 	}
 
 	/**
-	 * Represents the "get_orders" action.
-	 *
-	 * @throws ShopgateLibraryException
-	 * @see http://wiki.shopgate.com/Shopgate_Plugin_API_get_orders
-	 * @todo
-	 */
-	protected function getOrders() {
-		/**** not yet implemented ****/
-
-		//if (!empty($this->params['external_customer_number'])) {
-	}
-
-	/**
 	 * Represents the "receive_authorization" action (OAUTH ONLY!).
 	 * Please make sure to allow calls to this action only for admin users with proper rights (only call inside of the
 	 * admin area or check for admin-login set when providing an action from outside of the admin area)
@@ -1100,7 +1175,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		// the "receive_authorization" action url is needed (again) for requesting an access token
 		$calledScriptUrl = $this->plugin->getActionUrl($this->params['action']);
 		
-		// Re-initialize the OAuth auth service object and the ShopgateMerchantAPI object 
+		// Re-initialize the OAuth auth service object and the ShopgateMerchantAPI object
 		$smaAuthService = new ShopgateAuthenticationServiceOAuth();
 		$accessToken = $smaAuthService->requestOAuthAccessToken($this->params['code'], $calledScriptUrl, $tokenRequestUrl);
 		
@@ -1429,7 +1504,7 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 		return $response;
 	}
 	
-	public function addOrderDeliveryNote($orderNumber, $shippingServiceId, $trackingNumber, $markAsCompleted = false, $sendCustomerEmail = false) {
+	public function addOrderDeliveryNote($orderNumber, $shippingServiceId, $trackingNumber = '', $markAsCompleted = false, $sendCustomerEmail = false) {
 		$request = array(
 			'action' => 'add_order_delivery_note',
 			'order_number' => $orderNumber,
@@ -1797,11 +1872,11 @@ class ShopgateAuthenticationServiceOAuth extends ShopgateObject implements Shopg
 	public function setup(ShopgateConfigInterface $config) {
 		// needs to check if an old config is present without any access token
 		if($config->getCustomerNumber() && $config->getShopNumber() && $config->getApiKey() && !$config->getOauthAccessToken()) {
-			// needs to load the non-oauth-url since the new access token needs to be generated using the classic shopgate merchant api authentication 
+			// needs to load the non-oauth-url since the new access token needs to be generated using the classic shopgate merchant api authentication
 			$apiUrls = $config->getApiUrls();
 			$apiUrl = $config->getServer() == 'custom' ? str_replace('/api/merchant2', '/api/merchant', $config->getApiUrl()) : $apiUrls[$config->getServer()][ShopgateConfigInterface::SHOPGATE_AUTH_SERVICE_CLASS_NAME_SHOPGATE];
 			$smaAuthServiceShopgate = new ShopgateAuthenticationServiceShopgate($config->getCustomerNumber(), $config->getApiKey());
-			$smaAuthServiceShopgate->startup($config);
+			$smaAuthServiceShopgate->setup($config);
 			$classicSma = new ShopgateMerchantApi($smaAuthServiceShopgate, $config->getShopNumber(), $apiUrl);
 			
 			// the "get_shop_info" returns an oauth access token
@@ -2342,7 +2417,7 @@ interface ShopgateMerchantApiInterface {
 	 *
 	 * @see http://wiki.shopgate.com/Merchant_API_add_order_delivery_note
 	 */
-	public function addOrderDeliveryNote($orderNumber, $shippingServiceId, $trackingNumber, $markAsCompleted = false, $sendCustomerMail = true);
+	public function addOrderDeliveryNote($orderNumber, $shippingServiceId, $trackingNumber = '', $markAsCompleted = false, $sendCustomerMail = true);
 	
 	/**
 	 * Represents the "set_order_shipping_completed" action.
