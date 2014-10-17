@@ -1,40 +1,14 @@
 <?php
-class ShopgateExternalOrder extends ShopgateContainer {
-	protected $order_number;
-	protected $external_order_number;
-	protected $external_order_id;
+/*
+ * Shopgate GmbH
+ * http://www.shopgate.com
+ * Copyright © 2012-2014 Shopgate GmbH
+ * 
+ * Released under the GNU General Public License (Version 2)
+ * [http://www.gnu.org/licenses/gpl-2.0.html]
+*/
 
-	protected $created_time;
-	
-	protected $mail;
-	protected $phone;
-	protected $mobile;
-	
-	
-	protected $custom_fields;
-	protected $invoice_address;
-	protected $delivery_address;
-	
-	protected $currency;
-	protected $amount_complete;
-	protected $is_paid;
-	protected $payment_method;
-	protected $payment_time;
-	protected $payment_transaction_number;
-	
-	protected $is_shipping_completed;
-	protected $shipping_completed_time;
 
-	protected $delivery_notes;
-
-	protected $order_taxes;
-	protected $extra_costs;
-	protected $external_coupons;
-	protected $items;
-
-	/**
-	 * @param string $value
-	 */
 	public function setOrderNumber($value) {
 		$this->order_number = $value;
 	}

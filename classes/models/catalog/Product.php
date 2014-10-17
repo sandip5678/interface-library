@@ -1,121 +1,14 @@
 <?php
-
-/**
+/*
  * Shopgate GmbH
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file AFL_license.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/AFL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to interfaces@shopgate.com so we can send you a copy immediately.
- *
- * @author     Shopgate GmbH, Schloßstraße 10, 35510 Butzbach <interfaces@shopgate.com>
- * @copyright  Shopgate GmbH
- * @license    http://opensource.org/licenses/AFL-3.0 Academic Free License ("AFL"), in the version 3.0
- *
- * User: awesselburg
- * Date: 07.03.14
- * Time: 08:17
- *
- * File: Product.php
- *
- * @method                                      setUid(string $value)
- * @method string                               getUid()
- *
- * @method                                      setLastUpdate(string $value)
- * @method string                               getLastUpdate()
- *
- * @method                                      setName(string $value)
- * @method string                               getName()
- *
- * @method                                      setTaxPercent(float $value)
- * @method float                                getTaxPercent()
- *
- * @method                                      setTaxClass(string $value)
- * @method string                               getTaxClass()
- *
- * @method                                      setCurrency(string $value)
- * @method string                               getCurrency()
- *
- * @method                                      setDescription(string $value)
- * @method string                               getDescription()
- *
- * @method                                      setDeeplink(string $value)
- * @method string                               getDeeplink()
- *
- * @method                                      setPromotionSortOrder(int $value)
- * @method int                                  getPromotionSortOrder()
- *
- * @method                                      setInternalOrderInfo(string $value)
- * @method string                               getInternalOrderInfo()
- *
- * @method                                      setAgeRating(int $value)
- * @method int                                  getAgeRating()
- *
- * @method                                      setPrice(Shopgate_Model_Catalog_Price $value)
- * @method Shopgate_Model_Catalog_Price         getPrice()
- *
- * @method                                      setWeight(float $value)
- * @method float                                getWeight()
- *
- * @method                                      setWeightUnit(string $value)
- * @method string                               getWeightUnit()
- *
- * @method                                      setImages(array $value)
- * @method array                                getImages()
- *
- * @method                                      setCategoryPaths(array $value)
- * @method array                                getCategoryPaths()
- *
- * @method                                      setShipping(Shopgate_Model_Catalog_Shipping $value)
- * @method Shopgate_Model_Catalog_Shipping      getShipping()
- *
- * @method                                      setManufacturer(Shopgate_Model_Catalog_Manufacturer $value)
- * @method Shopgate_Model_Catalog_Manufacturer  getManufacturer()
- *
- * @method                                      setVisibility(Shopgate_Model_Catalog_Visibility $value)
- * @method Shopgate_Model_Catalog_Visibility    getVisibility()
- *
- * @method                                      setProperties(array $value)
- * @method array                                getProperties()
- *
- * @method                                      setStock(Shopgate_Model_Catalog_Stock $value)
- * @method Shopgate_Model_Catalog_Stock         getStock()
- *
- * @method                                      setIdentifiers(array $value)
- * @method array                                getIdentifiers()
- *
- * @method                                      setTags(array $value)
- * @method array                                getTags()
- *
- * @method                                      setRelations(array $value)
- * @method array                                getRelations()
- *
- * @method                                      setAttributeGroups(array $value)
- * @method array                                getAttributeGroups()
- *
- * @method                                      setAttributes(array $value)
- * @method array                                getAttributes()
- *
- * @method                                      setInputs(array $value)
- * @method array                                getInputs()
- *
- * @method                                      setAttachments(array $value)
- * @method array                                getAttachments()
- *
- * @method                                      setIsDefaultChild(bool $value)
- * @method bool                                 getIsDefaultChild()
- *
- * @method                                      setChildren(array $value)
- *
- * @method                                      setDisplayType(string $value)
- * @method string                               getDisplayType()
- *
- */
+ * http://www.shopgate.com
+ * Copyright © 2012-2014 Shopgate GmbH
+ * 
+ * Released under the GNU General Public License (Version 2)
+ * [http://www.gnu.org/licenses/gpl-2.0.html]
+*/
+
+
 class Shopgate_Model_Catalog_Product extends Shopgate_Model_AbstractExport
 {
 

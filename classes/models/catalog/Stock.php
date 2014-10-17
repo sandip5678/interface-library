@@ -1,50 +1,14 @@
 <?php
-
-/**
+/*
  * Shopgate GmbH
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file AFL_license.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/AFL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to interfaces@shopgate.com so we can send you a copy immediately.
- *
- * @author     Shopgate GmbH, Schloßstraße 10, 35510 Butzbach <interfaces@shopgate.com>
- * @copyright  Shopgate GmbH
- * @license    http://opensource.org/licenses/AFL-3.0 Academic Free License ("AFL"), in the version 3.0
- *
- * User: awesselburg
- * Date: 14.03.14
- * Time: 22:26
- *
- * File: Stock.php
- *
- * @method          setIsSaleable(bool $value)
- * @method bool     getIsSaleable()
- *
- * @method          setBackorders(bool $value)
- * @method bool     getBackorders()
- *
- * @method          setUseStock(bool $value)
- * @method bool     getUseStock()
- *
- * @method          setStockQuantity(int $value)
- * @method int      getStockQuantity()
- *
- * @method          setMinimumOrderQuantity(int $value)
- * @method int      getMinimumOrderQuantity()
- *
- * @method          setMaximumOrderQuantity(int $value)
- * @method int      getMaximumOrderQuantity()
- *
- * @method          setAvailabilityText(string $value)
- * @method string   getAvailabilityText()
- *
- */
+ * http://www.shopgate.com
+ * Copyright © 2012-2014 Shopgate GmbH
+ * 
+ * Released under the GNU General Public License (Version 2)
+ * [http://www.gnu.org/licenses/gpl-2.0.html]
+*/
+
+
 class Shopgate_Model_Catalog_Stock extends Shopgate_Model_AbstractExport {
 
 	/**

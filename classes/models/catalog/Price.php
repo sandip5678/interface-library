@@ -1,50 +1,14 @@
 <?php
-
-/**
+/*
  * Shopgate GmbH
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file AFL_license.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/AFL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to interfaces@shopgate.com so we can send you a copy immediately.
- *
- * @author     Shopgate GmbH, Schloßstraße 10, 35510 Butzbach <interfaces@shopgate.com>
- * @copyright  Shopgate GmbH
- * @license    http://opensource.org/licenses/AFL-3.0 Academic Free License ("AFL"), in the version 3.0
- *
- * User: awesselburg
- * Date: 14.03.14
- * Time: 16:47
- *
- * File: Price.php
- *
- *  @method         setType(string $value)
- *  @method string  getType()
- *
- *  @method         setPrice(float $value)
- *  @method float   getPrice()
- *
- *  @method         setCost(float $value)
- *  @method float   getCost()
- *
- *  @method         setSalePrice(float $value)
- *  @method float   getSalePrice()
- *
- *  @method         setMsrp(float $value)
- *  @method float   getMsrp()
- *
- *  @method         setTierPricesGroup(array $value)
- *  @method array   getTierPricesGroup()
- *
- *  @method         setMinimumOrderAmount(int $value)
- *  @method int     getMinimumOrderAmount()
- *
- */
+ * http://www.shopgate.com
+ * Copyright © 2012-2014 Shopgate GmbH
+ * 
+ * Released under the GNU General Public License (Version 2)
+ * [http://www.gnu.org/licenses/gpl-2.0.html]
+*/
+
+
 class Shopgate_Model_Catalog_Price extends Shopgate_Model_AbstractExport {
 	/**
 	 * default price types
