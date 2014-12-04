@@ -50,6 +50,8 @@ class ShopgateCustomer extends ShopgateContainer {
 	
 	protected $addresses;
 	
+	protected $registration_date;
+	
 	/**
 	 * @deprecated
 	 */
@@ -133,6 +135,22 @@ class ShopgateCustomer extends ShopgateContainer {
 	 */
 	public function setFirstName($value) {
 		$this->first_name = $value;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getRegistrationDate()
+	{
+		return $this->registration_date;
+	}
+
+	/**
+	 * @param mixed $registration_date
+	 */
+	public function setRegistrationDate($registration_date)
+	{
+		$this->registration_date = $registration_date;
 	}
 	
 	/**

@@ -2,6 +2,7 @@
 
 '''Version 2.9.x'''
 * setter und getter für external_customer_group_id hinzugefügt
+* setter und getter für registration_date in der Klasse ShopgateCustomer hinzugefügt
 
 '''Version 2.9.7'''
 * Unterstützung für Tracking-Parameter beim Bestellungsimport hinzugefügt
@@ -377,6 +378,7 @@
 
 '''Version 2.9.x'''
 * added setter and getter for external_customer_group_id
+* added setter and getter for registration_date field (Class ShopgateCustomer)
 
 '''Version 2.9.7'''
 * added support for tracking parameters in the import of orders
