@@ -72,7 +72,8 @@ class Shopgate_Tracking_User extends ShopgateContainer
         $this->value = $value;
     }
 
-    public function accept(ShopgateContainerVisitor $v) {
+    public function accept(ShopgateContainerVisitor $v)
+    {
         $v->visitOrderItem($this);
     }
 }

@@ -91,7 +91,8 @@ class Shopgate_Tracking_Item extends ShopgateContainer
         $this->item_number = $item_number;
     }
 
-    public function accept(ShopgateContainerVisitor $v) {
+    public function accept(ShopgateContainerVisitor $v)
+    {
         $v->visitOrderItem($this);
     }
 }
