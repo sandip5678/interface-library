@@ -188,6 +188,8 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 
 	protected $items = array();
 
+	protected $tracking_get_parameters = array();
+
 	##########
 	# Setter #
 	##########
@@ -490,6 +492,42 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 		$this->items = $value;
 	}
 
+	/**
+	 * @param array $value
+	 */
+	public function setTrackingGetParameters($value)
+	{
+		if (!is_array($value)) {
+			$this->tracking_get_parameters = null;
+
+			return;
+		}
+
+		foreach ($value as $identifier => &$elements) {
+
+			if (is_array($elements)) {
+				switch ($identifier) {
+					case Shopgate_Tracking_Item::DEFAULT_IDENTIFIER :
+						foreach ($elements as &$element) {
+							$element = new Shopgate_Tracking_Item($element);
+						}
+						break;
+					case Shopgate_Tracking_Order::DEFAULT_IDENTIFIER :
+						foreach ($elements as $key => &$element) {
+							$element = new Shopgate_Tracking_Order($element);
+						}
+						break;
+					case Shopgate_Tracking_User::DEFAULT_IDENTIFIER :
+						foreach ($elements as $key => &$element) {
+							$element = new Shopgate_Tracking_User($element);
+						}
+						break;
+				}
+			}
+		}
+
+		$this->tracking_get_parameters = $value;
+	}
 
 	##########
 	# Getter #
@@ -677,6 +715,24 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	 */
 	public function getItems() {
 		return $this->items;
+	}
+
+	/**
+	 * @param string $type
+	 *
+	 * @return array
+	 */
+	public function getTrackingGetParameters($type = false)
+	{
+		if ($type == false) {
+			return $this->tracking_get_parameters;
+		} else {
+			if(array_key_exists($type, $this->tracking_get_parameters)) {
+				return $this->tracking_get_parameters[$type];
+			}
+		}
+
+		return $this->tracking_get_parameters;
 	}
 }
 
