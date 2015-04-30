@@ -27,53 +27,5 @@
  * Time: 15:26
  * E-Mail: awesselburg <wesselburg@me.com>
  */
-class Shopgate_Tracking_Order extends ShopgateContainer
-{
-    /**
-     * type identifier
-     */
-    const DEFAULT_IDENTIFIER = 'order';
-
-    /** @var  mixed */
-    protected $key;
-
-    /** @var  mixed */
-    protected $value;
-
-    /**
-     * @return mixed
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * @param mixed $key
-     */
-    public function setKey($key)
-    {
-        $this->key = $key;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @param mixed $value
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-    }
-
-    public function accept(ShopgateContainerVisitor $v)
-    {
-        $v->visitOrderItem($this);
-    }
-}
+class ShopgateTrackingOrder extends ShopgateTrackingAbstract
+{}

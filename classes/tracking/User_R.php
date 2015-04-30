@@ -24,75 +24,8 @@
 /**
  * User: awesselburg
  * Date: 14.04.15
- * Time: 15:26
+ * Time: 15:27
  * E-Mail: awesselburg <wesselburg@me.com>
  */
-class Shopgate_Tracking_Item extends ShopgateContainer
-{
-    /**
-     * type identifier
-     */
-    const DEFAULT_IDENTIFIER = 'item';
-
-    /** @var  mixed */
-    protected $key;
-
-    /** @var  mixed */
-    protected $value;
-
-    /** @var  mixed */
-    protected $item_number;
-
-    /**
-     * @return mixed
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * @param mixed $key
-     */
-    public function setKey($key)
-    {
-        $this->key = $key;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @param mixed $value
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getItemNumber()
-    {
-        return $this->item_number;
-    }
-
-    /**
-     * @param mixed $item_number
-     */
-    public function setItemNumber($item_number)
-    {
-        $this->item_number = $item_number;
-    }
-
-    public function accept(ShopgateContainerVisitor $v)
-    {
-        $v->visitOrderItem($this);
-    }
-}
+class ShopgateTrackingUser extends ShopgateTrackingAbstract
+{}

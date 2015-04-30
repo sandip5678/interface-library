@@ -493,34 +493,35 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	}
 
 	/**
-	 * @param array $value
+	 * @param ShopgateTrackingAbstract []|mixed[][] $value
 	 */
 	public function setTrackingGetParameters($value)
 	{
 		if (!is_array($value)) {
 			$this->tracking_get_parameters = null;
-
 			return;
 		}
 
-		foreach ($value as $identifier => &$elements) {
+		foreach ($value as $index => &$element) {
 
-			if (is_array($elements)) {
-				switch ($identifier) {
-					case Shopgate_Tracking_Item::DEFAULT_IDENTIFIER :
-						foreach ($elements as &$element) {
-							$element = new Shopgate_Tracking_Item($element);
-						}
+			if ((!is_object($element) || !($element instanceof ShopgateTrackingAbstract)) && !is_array($element)) {
+				unset($value[$index]);
+				continue;
+			}
+
+			if (is_array($element) && array_key_exists(ShopgateTrackingAbstract::DEFAULT_IDENTIFIER_TYPE, $element)) {
+				switch ($element[ShopgateTrackingAbstract::DEFAULT_IDENTIFIER_TYPE]) {
+					case ShopgateTrackingAbstract::DEFAULT_IDENTIFIER_TYPE_ITEM :
+						$element = new ShopgateTrackingItem($element);
 						break;
-					case Shopgate_Tracking_Order::DEFAULT_IDENTIFIER :
-						foreach ($elements as $key => &$element) {
-							$element = new Shopgate_Tracking_Order($element);
-						}
+					case ShopgateTrackingAbstract::DEFAULT_IDENTIFIER_TYPE_ORDER :
+						$element = new ShopgateTrackingOrder($element);
 						break;
-					case Shopgate_Tracking_User::DEFAULT_IDENTIFIER :
-						foreach ($elements as $key => &$element) {
-							$element = new Shopgate_Tracking_User($element);
-						}
+					case ShopgateTrackingAbstract::DEFAULT_IDENTIFIER_TYPE_USER :
+						$element = new ShopgateTrackingUser($element);
+						break;
+					default :
+						unset($value[$index]);
 						break;
 				}
 			}
@@ -724,11 +725,12 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	 */
 	public function getTrackingGetParameters($type = false)
 	{
-		if ($type == false) {
-			return $this->tracking_get_parameters;
-		} else {
-			if(array_key_exists($type, $this->tracking_get_parameters)) {
-				return $this->tracking_get_parameters[$type];
+		if($type) {
+			foreach ($this->tracking_get_parameters as $key => $parameter) {
+				/** @var ShopgateTrackingAbstract $parameter */
+				if($parameter->getType() != $type) {
+					unset ($this->tracking_get_parameters[$key]);
+				}
 			}
 		}
 

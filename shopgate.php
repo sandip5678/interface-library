@@ -35,9 +35,10 @@ require_once(dirname(__FILE__).DS.'classes'.DS.'orders.php');
 require_once(dirname(__FILE__).DS.'classes'.DS.'external_orders.php');
 require_once(dirname(__FILE__).DS.'classes'.DS.'items.php');
 require_once(dirname(__FILE__).DS.'classes'.DS.'redirect.php');
-require_once(dirname(__FILE__).DS.'classes'.DS.'tracking/user.php');
-require_once(dirname(__FILE__).DS.'classes'.DS.'tracking/order.php');
-require_once(dirname(__FILE__).DS.'classes'.DS.'tracking/item.php');
+require_once(dirname(__FILE__).DS.'classes'.DS.'tracking/Abstract.php');
+require_once(dirname(__FILE__).DS.'classes'.DS.'tracking/User.php');
+require_once(dirname(__FILE__).DS.'classes'.DS.'tracking/Order.php');
+require_once(dirname(__FILE__).DS.'classes'.DS.'tracking/Item.php');
 
 /**
  * global

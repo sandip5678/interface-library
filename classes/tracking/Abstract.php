@@ -24,21 +24,57 @@
 /**
  * User: awesselburg
  * Date: 14.04.15
- * Time: 15:27
+ * Time: 15:26
  * E-Mail: awesselburg <wesselburg@me.com>
  */
-class Shopgate_Tracking_User extends ShopgateContainer
+class ShopgateTrackingAbstract extends ShopgateContainer
 {
     /**
-     * type identifier
+     * default identifier type
      */
-    const DEFAULT_IDENTIFIER = 'user';
+    const DEFAULT_IDENTIFIER_TYPE = 'type';
+
+    /**
+     * default identifier type item
+     */
+    const DEFAULT_IDENTIFIER_TYPE_ITEM = 'item';
+
+    /**
+     * default identifier type order
+     */
+    const DEFAULT_IDENTIFIER_TYPE_ORDER = 'order';
+
+    /**
+     * default identifier type user
+     */
+    const DEFAULT_IDENTIFIER_TYPE_USER = 'user';
 
     /** @var  mixed */
     protected $key;
 
     /** @var  mixed */
     protected $value;
+
+    /**
+     * @var string
+     */
+    protected $type;
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
 
     /**
      * @return mixed
@@ -72,6 +108,9 @@ class Shopgate_Tracking_User extends ShopgateContainer
         $this->value = $value;
     }
 
+    /**
+     * @param ShopgateContainerVisitor $v
+     */
     public function accept(ShopgateContainerVisitor $v)
     {
         $v->visitOrderItem($this);
