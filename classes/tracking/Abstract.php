@@ -27,7 +27,7 @@
  * Time: 15:26
  * E-Mail: awesselburg <wesselburg@me.com>
  */
-class ShopgateTrackingAbstract extends ShopgateContainer
+abstract class ShopgateTrackingAbstract extends ShopgateContainer
 {
     /**
      * default identifier type
@@ -113,6 +113,6 @@ class ShopgateTrackingAbstract extends ShopgateContainer
      */
     public function accept(ShopgateContainerVisitor $v)
     {
-        $v->visitOrderItem($this);
+        $v->visitPlainObject($this);
     }
 }
