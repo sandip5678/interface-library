@@ -30,24 +30,24 @@
 abstract class ShopgateTrackingAbstract extends ShopgateContainer
 {
     /**
-     * default identifier type
+     * identifier type
      */
-    const DEFAULT_IDENTIFIER_TYPE = 'type';
+    const IDENTIFIER_TYPE = 'type';
 
     /**
-     * default identifier type item
+     * identifier type item
      */
-    const DEFAULT_IDENTIFIER_TYPE_ITEM = 'item';
+    const IDENTIFIER_TYPE_ITEM = 'item';
 
     /**
-     * default identifier type order
+     * identifier type order
      */
-    const DEFAULT_IDENTIFIER_TYPE_ORDER = 'order';
+    const IDENTIFIER_TYPE_ORDER = 'order';
 
     /**
-     * default identifier type user
+     * identifier type user
      */
-    const DEFAULT_IDENTIFIER_TYPE_USER = 'user';
+    const IDENTIFIER_TYPE_USER = 'user';
 
     /** @var  mixed */
     protected $key;

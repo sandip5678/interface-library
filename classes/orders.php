@@ -509,15 +509,15 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 				continue;
 			}
 
-			if (is_array($element) && array_key_exists(ShopgateTrackingAbstract::DEFAULT_IDENTIFIER_TYPE, $element)) {
-				switch ($element[ShopgateTrackingAbstract::DEFAULT_IDENTIFIER_TYPE]) {
-					case ShopgateTrackingAbstract::DEFAULT_IDENTIFIER_TYPE_ITEM :
+			if (is_array($element) && array_key_exists(ShopgateTrackingAbstract::IDENTIFIER_TYPE, $element)) {
+				switch ($element[ShopgateTrackingAbstract::IDENTIFIER_TYPE]) {
+					case ShopgateTrackingAbstract::IDENTIFIER_TYPE_ITEM :
 						$element = new ShopgateTrackingItem($element);
 						break;
-					case ShopgateTrackingAbstract::DEFAULT_IDENTIFIER_TYPE_ORDER :
+					case ShopgateTrackingAbstract::IDENTIFIER_TYPE_ORDER :
 						$element = new ShopgateTrackingOrder($element);
 						break;
-					case ShopgateTrackingAbstract::DEFAULT_IDENTIFIER_TYPE_USER :
+					case ShopgateTrackingAbstract::IDENTIFIER_TYPE_USER :
 						$element = new ShopgateTrackingUser($element);
 						break;
 					default :
@@ -725,10 +725,10 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	 */
 	public function getTrackingGetParameters($type = false)
 	{
-		if($type) {
+		if ($type) {
 			foreach ($this->tracking_get_parameters as $key => $parameter) {
 				/** @var ShopgateTrackingAbstract $parameter */
-				if($parameter->getType() != $type) {
+				if ($parameter->getType() != $type) {
 					unset ($this->tracking_get_parameters[$key]);
 				}
 			}
