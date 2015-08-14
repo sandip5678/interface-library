@@ -442,6 +442,16 @@ class FakeMapper
                     'shopgate_payment_name' => 'Invoice Payment',
                 ),
         ),
+        ShopgateCartBase::SHOPGATE       => array(
+            'is_paid'        => 0,
+            'payment_method' => 'SHOPGATE',
+            'payment_group'  => 'SHOPGATE',
+            'customer_name'  => 'Shopgate',
+            'payment_infos'  =>
+                array(
+                    'shopgate_payment_name' => 'Shopgate Payment',
+                ),
+        ),
         ShopgateCartBase::COLL_STORE     => array(
             'is_paid'        => 0,
             'payment_method' => 'COLL_STORE',
@@ -471,7 +481,6 @@ class FakeMapper
                 ),
         ),
         'PAYOL_INV'                      => array(
-            //'order_number'   => 200000003,
             'is_paid'        => 0,
             'payment_method' => 'PAYOL_INV',
             'payment_group'  => 'INVOICE',
@@ -479,13 +488,14 @@ class FakeMapper
             'payment_infos'  =>
                 array(
                     'shopgate_payment_name' => 'Invoice (Payolution)',
-                    'status'                => 'NEW', //WAITING, PENDING
-                    'unique_id'             => '8a8294494efab0fc014effe4d2715cff',
-                    'preauth_id'            => '',
+                    'status'                => 'NEW',
+                    'transaction_id'        => 'SG1500006765',
+                    'unique_id'             => '8a82944a4edf0695014ee2a590e21a6f',
+                    'preauth_id'            => '8a82944a4edf0695014ee2a590e21a6f',
                     'capture_id'            => '',
-                    'short_id'              => '1331.1957.4690',
-                    'reference_id'          => 'NBVD-TCWP-GCBX',
-                    'ip'                    => '',
+                    'short_id'              => '1831.7649.5778',
+                    'reference_id'          => null,
+                    'ip'                    => '10.10.10.97',
                 ),
         ),
         'PAYOL_INS'                      => array(
@@ -496,28 +506,32 @@ class FakeMapper
             'payment_infos'  =>
                 array(
                     'shopgate_payment_name' => 'Installment (Payolution)',
-                    'status'                => 'NEW', //WAITING, PENDING
-                    'unique_id'             => '8a8294494efab0fc014effe4d2715cff',
-                    'preauth_id'            => '',
-                    'capture_id'            => '',
-                    'short_id'              => '1331.1957.4690',
-                    'reference_id'          => 'NBVD-TCWP-GCBX',
-                    'ip'                    => '',
-                    'plan'                  => array(
-                        'unique_id'       => '',
-                        'original_amount' => '298.00',
-                        'total_amount'    => '301.50',
-                        'currency'        => 'EUR',
-                        'duration'        => '3',
-                        'accepted'        => 'true',
-                        'bank_data'       => array(
-                            'bank_holder'     => 'Max Mustermann',
-                            'bank_iban'       => 'DE22************',
-                            'bank_bic'        => 'PBNKDEFF',
+                    'status'                => 'NEW',
+                    'transaction_id'        => 'SG1500006768',
+                    'unique_id'             => '8a8294494edefa06014ee2a99a21249d',
+                    'preauth_id'            => '8a8294494edefa06014ee2a99479248e',
+                    'capture_id'            => '8a8294494edefa06014ee2a99a21249d',
+                    'short_id'              => '8854.0364.8674',
+                    'reference_id'          => 'NZMR-XXHT-PDGB',
+                    'ip'                    => '10.10.10.97',
+                    'plan'                  =>
+                        array(
+                            'unique_id'       => 'Tx-rkz7q4jrirs',
+                            'original_amount' => '288.00',
+                            'total_amount'    => '296.73',
+                            'currency'        => 'EUR',
+                            'duration'        => '9',
+                            'accepted'        => true,
+                        ),
+                    'bank_data'             =>
+                        array(
+                            'bank_holder'     => 'holder',
+                            'bank_iban'       => 'iban',
+                            'bank_bic'        => 'bic',
                             'bank_country_id' => 'de',
-                        )
-                    )
-                ),
+                        ),
+                )
+
         )
     );
 
@@ -552,7 +566,10 @@ class FakeMapper
                     $map['payment_infos']['txid'] = $transId;
                 }
             }
-            return $this->_getFakeOrder($map);
+            /** @var ShopgateOrder $fakeOrder */
+            $fakeOrder = $this->_getFakeOrder($map);
+            $fakeOrder->setItems($this->productSwitcher($fakeOrder->getItems()));
+            return array($fakeOrder);
         }
         throw new Exception('Payment method provided was empty');
     }
@@ -607,7 +624,7 @@ class FakeMapper
      */
     protected function _getFakeOrder($map)
     {
-        return array(
+        return
             new ShopgateOrder(
                 array(
                     'order_number'                => isset($map['order_number']) ? $map['order_number'] : rand(
@@ -654,7 +671,7 @@ class FakeMapper
                     'amount_shop_payment'         => '5.00',
                     'payment_tax_percent'         => '19.00',
                     'amount_shopgate_payment'     => '0.00',
-                    'amount_complete'             => '474.9',
+                    'amount_complete'             => '509.9',
                     'currency'                    => 'USD',
                     'invoice_address'             => array(
                         'id'                  => null,
@@ -713,7 +730,7 @@ class FakeMapper
                                 'tax_class_key'        => null,
                                 'tax_class_id'         => null,
                                 'currency'             => 'USD',
-                                'internal_order_info'  => '{"product_id":554}', // 1411: 1, 1702: 16, 1911: 554
+                                'internal_order_info'  => '{"product_id":554}',
                                 'options'              =>
                                     array(),
                                 'inputs'               =>
@@ -765,8 +782,7 @@ class FakeMapper
                              )*/
                         )
                 )
-            )
-        );
+            );
     }
 
     /**
@@ -787,5 +803,41 @@ class FakeMapper
             }
         }
         return $calls;
+    }
+
+    /**
+     * Manages switching the first item's ID
+     * based on magento version
+     *
+     * @param $items array
+     * @return array
+     */
+    protected function productSwitcher($items)
+    {
+        /** @var ShopgateOrderItem $item */
+        $item = $items[0]; //grab first item
+        if ($item instanceof ShopgateOrderItem) {
+            /** @var StdClass $decode */
+            $decode               = json_decode($item->getInternalOrderInfo(), true);
+            $decode['product_id'] = $this->getMageProduct();
+            $item->setInternalOrderInfo(json_encode($decode));
+        }
+        return array($item);
+    }
+
+    /**
+     * Gets the correct product id for the right store
+     *
+     * @return string
+     */
+    protected function getMageProduct()
+    {
+        $helper = Mage::helper('shopgate/config');
+        if ($helper->getIsMagentoVersionLower1701()) {
+            return '1';
+        } elseif ($helper->getIsMagentoVersionLower('1.9.0.0')) {
+            return '16';
+        }
+        return '554';
     }
 }
