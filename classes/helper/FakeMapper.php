@@ -480,7 +480,7 @@ class FakeMapper
                     'billsafe_response'       => '{"ack":"OK", "status":"DECLINED", "declineReason":{ "code":"101", "message":"BillSAFE does not secure this transaction", "buyerMessage":"Thank you for your purchase."}}',
                 ),
         ),
-        'PAYOL_INV'                      => array(
+        ShopgateCartBase::PAYOL_INV      => array(
             'is_paid'        => 0,
             'payment_method' => 'PAYOL_INV',
             'payment_group'  => 'INVOICE',
@@ -490,15 +490,15 @@ class FakeMapper
                     'shopgate_payment_name' => 'Invoice (Payolution)',
                     'status'                => 'NEW',
                     'transaction_id'        => 'SG1500006765',
-                    'unique_id'             => '8a82944a4edf0695014ee2a590e21a6f',
-                    'preauth_id'            => '8a82944a4edf0695014ee2a590e21a6f',
-                    'capture_id'            => '',
+                    'unique_id'             => '8a82944a4f45ce6e014f463d02764178',
+                    'preauth_id'            => '8a82944a4f45ce6e014f463d02764178',
+                    'capture_id'            => '8a82944a4f45ce6e014f463d02764178',
                     'short_id'              => '1831.7649.5778',
                     'reference_id'          => null,
                     'ip'                    => '10.10.10.97',
                 ),
         ),
-        'PAYOL_INS'                      => array(
+        ShopgateCartBase::PAYOL_INS      => array(
             'is_paid'        => 0,
             'payment_method' => 'PAYOL_INS',
             'payment_group'  => 'INSTALLMENT',
@@ -508,9 +508,9 @@ class FakeMapper
                     'shopgate_payment_name' => 'Installment (Payolution)',
                     'status'                => 'NEW',
                     'transaction_id'        => 'SG1500006768',
-                    'unique_id'             => '8a8294494edefa06014ee2a99a21249d',
-                    'preauth_id'            => '8a8294494edefa06014ee2a99479248e',
-                    'capture_id'            => '8a8294494edefa06014ee2a99a21249d',
+                    'unique_id'             => '8a8294494f45c16f014f460002f62fc4',
+                    'preauth_id'            => '8a8294494f45c16f014f460002f62fc4',
+                    'capture_id'            => '8a8294494f45c16f014f460002f62fc4',
                     'short_id'              => '8854.0364.8674',
                     'reference_id'          => 'NZMR-XXHT-PDGB',
                     'ip'                    => '10.10.10.97',
@@ -604,8 +604,9 @@ class FakeMapper
             $flag           = true;
         }
         if (isset($map['payment_infos']['mws_order_id'])) {
-            if ($paid === 0) {
+            if ($paid == 0) {
                 $map['payment_infos']['mws_capture_id'] = '';
+                $flag                                   = true;
             }
         }
         /**
@@ -614,6 +615,16 @@ class FakeMapper
         if (isset($map['payment_infos']['request_type'])) {
             $map['payment_infos']['request_type'] = $paid == 0 ? 'preauthorization' : 'authorization';
             $flag                                 = true;
+        }
+
+        /**
+         * Payolution flag
+         */
+        if (isset($map['payment_infos']['capture_id'])) {
+            if ($paid == 0) {
+                $map['payment_infos']['capture_id'] = '';
+                $flag                                   = true;
+            }
         }
         return $flag;
     }
