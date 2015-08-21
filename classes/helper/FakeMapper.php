@@ -749,36 +749,15 @@ class FakeMapper
                                 'attributes'           =>
                                     array(),
                             ),
-                            /* array(
-                                 'item_number'          => 'kittencoupon',
-                                 'item_number_public'   => 'kittencoupon',
-                                 'parent_item_number'   => null,
-                                 'order_item_id'        => 0,
-                                 'quantity'             => 2,
-                                 'name'                 => 'Coupon (Code: Kitten)',
-                                 'unit_amount'          => '-10.00',
-                                 'unit_amount_with_tax' => '-10.00',
-                                 'tax_percent'          => '0.00',
-                                 'tax_class_key'        => null,
-                                 'tax_class_id'         => null,
-                                 'currency'             => 'USD',
-                                 'internal_order_info'  => null,
-                                 'options'              =>
-                                     array(),
-                                 'inputs'               =>
-                                     array(),
-                                 'attributes'           =>
-                                     array(),
-                             ),
-                             array(
-                                 'item_number'          => 'kittencoupon2',
-                                 'item_number_public'   => 'kittencoupon2',
+                             /*array(
+                                 'item_number'          => 'TOMTAILOR_COUPON',
+                                 'item_number_public'   => 'TOMTAILOR_COUPON',
                                  'parent_item_number'   => null,
                                  'order_item_id'        => 0,
                                  'quantity'             => 1,
-                                 'name'                 => 'Coupon (Code: Kitten)',
-                                 'unit_amount'          => '-15.00',
-                                 'unit_amount_with_tax' => '-15.00',
+                                 'name'                 => 'Coupon (Code: TOMTAILOR)',
+                                 'unit_amount'          => '-5.00',
+                                 'unit_amount_with_tax' => '0.00',
                                  'tax_percent'          => '0.00',
                                  'tax_class_key'        => null,
                                  'tax_class_id'         => null,
@@ -790,7 +769,7 @@ class FakeMapper
                                      array(),
                                  'attributes'           =>
                                      array(),
-                             )*/
+                             ),*/
                         )
                 )
             );
@@ -832,8 +811,9 @@ class FakeMapper
             $decode               = json_decode($item->getInternalOrderInfo(), true);
             $decode['product_id'] = $this->getMageProduct();
             $item->setInternalOrderInfo(json_encode($decode));
+            $items[0] = $item;
         }
-        return array($item);
+        return $items;
     }
 
     /**
