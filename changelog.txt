@@ -1,3 +1,11 @@
+'''Version 2.9.25'''
+* added and changed error messages for method checkCart and checkStock
+
+'''Version 2.9.24'''
+* added constants for some payment methods
+
+'''Version 2.9.23'''
+* added sort order for options and option values
 
 '''Version 2.9.22'''
 * CSV exports: the methods ShopgatePlugin::createCategoriesCsv(), ::createItemsCsv() und ::createReviewsCsv() are now deprecated and not abstract anymore
