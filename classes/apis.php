@@ -1156,57 +1156,84 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 	 * @throws ShopgateLibraryException
 	 * @see http://wiki.shopgate.com/Shopgate_Plugin_API_register_customer
 	 */
-	protected function registerCustomer() {
-        $this->params['user'] = 'test@tester' . rand(0,9999999999). '.com';
-        $this->params['pass'] = '******';
-        $this->params['user_data'] = array(
-            'geneder' => 'm',
-            'first_name' => 'Konstantin',
-            'last_name' => 'Kiritsenko',
-            'birthday' => '1987-01-17',
-            'phone' => '004915771787112',
-            'mobile' => null,
-            'mail' => $this->params['user'],
-            'registration_date' => '2015-06-25T13:28:07+0000',
-            'addresses' =>  array(
-                array(
-                'is_invoice_address' => true,
-                'is_delivery_address' => false,
-                'gender' => 'm',
-                'first_name' => 'Konstantin',
-                'last_name' => 'Kiritsenko',
-                'birthday'  => '1987-01-17',
-                'company' => 'Shopgate',
-                'street_1' => 'Tester',
-                'steet_2' => null,
-                'zipcode' => '35510',
-                'city' => 'Butzbach',
-                'country' => 'DE',
-                'state' => '',
-                'phone' => null,
-                'mobile' => null,
-                'mail' => null,
-                ),
-                array(
-                'is_invoice_address'  => false,
-                'is_delivery_address' => true,
-                'gender'              => 'm',
-                'first_name'          => 'Konstantin',
-                'last_name'           => 'Kiritsenko',
-                'birthday'            => '1987-01-17',
-                'company'             => 'Shopgate',
-                'street_1'            => 'Tester',
-                'steet_2'             => null,
-                'zipcode'             => '35510',
-                'city'                => 'Butzbach',
-                'country'             => 'DE',
-                'state'               => '',
-                'phone'               => null,
-                'mobile'              => null,
-                'mail'                => null,
-                )
-            )
-        );
+	protected function registerCustomer()
+	{
+		$this->params['user']      = 'test@tester' . rand(0, 9999999999) . '.com';
+		$this->params['pass']      = '******';
+		$this->params['user_data'] = array(
+			'geneder'           => 'm',
+			'first_name'        => 'Konstantin',
+			'last_name'         => 'Kiritsenko',
+			'birthday'          => '1987-01-17',
+			'phone'             => '004915771787112',
+			'mobile'            => null,
+			'mail'              => $this->params['user'],
+			'registration_date' => '2015-06-25T13:28:07+0000',
+			'custom_fields'     => array(
+				array(
+					'label'               => 'Test Label',
+					'internal_field_name' => 'test_var',
+					'value'               => 'var',
+				),
+				array(
+					'label'               => 'Mom\'s name',
+					'internal_field_name' => 'mom_name',
+					'value'               => 'Theresa'
+				)
+			),
+			'addresses'         => array(
+				array(
+					'is_invoice_address'  => true,
+					'is_delivery_address' => false,
+					'gender'              => 'm',
+					'first_name'          => 'Konstantin',
+					'last_name'           => 'Kiritsenko',
+					'birthday'            => '1987-01-17',
+					'company'             => 'Shopgate',
+					'street_1'            => 'Tester',
+					'steet_2'             => null,
+					'zipcode'             => '35510',
+					'city'                => 'Butzbach',
+					'country'             => 'DE',
+					'state'               => '',
+					'phone'               => null,
+					'mobile'              => null,
+					'mail'                => null,
+					'custom_fields'       => array(
+						array(
+							'label'               => 'Is house?',
+							'internal_field_name' => 'is_house',
+							'value'               => 0,
+						)
+					),
+				),
+				array(
+					'is_invoice_address'  => false,
+					'is_delivery_address' => true,
+					'gender'              => 'm',
+					'first_name'          => 'Konstantin',
+					'last_name'           => 'Kiritsenko',
+					'birthday'            => '1987-01-17',
+					'company'             => 'Shopgate',
+					'street_1'            => 'Tester',
+					'steet_2'             => null,
+					'zipcode'             => '35510',
+					'city'                => 'Butzbach',
+					'country'             => 'DE',
+					'state'               => '',
+					'phone'               => null,
+					'mobile'              => null,
+					'mail'                => null,
+					'custom_fields'       => array(
+						array(
+							'label'               => 'Is house?',
+							'internal_field_name' => 'is_house',
+							'value'               => 1,
+						)
+					),
+				)
+			)
+		);
 		if (!isset($this->params['user'])) {
 			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_NO_USER);
 		}

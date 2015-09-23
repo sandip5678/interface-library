@@ -662,6 +662,13 @@ class FakeMapper
                     'external_order_id'           => '8240',
                     'external_customer_number'    => null,
                     'external_customer_id'        => null,
+                    'custom_fields' => array(
+                        array(
+                            'label'               => 'Test Custom Field',
+                            'internal_field_name' => 'test_field',
+                            'value'               => 'test field value',
+                        ),
+                    ),
                     'mail'                        => 'test@test.com',
                     'phone'                       => null,
                     'mobile'                      => null,
@@ -702,6 +709,13 @@ class FakeMapper
                         'phone'               => null,
                         'mobile'              => null,
                         'mail'                => null,
+                        'custom_fields' => array(
+                            array(
+                                'label'               => 'Is house?',
+                                'internal_field_name' => 'is_house',
+                                'value'               => 1,
+                            )
+                        ),
                     ),
                     'delivery_address'            => array(
                         'id'                  => null,
@@ -721,6 +735,13 @@ class FakeMapper
                         'phone'               => null,
                         'mobile'              => null,
                         'mail'                => null,
+                        'custom_fields' => array(
+                            array(
+                                'label'               => 'Is house?',
+                                'internal_field_name' => 'is_house',
+                                'value'               => 0,
+                            )
+                        ),
                     ),
                     'external_coupons'            =>
                         array(),
