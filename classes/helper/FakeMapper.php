@@ -30,7 +30,7 @@ class FakeMapper
 {
     protected $_paymentMap = array(
         ShopgateCartBase::PAYONE_PP      => array(
-            'is_paid'        => null,
+            'is_paid'        => 0,
             'payment_method' => 'PAYONE_PP',
             'payment_group'  => 'PAYPAL',
             'customer_name'  => 'PayonePP',
@@ -558,7 +558,7 @@ class FakeMapper
                 $map['payment_infos']['credit_card']['masked_number'] = rand(0000, 9999); //randomize card #
             }
 
-            //payone transaction ID creator
+            //PayOne transaction ID creator
             if (strpos($paymentMethod, 'PAYONE') !== false) {
                 $helper  = new Payone_Handler();
                 $transId = $helper->getTransactionId($paymentMethod);
@@ -679,6 +679,7 @@ class FakeMapper
                         'display_name' => 'DHL Pakte gogreen',
                         'description'  => '',
                         'amount'       => '4.90',
+                        'amount_net'   => '4.90',
                         'weight'       => 0,
                         'api_response' => null,
                     ),
@@ -687,7 +688,8 @@ class FakeMapper
                     'amount_items'                => '139.95',
                     'amount_shipping'             => '4.90',
                     'amount_shop_payment'         => '5.00',
-                    'payment_tax_percent'         => '19.00',
+                    'payment_tax_percent'         => '20.00',
+                    'shipping_tax_percent'        => '20.00',
                     'amount_shopgate_payment'     => '0.00',
                     'amount_complete'             => '509.9',
                     'currency'                    => 'USD',
@@ -776,6 +778,7 @@ class FakeMapper
                                  'parent_item_number'   => null,
                                  'order_item_id'        => 0,
                                  'quantity'             => 1,
+                                 'type'                 => 'sg-coupon's
                                  'name'                 => 'Coupon (Code: TOMTAILOR)',
                                  'unit_amount'          => '-5.00',
                                  'unit_amount_with_tax' => '0.00',
