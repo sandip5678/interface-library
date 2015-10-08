@@ -1746,6 +1746,8 @@ class ShopgateShippingInfo extends ShopgateContainer {
 	protected $display_name;
 	protected $description;
 	protected $amount;
+	protected $amount_net;
+	protected $amount_gross;
 	protected $weight;
 	protected $api_response;
 	protected $internal_shipping_info;
@@ -1804,6 +1806,8 @@ class ShopgateShippingInfo extends ShopgateContainer {
 	/**
 	 *
 	 * @return float
+	 *
+	 * @deprecated use getAmountNet or getAmountGross
 	 */
 	public function getAmount() {
 		return $this->amount;
@@ -1812,9 +1816,43 @@ class ShopgateShippingInfo extends ShopgateContainer {
 	/**
 	 *
 	 * @param float $value
+	 *
+	 * @deprecated use setAmountNet or setAmountGross
 	 */
 	public function setAmount($value) {
 		$this->amount = $value;
+	}
+
+	/**
+	 *
+	 * @return float
+	 */
+	public function getAmountNet() {
+		return $this->amount_net;
+	}
+
+	/**
+	 *
+	 * @param float $value
+	 */
+	public function setAmountNet($value) {
+		$this->amount_net = $value;
+	}
+
+	/**
+	 *
+	 * @return float
+	 */
+	public function getAmountGross() {
+		return $this->amount_gross;
+	}
+
+	/**
+	 *
+	 * @param float $value
+	 */
+	public function setAmountGross($value) {
+		$this->amount_gross = $value;
 	}
 
 	/**
@@ -1866,28 +1904,28 @@ class ShopgateShippingInfo extends ShopgateContainer {
 
 class ShopgateDeliveryNote extends ShopgateContainer {
 	// shipping groups
-	const DHL = "DHL"; // DHL
+	const DHL        = "DHL";        // DHL
 	const DHLEXPRESS = "DHLEXPRESS"; // DHLEXPRESS
-	const DP = "DP"; // Deutsche Post
-	const DPD = "DPD"; // Deutscher Paket Dienst
-	const FEDEX = "FEDEX"; // FedEx
-	const GLS = "GLS"; // GLS
-	const HLG = "HLG"; // Hermes
-	const OTHER = "OTHER"; // Anderer Lieferant
-	const TNT = "TNT"; // TNT
-	const TOF = "TOF"; // Trnas-o-Flex
-	const UPS = "UPS"; // UPS
-	const USPS = "USPS"; // USPS
+	const DP         = "DP";         // Deutsche Post
+	const DPD        = "DPD";        // Deutscher Paket Dienst
+	const FEDEX      = "FEDEX";      // FedEx
+	const GLS        = "GLS";        // GLS
+	const HLG        = "HLG";        // Hermes
+	const OTHER      = "OTHER";      // Anderer Lieferant
+	const TNT        = "TNT";        // TNT
+	const TOF        = "TOF";        // Trnas-o-Flex
+	const UPS        = "UPS";        // UPS
+	const USPS       = "USPS";       // USPS
 
 	// shipping types
-	const MANUAL = "MANUAL";
+	const MANUAL      = "MANUAL";
 	const USPS_API_V1 = "USPS_API_V1";
-	const UPS_API_V1 = "UPS_API_V1";
+	const UPS_API_V1  = "UPS_API_V1";
 
-	protected $shipping_service_id = ShopgateDeliveryNote::DHL;
+	protected $shipping_service_id   = null;
 	protected $shipping_service_name = "";
-	protected $tracking_number = "";
-	protected $shipping_time = null;
+	protected $tracking_number       = "";
+	protected $shipping_time         = null;
 
 	##########
 	# Setter #
