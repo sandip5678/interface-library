@@ -240,7 +240,7 @@ class FakeMapper
             'customer_name'  => 'AuthorizeNet',
             'payment_infos'  => array(
                 'shopgate_payment_name' => 'Credit card (Authorize.net)',
-                'transaction_id'        => '2237667693',
+                'transaction_id'        => '2232308291',
                 'response_code'         => 1,
                 'response_reason_code'  => 1,
                 'response_reason_text'  => 'This transaction has been approved.',
@@ -558,14 +558,21 @@ class FakeMapper
                 $map['payment_infos']['credit_card']['masked_number'] = rand(0000, 9999); //randomize card #
             }
 
-            //PayOne transaction ID creator
+            //Transaction ID creators
             if (strpos($paymentMethod, 'PAYONE') !== false) {
                 $helper  = new Payone_Handler();
                 $transId = $helper->getTransactionId($paymentMethod);
                 if ($transId) {
                     $map['payment_infos']['txid'] = $transId;
                 }
+            } elseif ($paymentMethod === 'AUTHN_CC') {
+                $helper  = new Authorize_Handler();
+                $trans = $helper->getTransaction($map['payment_infos']['transaction_type']);
+                $map['payment_infos']['transaction_id'] = $trans->transaction_id;
+                $map['payment_infos']['authorization_code'] = $trans->authorization_code;
+                $map['payment_infos']['md5_hash'] = $trans->md5_hash;
             }
+            
             /** @var ShopgateOrder $fakeOrder */
             $fakeOrder = $this->_getFakeOrder($map);
             $fakeOrder->setItems($this->productSwitcher($fakeOrder->getItems()));
@@ -623,7 +630,7 @@ class FakeMapper
         if (isset($map['payment_infos']['capture_id'])) {
             if ($paid == 0) {
                 $map['payment_infos']['capture_id'] = '';
-                $flag                                   = true;
+                $flag                               = true;
             }
         }
         return $flag;
@@ -691,7 +698,7 @@ class FakeMapper
                     'payment_tax_percent'         => '20.00',
                     'shipping_tax_percent'        => '20.00',
                     'amount_shopgate_payment'     => '0.00',
-                    'amount_complete'             => '509.9',
+                    'amount_complete'             => '509.07',
                     'currency'                    => 'USD',
                     'invoice_address'             => array(
                         'id'                  => null,

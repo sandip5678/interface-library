@@ -76,6 +76,7 @@ require_once(dirname(__FILE__).DS.'classes'.DS.'helper/Pricing.php');
 require_once(dirname(__FILE__).DS.'classes'.DS.'helper/String.php');
 include_once dirname(__FILE__) . DS . 'classes' . DS . 'helper/FakeMapper.php';
 include_once dirname(__FILE__) . DS . 'classes' . DS . 'helper/handlers/Payone.php';
+include_once dirname(__FILE__) . DS . 'classes' . DS . 'helper/handlers/Authorize.php';
 
 /**
  * media
