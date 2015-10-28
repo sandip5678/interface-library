@@ -2,11 +2,11 @@
 /*
  * Shopgate GmbH
  * http://www.shopgate.com
- * Copyright © 2012-2014 Shopgate GmbH
+ * Copyright © 2012-2015 Shopgate GmbH
  *
  * Released under the GNU General Public License (Version 2)
  * [http://www.gnu.org/licenses/gpl-2.0.html]
-*/
+ */
 
 /**
  * @class Shopgate_Model_Catalog_Input
@@ -29,6 +29,9 @@
  *
  * @method                                      setAdditionalPrice(string $value)
  * @method string                               getAdditionalPrice()
+ *
+ * @method                                      setSortOrder(int $value)
+ * @method int                               	getSortOrder()
  *
  * @method                                      setLabel(string $value)
  * @method string                               getLabel()
@@ -62,6 +65,7 @@ class Shopgate_Model_Catalog_Input extends Shopgate_Model_AbstractExport {
 		'Validation',
 		'Required',
 		'AdditionalPrice',
+		'SortOrder',
 		'Label',
 		'InfoText');
 
@@ -88,8 +92,9 @@ class Shopgate_Model_Catalog_Input extends Shopgate_Model_AbstractExport {
 		$inputNode = $itemNode->addChild('input');
 		$inputNode->addAttribute('uid', $this->getUid());
 		$inputNode->addAttribute('type', $this->getType());
-		$inputNode->addAttribute('required', $this->getRequired());
+		$inputNode->addAttribute('required', (int)$this->getRequired());
 		$inputNode->addAttribute('additional_price', $this->getAdditionalPrice());
+		$inputNode->addAttribute('sort_order', $this->getSortOrder());
 		$inputNode->addChildWithCDATA('label', $this->getLabel());
 		$inputNode->addChildWithCDATA('info_text', $this->getInfoText());
 		$optionsNode = $inputNode->addChild('options');

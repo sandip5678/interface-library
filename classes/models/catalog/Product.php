@@ -2,11 +2,11 @@
 /*
  * Shopgate GmbH
  * http://www.shopgate.com
- * Copyright © 2012-2014 Shopgate GmbH
+ * Copyright © 2012-2015 Shopgate GmbH
  *
  * Released under the GNU General Public License (Version 2)
  * [http://www.gnu.org/licenses/gpl-2.0.html]
-*/
+ */
 
 /**
  * @class Shopgate_Model_Catalog_Product
@@ -312,14 +312,14 @@ class Shopgate_Model_Catalog_Product extends Shopgate_Model_AbstractExport {
 		$itemNode->addAttribute('uid', $this->getUid());
 		$itemNode->addAttribute('last_update', $this->getLastUpdate());
 		$itemNode->addChildWithCDATA('name', $this->getName());
-		$itemNode->addChild('tax_percent', $this->getTaxPercent());
-		$itemNode->addChild('tax_class', $this->getTaxClass());
+		$itemNode->addChild('tax_percent', $this->getTaxPercent(), null, false);
+		$itemNode->addChild('tax_class', $this->getTaxClass(), null, false);
 		$itemNode->addChild('currency', $this->getCurrency());
 		$itemNode->addChildWithCDATA('description', $this->getDescription());
 		$itemNode->addChildWithCDATA('deeplink', $this->getDeeplink());
 		$itemNode->addChild('promotion')->addAttribute('sort_order', $this->getPromotionSortOrder());
 		$itemNode->addChildWithCDATA('internal_order_info', $this->getInternalOrderInfo());
-		$itemNode->addChild('age_rating', $this->getAgeRating());
+		$itemNode->addChild('age_rating', $this->getAgeRating(), null, false);
 		$itemNode->addChild('weight', $this->getWeight())->addAttribute('unit', $this->getWeightUnit());
 	
 		/**
@@ -742,27 +742,33 @@ class Shopgate_Model_Catalog_Product extends Shopgate_Model_AbstractExport {
 	 */
 	protected function cleanChildData($parentItem, $childItem) {
 		foreach ($childItem->getData() as $childKey => $childValue) {
-			/**
-			 * array or object
-			 */
 			if (is_array($childValue) || $childValue instanceof Shopgate_Model_Abstract) {
 				/**
-				 * array
+				 * array or object
 				 */
 				if(is_array($childValue) && count($childValue) > 0) {
+					/**
+					 * array
+					 */
 					if($childValue == $parentItem->getData($childKey)) {
 						$childItem->setData($childKey, array());
 					}
 				} elseif ($childValue instanceof Shopgate_Model_Abstract) {
-					if($childValue == $parentItem->getData($childKey)) {
-						$class = get_class($childValue);
-						$childItem->setData($childKey, new $class);
+					/**
+					 * object - but we check only data array
+					 */
+					$parentAttribute = $parentItem->getData($childKey);
+					
+					if ($parentAttribute instanceof Shopgate_Model_Abstract
+						&& $childValue->getData() == $parentAttribute->getData()
+					) {
+						$childItem->setData($childKey, new Shopgate_Model_Catalog_XmlEmptyObject());
 					}
 				}
+			} else {
 				/**
 				 * string
 				 */
-			} else {
 				if($childValue == $parentItem->getData($childKey)) {
 					$childItem->setData($childKey, null);
 				}

@@ -2,11 +2,11 @@
 /*
  * Shopgate GmbH
  * http://www.shopgate.com
- * Copyright © 2012-2014 Shopgate GmbH
+ * Copyright © 2012-2015 Shopgate GmbH
  *
  * Released under the GNU General Public License (Version 2)
  * [http://www.gnu.org/licenses/gpl-2.0.html]
-*/
+ */
 
 class ShopgateExternalOrder extends ShopgateContainer {
 	protected $order_number;
@@ -27,7 +27,14 @@ class ShopgateExternalOrder extends ShopgateContainer {
 	protected $delivery_address;
 	
 	protected $currency;
-	protected $amount_complete;
+
+	protected $amount_items_gross;
+	protected $amount_items_net;
+	protected $amount_complete_gross;
+	protected $amount_complete_net;
+
+    protected $amount_complete;
+    
 	protected $is_paid;
 	protected $payment_method;
 	protected $payment_time;
@@ -198,10 +205,40 @@ class ShopgateExternalOrder extends ShopgateContainer {
 	}
 
 	/**
+	 * @deprecated since version 2.9.26; use setAmountCompleteGross
+	 *
 	 * @param float $value
 	 */
 	public function setAmountComplete($value) {
 		$this->amount_complete = $value;
+	}
+
+	/**
+	 * @param float $value
+	 */
+	public function setAmountItemsGross($value) {
+		$this->amount_items_gross = $value;
+	}
+
+	/**
+	 * @param float $value
+	 */
+	public function setAmountItemsNet($value) {
+		$this->amount_items_net = $value;
+	}
+
+	/**
+	 * @param float $value
+	 */
+	public function setAmountCompleteGross($value) {
+		$this->amount_complete_gross = $value;
+	}
+
+	/**
+	 * @param float $value
+	 */
+	public function setAmountCompleteNet($value) {
+		$this->amount_complete_net = $value;
 	}
 	
 	/**
@@ -447,10 +484,40 @@ class ShopgateExternalOrder extends ShopgateContainer {
 	}
 
 	/**
+	 * @deprecated since version 2.9.26; use getAmountCompleteGross
+	 *
 	 * @return float
 	 */
 	public function getAmountComplete() {
 		return $this->amount_complete;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getAmountItemsGross() {
+		return $this->amount_items_gross;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getAmountItemsNet() {
+		return $this->amount_items_net;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getAmountCompleteGross() {
+		return $this->amount_complete_gross;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getAmountCompleteNet() {
+		return $this->amount_complete_net;
 	}
 	
 	/**
@@ -777,7 +844,7 @@ class ShopgateExternalOrderTax extends ShopgateContainer {
 
 	/**
 	 *
-	 * @param string $value
+	 * @param null|string $value
 	 */
 	public function setLabel($value){
 		$this->label = $value;

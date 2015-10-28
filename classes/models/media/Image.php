@@ -2,11 +2,11 @@
 /*
  * Shopgate GmbH
  * http://www.shopgate.com
- * Copyright © 2012-2014 Shopgate GmbH
+ * Copyright © 2012-2015 Shopgate GmbH
  *
  * Released under the GNU General Public License (Version 2)
  * [http://www.gnu.org/licenses/gpl-2.0.html]
-*/
+ */
 
 /**
  *
@@ -61,8 +61,8 @@ class Shopgate_Model_Media_Image extends Shopgate_Model_AbstractExport {
 		$imageNode->addAttribute('sort_order', $this->getSortOrder());
 		$imageNode->addAttribute('is_cover', $this->getIsCover());
 		$imageNode->addChildWithCDATA('url', $this->getUrl());
-		$imageNode->addChildWithCDATA('title', $this->getTitle());
-		$imageNode->addChildWithCDATA('alt', $this->getAlt());
+		$imageNode->addChildWithCDATA('title', $this->getTitle(), false);
+		$imageNode->addChildWithCDATA('alt', $this->getAlt(), false);
 
 		return $itemNode;
 	}

@@ -2,11 +2,11 @@
 /*
  * Shopgate GmbH
  * http://www.shopgate.com
- * Copyright © 2012-2014 Shopgate GmbH
+ * Copyright © 2012-2015 Shopgate GmbH
  *
  * Released under the GNU General Public License (Version 2)
  * [http://www.gnu.org/licenses/gpl-2.0.html]
-*/
+ */
 
 /**
  * @class Shopgate_Model_Catalog_Shipping
@@ -44,9 +44,9 @@ class Shopgate_Model_Catalog_Shipping extends Shopgate_Model_AbstractExport {
 		 * @var Shopgate_Model_XmlResultObject $shippingNode
 		 */
 		$shippingNode = $itemNode->addChild('shipping');
-		$shippingNode->addChild('costs_per_order', $this->getCostsPerOrder());
-		$shippingNode->addChild('additional_costs_per_unit', $this->getAdditionalCostsPerUnit());
-		$shippingNode->addChild('is_free', $this->getIsFree());
+		$shippingNode->addChild('costs_per_order', $this->getCostsPerOrder(), null, false);
+		$shippingNode->addChild('additional_costs_per_unit', $this->getAdditionalCostsPerUnit(), null, false);
+		$shippingNode->addChild('is_free', (int)$this->getIsFree());
 
 		return $itemNode;
 	}
@@ -59,7 +59,7 @@ class Shopgate_Model_Catalog_Shipping extends Shopgate_Model_AbstractExport {
 
 		$shippingResult->setData('costs_per_order', $this->getCostsPerOrder());
 		$shippingResult->setData('additional_costs_per_unit', $this->getAdditionalCostsPerUnit());
-		$shippingResult->setData('is_free', $this->getIsFree());
+		$shippingResult->setData('is_free', (int)$this->getIsFree());
 
 		return $shippingResult->getData();
 	}

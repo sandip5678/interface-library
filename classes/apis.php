@@ -2,11 +2,11 @@
 /*
  * Shopgate GmbH
  * http://www.shopgate.com
- * Copyright © 2012-2014 Shopgate GmbH
+ * Copyright © 2012-2015 Shopgate GmbH
  *
  * Released under the GNU General Public License (Version 2)
  * [http://www.gnu.org/licenses/gpl-2.0.html]
-*/
+ */
 
 class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInterface {
 	/**
@@ -211,13 +211,13 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 			
 			if (in_array($this->params['action'], $this->exportActionList)) {
 				if (isset($this->params['memory_limit'])) {
-					$this->plugin->setExportMemoryLimit($this->params['memory_limit']);
+					$this->plugin->setExportMemoryLimit((int) $this->params['memory_limit']);
 				} else {
 					$this->plugin->setExportMemoryLimit($this->config->getDefaultMemoryLimit());
 				}
 				
 				if (isset($this->params['max_execution_time'])) {
-					$this->plugin->setExportTimeLimit($this->params['max_execution_time']);
+					$this->plugin->setExportTimeLimit((int) $this->params['max_execution_time']);
 				} else {
 					$this->plugin->setExportTimeLimit($this->config->getDefaultExecutionTime());
 				}
@@ -236,7 +236,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 			$message .= 'and message: \''.$e->getMessage()."'\n";
 			
 			// new ShopgateLibraryException to build proper error message and perform logging
-			$se = new ShopgateLibraryException($message);
+			$se = new ShopgateLibraryException($message, null, false, true, $e);
 			$error = $se->getCode();
 			$errortext = $se->getMessage();
 		}
@@ -738,8 +738,8 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		
 		$this->config->load($shopgateSettingsNew);
 		$this->config->save(array_keys($shopgateSettingsNew), true);
-		
-		$shopgateSettingsDiff = array();
+
+		$diff = array();
 		foreach ($shopgateSettingsNew as $setting => $value) {
 			$diff[] = array('name' => $setting, 'old' => $shopgateSettingsOld[$setting], 'new' => $value);
 		}
@@ -1602,7 +1602,7 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 		return $this->sendRequest($request);
 	}
 	
-	public function cancelOrder($orderNumber, $cancelCompleteOrder = false, $cancellationItems = array(), $cancelShipping = false, $cancellationNote = '') {
+	public function cancelOrder($orderNumber, $cancelCompleteOrder = true, $cancellationItems = array(), $cancelShipping = false, $cancellationNote = '') {
 		$request = array(
 			'action' => 'cancel_order',
 			'order_number' => $orderNumber,
@@ -2138,9 +2138,11 @@ abstract class ShopgatePluginApiResponse extends ShopgateObject {
 		$this->version = $version;
 		$this->pluginVersion = (empty($pluginVersion) && defined('SHOPGATE_PLUGIN_VERSION')) ? SHOPGATE_PLUGIN_VERSION : $pluginVersion;
 	}
-	
+
 	/**
 	 * Marks the response as error.
+	 * @param $code
+	 * @param $message
 	 */
 	public function markError($code, $message) {
 		$this->error = $code;

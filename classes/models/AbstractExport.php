@@ -2,15 +2,14 @@
 /*
  * Shopgate GmbH
  * http://www.shopgate.com
- * Copyright © 2012-2014 Shopgate GmbH
+ * Copyright © 2012-2015 Shopgate GmbH
  *
  * Released under the GNU General Public License (Version 2)
  * [http://www.gnu.org/licenses/gpl-2.0.html]
-*/
+ */
 
 abstract class Shopgate_Model_AbstractExport extends Shopgate_Model_Abstract {
-	public static $allowedEncodings = array(SHOPGATE_LIBRARY_ENCODING, 'ASCII', 'CP1252', 'ISO-8859-15', 'UTF-16LE', 'ISO-8859-1');
-	
+
 	/** @var stdClass $item */
 	protected $item;
 
@@ -47,14 +46,14 @@ abstract class Shopgate_Model_AbstractExport extends Shopgate_Model_Abstract {
 		if (is_array($key)) {
 			foreach ($key as $key => $value) {
 				if (!is_array($value) && !is_object($value)) {
-					$value = $this->stripInvalidUnicodeSequences($this->stringToUtf8($value, self::$allowedEncodings));
+					$value = $this->stripInvalidUnicodeSequences($this->stringToUtf8($value, ShopgateObject::$sourceEncodings));
 				}
 				$this->$key = $value;
 			}
 		} else {
 			if (!is_array($value) && !is_object($value)) {
 				if (!is_null($value)) {
-					$value = $this->stripInvalidUnicodeSequences($this->stringToUtf8($value, self::$allowedEncodings));
+					$value = $this->stripInvalidUnicodeSequences($this->stringToUtf8($value, ShopgateObject::$sourceEncodings));
 				}
 			}
 			$this->$key = $value;

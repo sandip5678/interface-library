@@ -2,11 +2,11 @@
 /*
  * Shopgate GmbH
  * http://www.shopgate.com
- * Copyright © 2012-2014 Shopgate GmbH
+ * Copyright © 2012-2015 Shopgate GmbH
  *
  * Released under the GNU General Public License (Version 2)
  * [http://www.gnu.org/licenses/gpl-2.0.html]
-*/
+ */
 
 /**
  * @class Shopgate_Model_Catalog_Visibility
@@ -34,6 +34,7 @@ class Shopgate_Model_Catalog_Visibility extends Shopgate_Model_AbstractExport {
 	const DEFAULT_VISIBILITY_CATALOG = 'catalog';
 	const DEFAULT_VISIBILITY_SEARCH = 'search';
 	const DEFAULT_VISIBILITY_NOT_VISIBLE = "not_visible";
+	const DEFAULT_VISIBILITY_NOTHING = "nothing";
 
 	/**
 	 * @param Shopgate_Model_XmlResultObject $itemNode

@@ -2,11 +2,11 @@
 /*
  * Shopgate GmbH
  * http://www.shopgate.com
- * Copyright © 2012-2014 Shopgate GmbH
+ * Copyright © 2012-2015 Shopgate GmbH
  *
  * Released under the GNU General Public License (Version 2)
  * [http://www.gnu.org/licenses/gpl-2.0.html]
-*/
+ */
 
 class ShopgateCategory extends ShopgateContainer {
 	protected $category_number;
@@ -528,7 +528,7 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @param string[] $related_item_numbers
+	 * @param string[] $value
 	 */
 	public function setRelatedItemNumbers($value) {
 		$this->related_item_numbers = $value;

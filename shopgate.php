@@ -2,11 +2,11 @@
 /*
  * Shopgate GmbH
  * http://www.shopgate.com
- * Copyright © 2012-2014 Shopgate GmbH
+ * Copyright © 2012-2015 Shopgate GmbH
  *
  * Released under the GNU General Public License (Version 2)
  * [http://www.gnu.org/licenses/gpl-2.0.html]
-*/
+ */
 
 if (!defined('DS')) define('DS', '/');
 
@@ -28,6 +28,7 @@ require_once(dirname(__FILE__).DS.'classes'.DS.'redirect.php');
  */
 require_once(dirname(__FILE__).DS.'classes'.DS.'models/Abstract.php');
 require_once(dirname(__FILE__).DS.'classes'.DS.'models/AbstractExport.php');
+require_once(dirname(__FILE__).DS.'classes'.DS.'models/XmlEmptyObject.php');
 require_once(dirname(__FILE__).DS.'classes'.DS.'models/XmlResultObject.php');
 /**
  * catalog
