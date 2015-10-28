@@ -528,7 +528,7 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @param string[] $related_item_numbers
+	 * @param string[] $value
 	 */
 	public function setRelatedItemNumbers($value) {
 		$this->related_item_numbers = $value;

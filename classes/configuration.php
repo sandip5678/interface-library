@@ -165,7 +165,12 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 	 * @var bool true to enable automatic encoding conversion to utf-8 during export
 	 */
 	protected $export_convert_encoding;
-	
+
+	/**
+	 * @var bool if true forces the $encoding to be the only one source encoding for all encoding operations
+	 */
+	protected $force_source_encoding;
+
 	/**
 	 * @var string[] the list of fields supported by the plugin method check_cart
 	 */
@@ -480,7 +485,8 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 	###################################################
 	### Initialization, loading, saving, validating ###
 	###################################################
-
+	
+	/** @noinspection PhpMissingParentConstructorInspection */
 	public final function __construct(array $data = array()) {
 		// parent constructor not called on purpose, because we need special
 		// initialization behaviour here (e.g. loading via array or file)
@@ -501,6 +507,7 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 		$this->enable_default_redirect = 0;
 		$this->encoding = 'UTF-8';
 		$this->export_convert_encoding = 1;
+		$this->force_source_encoding = false;
 		$this->supported_fields_check_cart = array();
 		$this->supported_fields_get_settings = array();
 		$this->supported_methods_cron = array();
@@ -1060,6 +1067,10 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 		return $this->export_convert_encoding;
 	}
 
+	public function getForceSourceEncoding() {
+		return $this->force_source_encoding;
+	}
+
 	public function getSupportedFieldsCheckCart() {
 		return $this->supported_fields_check_cart;
 	}
@@ -1435,6 +1446,10 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 
 	public function setExportConvertEncoding($value) {
 		$this->export_convert_encoding = $value;
+	}
+
+	public function setForceSourceEncoding($value) {
+		$this->force_source_encoding = $value;
 	}
 
 	public function setSupportedFieldsCheckCart($value) {
@@ -1954,7 +1969,7 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 	 * @throws ShopgateLibraryException whenever a ShopgateLibraryException is thrown by ShopgateConfigOld's method.
 	 */
 	public static function setConfig(array $newConfig, $validate = true) {
-		return ShopgateConfigOld::setConfig($newConfig, $validate);
+		ShopgateConfigOld::setConfig($newConfig, $validate);
 	}
 
 	/**
@@ -1994,7 +2009,7 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 	 * @throws ShopgateLibraryException whenever a ShopgateLibraryException is thrown by ShopgateConfigOld's method.
 	 */
 	public static function getLogFilePath($type = ShopgateLogger::LOGTYPE_ERROR) {
-		return ShopgateConfigOld::getLogFilePath($type = ShopgateLogger::LOGTYPE_ERROR);
+		return ShopgateConfigOld::getLogFilePath($type);
 	}
 
 	/**
@@ -2064,7 +2079,7 @@ class ShopgateConfig extends ShopgateContainer implements ShopgateConfigInterfac
 	 * @throws ShopgateLibraryException whenever a ShopgateLibraryException is thrown by ShopgateConfigOld's method.
 	 */
 	public static function saveConfig() {
-		return ShopgateConfigOld::saveConfig();
+		ShopgateConfigOld::saveConfig();
 	}
 }
 
@@ -2142,6 +2157,8 @@ class ShopgateConfigOld extends ShopgateObject {
 	 * @deprecated
 	 *
 	 * @param array $newConfig
+	 * @param bool $validate
+	 * @throws ShopgateLibraryException
 	 */
 	public static final function setConfig(array $newConfig, $validate = true) {
 		self::deprecated(__METHOD__);
@@ -2211,7 +2228,6 @@ class ShopgateConfigOld extends ShopgateObject {
 			default:
 				$type = 'error';
 			case "access":
-			case "request":
 			case "request":
 			case "debug":
 		}
@@ -2285,7 +2301,7 @@ class ShopgateConfigOld extends ShopgateObject {
 	}
 
 	/**
-	 * @return the absolute Path for the Redirect-Keywords-Caching-File
+	 * @return string the absolute Path for the Redirect-Keywords-Caching-File
 	 * @deprecated
 	 */
 	public static final function getRedirectKeywordsFilePath() {
@@ -2299,7 +2315,7 @@ class ShopgateConfigOld extends ShopgateObject {
 	}
 
 	/**
-	 * @return the absolute Path for the Skip-Redirect-Keywords-Caching-File
+	 * @return string the absolute Path for the Skip-Redirect-Keywords-Caching-File
 	 * @deprecated
 	 */
 	public static final function getSkipRedirectKeywordsFilePath() {
@@ -2387,11 +2403,9 @@ class ShopgateConfigOld extends ShopgateObject {
 			}
 		}
 
-		$message = "";
 		$handle = @fopen(dirname(__FILE__).'/../config/myconfig.php', 'w+');
 		if ($handle == false) {
 			throw new ShopgateLibraryException(ShopgateLibraryException::CONFIG_READ_WRITE_ERROR);
-			fclose($handle);
 		} else {
 			if (!fwrite($handle, $returnString)) {
 				throw new ShopgateLibraryException(ShopgateLibraryException::CONFIG_READ_WRITE_ERROR);
@@ -2569,6 +2583,11 @@ interface ShopgateConfigInterface {
 	 * @return bool true to enable automatic encoding conversion to utf-8 during export
 	 */
 	public function getExportConvertEncoding();
+
+	/**
+	 * @return bool if true forces the $encoding to be the only one source encoding for all encoding operations
+	 */
+	public function getForceSourceEncoding();
 	
 	/**
 	 * @return array<string, string[]> the list of response types supported by the plugin, indexed by exports
@@ -3026,14 +3045,19 @@ interface ShopgateConfigInterface {
 	 * @param bool $value true to enable automatic encoding conversion to utf-8 during export
 	 */
 	public function setExportConvertEncoding($value);
+
+	/**
+	 * @param bool $value if true forces the $encoding to be the only one source encoding for all encoding operations
+	 */
+	public function setForceSourceEncoding($value);
 	
 	/**
-	 * @param array the list of fields supported by the plugin method check_cart
+	 * @param array $value the list of fields supported by the plugin method check_cart
 	 */
 	public function setSupportedFieldsCheckCart($value);
 	
 	/**
-	 * @param array the list of fields supported by the plugin method get_settings
+	 * @param array $value the list of fields supported by the plugin method get_settings
 	 */
 	public function setSupportedFieldsGetSettings($value);
 	
@@ -3178,7 +3202,7 @@ interface ShopgateConfigInterface {
 	public function setEnableReceiveAuthorization($value);
 	
 	/**
-	 * @param string The ISO 3166 ALPHA-2 code of the country the plugin uses for export.
+	 * @param string $value The ISO 3166 ALPHA-2 code of the country the plugin uses for export.
 	 */
 	public function setCountry($value);
 
