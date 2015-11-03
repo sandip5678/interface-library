@@ -266,6 +266,7 @@ class FakeMapper
                 'shopgate_payment_name' => 'Kreditkarte (USA ePay)',
                 'source_key'            => '_OzGo8QwftswrN4CQ94649V0226kHJEW',
                 'authorization_number'  => 'TESTMD',
+                'transaction_type'      => 'authonly',
                 'reference_number'      => '0',
                 'credit_card'           =>
                     array(
@@ -593,8 +594,14 @@ class FakeMapper
     {
         $flag = false;
         if (isset($map['payment_infos']['transaction_type'])) {
-            $map['payment_infos']['transaction_type'] = $paid == 0 ? 'auth_only' : 'auth_capture';
-            $flag                                     = true;
+            if($map['payment_method'] === 'USAEPAY_CC') {
+                $map['payment_infos']['transaction_type'] = $paid == 0 ? 'authonly' : 'sale';
+                $flag                                     = true;
+            } else {
+                $map['payment_infos']['transaction_type'] = $paid == 0 ? 'auth_only' : 'auth_capture';
+                $flag                                     = true;
+            }
+           
         }
         if (isset($map['payment_infos']['payment_status'])) {
             $map['payment_infos']['payment_status'] = $paid == 0 ? 'Pending' : 'Completed';
