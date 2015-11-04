@@ -254,6 +254,8 @@ class FakeMapper
                         'holder'        => 'Tester',
                         'masked_number' => '1111', //matters for CIM existing customer card check
                         'type'          => 'visa',
+                        'expiry_year'   => '2018',
+                        'expiry_month'  => '7',
                     ),
             ),
         ),
@@ -273,6 +275,8 @@ class FakeMapper
                         'holder'        => 'Test Namel',
                         'masked_number' => '***********5006',
                         'type'          => 'american_express',
+                        'expiry_year'   => '2018',
+                        'expiry_month'  => '7',
                     ),
             ),
         ),
