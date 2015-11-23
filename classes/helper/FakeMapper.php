@@ -790,17 +790,38 @@ class FakeMapper
                                 'attributes'           =>
                                     array(),
                             ),
+                            /*array(
+                                'item_number'          => '162',
+                                'item_number_public'   => '162',
+                                'parent_item_number'   => null,
+                                'order_item_id'        => '4399299',
+                                'quantity'             => 1,
+                                'name'                 => 'Swiss Movement Sports Watch',
+                                'unit_amount'          => '59.99',
+                                'unit_amount_with_tax' => '59.99',
+                                'tax_percent'          => '0.00',
+                                'tax_class_key'        => null,
+                                'tax_class_id'         => null,
+                                'currency'             => 'USD',
+                                'internal_order_info'  => '{"product_id":162}',
+                                'options'              =>
+                                    array(),
+                                'inputs'               =>
+                                    array(),
+                                'attributes'           =>
+                                    array(),
+                            ),/*
                              /*array(
                                  'item_number'          => 'TOMTAILOR_COUPON',
                                  'item_number_public'   => 'TOMTAILOR_COUPON',
                                  'parent_item_number'   => null,
                                  'order_item_id'        => 0,
                                  'quantity'             => 1,
-                                 'type'                 => 'sg-coupon's
+                                 'type'                 => ShopgateOrderItem::TYPE_SHOPGATE_COUPON,
                                  'name'                 => 'Coupon (Code: TOMTAILOR)',
                                  'unit_amount'          => '-5.00',
-                                 'unit_amount_with_tax' => '0.00',
-                                 'tax_percent'          => '0.00',
+                                 'unit_amount_with_tax' => '0',
+                                 'tax_percent'          => '0',
                                  'tax_class_key'        => null,
                                  'tax_class_id'         => null,
                                  'currency'             => 'USD',
@@ -866,7 +887,7 @@ class FakeMapper
     protected function getMageProduct()
     {
         $helper = Mage::helper('shopgate/config');
-        if ($helper->getIsMagentoVersionLower1701()) {
+        if ($helper->getIsMagentoVersionLower16()) {
             return '1';
         } elseif ($helper->getIsMagentoVersionLower('1.9.0.0')) {
             return '16';
