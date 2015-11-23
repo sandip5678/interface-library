@@ -40,10 +40,16 @@
  *
  * @method        	setSortOrder(int $value)
  * @method int    	getSortOrder()
+ *      
+ * @method          setPriceType(string $value)
+ * @method string   getPriceType()
  *
  */
 class Shopgate_Model_Catalog_Option extends Shopgate_Model_AbstractExport {
 
+	const PRICE_TYPE_PERCENT = 'percentage';
+	const PRICE_TYPE_FIXED   = 'fixed';
+	
 	/**
 	 * define allowed methods
 	 *
@@ -54,7 +60,8 @@ class Shopgate_Model_Catalog_Option extends Shopgate_Model_AbstractExport {
 		'Label',
 		'Value',
 		'SortOrder',
-		'AdditionalPrice');
+		'AdditionalPrice',
+		'PriceType');
 
 	/**
 	 * @param Shopgate_Model_XmlResultObject $itemNode
@@ -69,6 +76,7 @@ class Shopgate_Model_Catalog_Option extends Shopgate_Model_AbstractExport {
 		$optionNode->addAttribute('additional_price', $this->getAdditionalPrice());
 		$optionNode->addAttribute('uid', $this->getUid());
 		$optionNode->addAttribute('sort_order', $this->getSortOrder());
+		$optionNode->addAttribute('price_type', $this->getPriceType());
 		$optionNode->addChildWithCDATA('label', $this->getLabel());
 		$optionNode->addChildWithCDATA('value', $this->getValue());
 
