@@ -345,57 +345,29 @@ class FakeMapper
             'payment_infos'  => array(
                 'shopgate_payment_name' => 'Kreditkarte (PayPal Website Payments Pro)',
                 'paypal_transaction_id' => '55P978957M513884X',
-                'paypal_payer_id'       => 'RADZRFMHXVGTA',
-                'paypal_payer_email'    => 'martin.geisse@shopgate.com',
-                'paypal_receiver_id'    => '28BFM6WRTF46S',
-                'paypal_receiver_email' => 'usausausa@shopgate.com',
-                'paypal_txn_id'         => '55P978957M513884X',
-                'paypal_ipn_track_id'   => 'f4d71d4945618',
-                'paypal_ipn_data'       => '{
-                                            "payment_status":"Pending",
-                                            "txn_id":"55P978957M513884X",
-                                            "payer_id":"RADZRFMHXVGTA",
-                                            "receiver_id":"28BFM6WRTF46S",
-                                            "verify_sign":"AUEfhqAqAHlSqPeWXpLjIRqawSIDAcPDcRf2yMUR0.OAurhUgihywh0O",
-                                            "ipn_track_id":"f4d71d4945618",
-                                            "invoice":"100000016",
-                                            "protection_eligibility":"Eligible",
-                                            "mc_gross":"272.22",
-                                            "address_status":"unconfirmed",
-                                            "tax":"0.00",
-                                            "address_street":"blubbstra\\u00dfe 10",
-                                            "payment_date":"01:42:59 Mar 10, 2015 PDT",
-                                            "charset":"windows-1252",
-                                            "address_zip":"12345",
-                                            "first_name":"Gustav",
-                                            "mc_fee":"10.97",
-                                            "address_country_code":"DE",
-                                            "address_name":"Gustav diFolt",
-                                            "notify_version":"3.8",
-                                            "custom":"PG-G-5500000530",
-                                            "payer_status":"verified",
-                                            "business":"usausausa@shopgate.com",
-                                            "address_country":"Germany",
-                                            "address_city":"Blubberstadt",
-                                            "quantity":"1",
-                                            "payer_email":"usausausa@shopgate.com",
-                                            "payment_type":"instant",
-                                            "last_name":"diFolt",
-                                            "address_state":"",
-                                            "receiver_email":"usausausa@shopgate.com",
-                                            "payment_fee":"",
-                                            "txn_type":"web_accept",
-                                            "item_name":"",
-                                            "mc_currency":"EUR",
-                                            "item_number":"",
-                                            "residence_country":"DE",
-                                            "test_ipn":"1",
-                                            "receipt_id":"4451-5996-6566-2174",
-                                            "handling_amount":"0.00",
-                                            "transaction_subject":"",
-                                            "payment_gross":"",
-                                            "shipping":"0.00"
-                                            }',
+                'paypal_payer_id'       => '',
+                'paypal_payer_email'    => '',
+                'paypal_receiver_id'    => '',
+                'paypal_receiver_email' => '',
+                'paypal_txn_id'         => '',
+                'paypal_ipn_track_id'   => '',
+                'paypal_ipn_data'       => array(
+                    'payment_status' => 'Pending',
+                    'txn_id' => '55P978957M513884X',
+                    'payer_id' => 'RADZRFMHXVGTA',
+                    'receiver_id' => '28BFM6WRTF46S',
+                    'verify_sign' => 'AUEfhqAqAHlSqPeWXpLjIRqawSIDAcPDcRf2yMUR0.OAurhUgihywh0O',
+                    'ipn_track_id' => 'f4d71d4945618',
+                    'invoice' => '100000016',
+                    'protection_eligibility' => 'Eligible',
+                    'mc_gross' => '272.22',
+                    'address_status' => 'unconfirmed',
+                    'tax' => '0.00',
+                    'address_street' => 'blubbstra\u00dfe 10',
+                    'payment_date' => '01:42:59 Mar 10, 2015 PDT',
+                    'payer_status' => 'verified',
+                    'txn_type' => 'web_accept'
+                ),
                 'credit_card'           =>
                     array(
                         'holder'        => 'Gustav diFolt',
@@ -596,52 +568,51 @@ class FakeMapper
      */
     protected function isPaidFlip(&$map, $paid = 0)
     {
-        $flag = false;
-        if (isset($map['payment_infos']['transaction_type'])) {
-            if($map['payment_method'] === 'USAEPAY_CC') {
-                $map['payment_infos']['transaction_type'] = $paid == 0 ? 'authonly' : 'sale';
-                $flag                                     = true;
+        $flag  = false;
+        $infos = $map['payment_infos'];
+        if (isset($infos['transaction_type'])) {
+            if ($map['payment_method'] === 'USAEPAY_CC') {
+                $infos['transaction_type'] = $paid == 0 ? 'authonly' : 'sale';
+                $flag                      = true;
             } else {
-                $map['payment_infos']['transaction_type'] = $paid == 0 ? 'auth_only' : 'auth_capture';
-                $flag                                     = true;
+                $infos['transaction_type'] = $paid == 0 ? 'auth_only' : 'auth_capture';
+                $flag                      = true;
             }
-           
+
         }
-        if (isset($map['payment_infos']['payment_status'])) {
-            $map['payment_infos']['payment_status'] = $paid == 0 ? 'Pending' : 'Completed';
-            $flag                                   = true;
+        if (isset($infos['payment_status'])) {
+            $infos['payment_status'] = $paid == 0 ? 'Pending' : 'Completed';
+            $flag                    = true;
         }
-        if (isset($map['payment_infos']['paypal_ipn_data'])) {
-            $decode                                  = json_decode($map['payment_infos']['paypal_ipn_data'], true);
-            $decode['payment_status']                = $paid == 0 ? 'Pending' : 'Completed';
-            $map['payment_infos']['paypal_ipn_data'] = json_encode($decode);
-            $flag                                    = true;
+        if (isset($infos['paypal_ipn_data'])) {
+            $infos['paypal_ipn_data']['payment_status'] = $paid == 0 ? 'Pending' : 'Completed';
+            $flag                                       = true;
         }
         if (isset($map['is_paid'])) {
             $map['is_paid'] = $paid;
             $flag           = true;
         }
-        if (isset($map['payment_infos']['mws_order_id'])) {
+        if (isset($infos['mws_order_id'])) {
             if ($paid == 0) {
-                $map['payment_infos']['mws_capture_id'] = '';
-                $flag                                   = true;
+                $infos['mws_capture_id'] = '';
+                $flag                    = true;
             }
         }
         /**
          * PayOne flag
          */
-        if (isset($map['payment_infos']['request_type'])) {
-            $map['payment_infos']['request_type'] = $paid == 0 ? 'preauthorization' : 'authorization';
-            $flag                                 = true;
+        if (isset($infos['request_type'])) {
+            $infos['request_type'] = $paid == 0 ? 'preauthorization' : 'authorization';
+            $flag                  = true;
         }
 
         /**
          * Payolution flag
          */
-        if (isset($map['payment_infos']['capture_id'])) {
+        if (isset($infos['capture_id'])) {
             if ($paid == 0) {
-                $map['payment_infos']['capture_id'] = '';
-                $flag                               = true;
+                $infos['capture_id'] = '';
+                $flag                = true;
             }
         }
         return $flag;
