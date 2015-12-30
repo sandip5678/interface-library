@@ -895,7 +895,62 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		
 		$this->responseData = $responseData;
 	}
-	
+
+	private function fakeStockItems()
+	{
+		return
+			array(
+				array(
+					"item_number"         => "554",
+					"internal_order_info" => '{
+                            "store_view_id":"1",
+                            "product_id":"554",
+                            "item_type":"simple",
+                            "exchange_rate":1,
+                            "stack_quantity": 1}',
+					"attributes"          => Array(),
+					"inputs"              => Array(),
+					"options"             => Array(),
+				),
+				array(
+					"item_number"         => "557",
+					"internal_order_info" => '{
+                            "store_view_id":"1",
+                            "product_id":"557",
+                            "item_type":"virtual",
+                            "exchange_rate":1,
+                            "stack_quantity": 1}',
+					"attributes"          => Array(),
+					"inputs"              => Array(),
+					"options"             => Array(),
+				),
+				array(
+					"item_number"         => "404-905",
+					"internal_order_info" => '{
+                            "store_view_id":"1",
+                            "product_id":"905",
+                            "item_type":"simple",
+                            "exchange_rate":1,
+                            "stack_quantity": 1}',
+					"attributes"          => Array(),
+					"inputs"              => Array(),
+					"options"             => Array(),
+				),
+				array(
+					"item_number"         => "439-541",
+					"internal_order_info" => '{
+                            "store_view_id":"1",
+                            "product_id":"541",
+                            "item_type":"simple",
+                            "exchange_rate":1,
+                            "stack_quantity": 1}',
+					"attributes"          => Array(),
+					"inputs"              => Array(),
+					"options"             => Array(),
+				)
+			);
+	}
+    
 	/**
 	 * Represents the "check_stock" action.
 	 *
@@ -904,6 +959,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 	 */
 	protected function checkStock()
 	{
+        $this->params['items'] = $this->fakeStockItems();
 		if (!isset($this->params['items'])) {
 			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_NO_ITEMS);
 		}
