@@ -57,7 +57,7 @@ class Payone_Handler
      * @param $paymentMethod
      * @return int
      */
-    public function getTransactionId($paymentMethod)
+    public function getTransactionId($paymentMethod, $paymentInfo)
     {
         $type         = 'preauthorization';
         $refId        = rand(000000000, 99999999);
@@ -99,6 +99,16 @@ class Payone_Handler
         $request->setIntegratorVersion('1.9.1.1');
         $request->setPersonalData($personalData);
         $request->setDeliveryData($deliveryData);
+        
+        if($clearingType === Payone_Enum_ClearingType::DEBITPAYMENT){
+            $bankData = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_DebitPayment();
+            $bankData->setBankcountry('DE');
+            $bankData->setBankaccount($paymentInfo['bank_account']['bank_account_number']);
+            $bankData->setBankcode($paymentInfo['bank_account']['bank_code']);
+            //$bankData->setBic($paymentInfo['bank_account']['bic']); //not supported in v3.1.6
+            //$bankData->setIban($paymentInfo['bank_account']['iban']);
+            $request->setPayment($bankData);
+        }
 
         if ($type === 'preauthorization') {
             $service = new Payone_Core_Model_Service_Payment_Preauthorize();
@@ -122,7 +132,7 @@ class Payone_Handler
 
         $service->setServiceApiPayment($api);
         /** @var Payone_Api_Response_Preauthorization_Approved $response */
-        $response = $service->perform($request); //make perform method public
+        $response = $service->perform($request); //make perform method public in the module. I know...hacking!
 
         return $response->getTxid();
     }

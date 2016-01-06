@@ -20,6 +20,7 @@
  *
  * @author Shopgate GmbH <interfaces@shopgate.com>
  */
+define('SHOPGATE_DEBUG', 1);
 class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInterface {
 	/**
 	 * @var ShopgatePlugin

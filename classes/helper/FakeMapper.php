@@ -208,21 +208,21 @@ class FakeMapper
                 )
             ),
         ),
-        ShopgateCartBase::PAYONE_DBT     => array(
+        ShopgateCartBase::PAYONE_DBT => array(
             'is_paid'        => 0,
             'payment_method' => 'PAYONE_DBT',
             'payment_group'  => 'DEBIT',
             'customer_name'  => 'Payone Debit',
             'payment_infos'  => array(
-                'shopgate_payment_name' => 'Bankkonto (Lastschrift) (PAYONE)',
-                'clearing_type'         => 'elv',
-                'mode'                  => 'test',
-                'mid'                   => '24906',
-                'aid'                   => '25775',
-                'portalid'              => '2017714',
-                'userid'                => '63672544',
-                'request_type'          => 'authorization',
-                'bank_account'          =>
+                'shopgate_payment_name'   => 'Bankkonto (Lastschrift) (PAYONE)',
+                'clearing_type'           => 'elv',
+                'mode'                    => 'test',
+                'mid'                     => '24906',
+                'aid'                     => '25775',
+                'portalid'                => '2017714',
+                'userid'                  => '63672544',
+                'request_type'            => 'authorization',
+                'bank_account'            =>
                     array(
                         'bank_account_holder' => 'Liam Barker',
                         'bank_account_number' => '12345',
@@ -230,8 +230,19 @@ class FakeMapper
                         'iban'                => '',
                         'bic'                 => '',
                     ),
-                'status'                => 'APPROVED',
-                'txid'                  => '168170775',
+                'status'                  => 'APPROVED',
+                'txid'                    => '168170775',
+                'mandate_identification'  => 'PO-12469411',
+                'mandate_dateofsignature' => '20160111',
+                'creditor_identifier'     => 'DE34ZZZ00001349522',
+                'creditor_name'           => 'Internet Shop GmbH',
+                'creditor_street'         => 'Hof Röndsyl',
+                'creditor_zip'            => '21311',
+                'creditor_city'           => 'Salzhausen',
+                'creditor_country'        => 'DE',
+                'creditor_email'          => 'andreas@shopgate.de',
+                'clearing_date'           => '20160111',
+                'clearing_amount'         => '2811',
             ),
         ),
         ShopgateCartBase::AUTHN_CC       => array(
@@ -538,7 +549,7 @@ class FakeMapper
             //Transaction ID creators
             if (strpos($paymentMethod, 'PAYONE') !== false) {
                 $helper  = new Payone_Handler();
-                $transId = $helper->getTransactionId($paymentMethod);
+                $transId = $helper->getTransactionId($paymentMethod, $map['payment_infos']);
                 if ($transId) {
                     $map['payment_infos']['txid'] = $transId;
                 }
