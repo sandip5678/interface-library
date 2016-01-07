@@ -658,6 +658,7 @@ class FakeMapper
                     'update_payment'              => false,
                     'delivery_notes'              => null,
                     'customer_number'             => '2059691',
+                    'customer_ip'                 => '127.0.0.1',
                     'external_order_number'       => null,
                     'external_order_id'           => '8240',
                     'external_customer_number'    => null,
