@@ -26,12 +26,12 @@ class Shopgate_Helper_Redirect_TemplateParser implements Shopgate_Helper_Redirec
 	public function getVariables($template)
 	{
 		$matches = array();
-		if (!preg_match_all('/{(?<variables>[^}]+)?}/', $template, $matches)) {
+		if (!preg_match_all('/{([^}]+)}*/', $template, $matches)) {
 			return array();
 		}
 		
 		$variables = array();
-		foreach ($matches['variables'] as $variable) {
+		foreach ($matches[1] as $variable) {
 			$parts = explode(':', $variable);
 			
 			$variable = new Shopgate_Model_Redirect_HtmlTagVariable();
@@ -74,7 +74,7 @@ class Shopgate_Helper_Redirect_TemplateParser implements Shopgate_Helper_Redirec
 			case Shopgate_Helper_Redirect_TemplateParserInterface::FUNCTION_NAME_BASE64:
 				return base64_encode($value);
 			case Shopgate_Helper_Redirect_TemplateParserInterface::FUNCTION_NAME_ESCAPED:
-				return addslashes($value);
+				return addslashes(htmlentities($value));
 		}
 		
 		return $value;
