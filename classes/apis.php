@@ -1543,7 +1543,57 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 		
 		return $responseObject;
 	}
-	
+
+	/**
+	 * @param array $parameters
+	 *
+	 * @return bool
+	 */
+	protected function sendRequestAndForget($parameters = array())
+	{
+		if (!empty($this->shopNumber)) {
+			$parameters['shop_number'] = $this->shopNumber;
+		}
+		$parameters = !empty($parameters)
+			? array_merge($this->authService->getAuthPostParams(), $parameters)
+			: $this->authService->getAuthPostParams()
+		;
+		$parameters['trace_id'] = 'spa-'.uniqid();
+
+		$this->log('Sending request and forget to "'.$this->apiUrl.'": '.ShopgateLogger::getInstance()->cleanParamsForLog($parameters), ShopgateLogger::LOGTYPE_REQUEST);
+
+		// init new auth session and generate cURL options
+		//$this->authService->startNewSession();
+
+		$postParams = array();
+		foreach ($parameters as $key => &$val) {
+			if (is_array($val)) {
+				foreach ($val as $subKey => &$subVal) {
+					$postParams[] = $key . '[' . $subKey . ']' . '=' . urlencode($subVal);
+				}
+			} else {
+				$postParams[] = $key . '=' . urlencode($val);
+			}
+		}
+		$postString = implode('&', $postParams);
+
+		$parts = parse_url($this->apiUrl);
+		$port  = isset($parts['port']) ? $parts['port'] : 80;
+		$fp    = fsockopen($parts['host'], $port, $errno, $errstr, 30);
+		if (!$fp) {
+			return false;
+		}
+
+		$output = "POST " . $parts['path'] . " HTTP/1.1\r\n";
+		$output .= "Host: " . $parts['host'] . "\r\n";
+		$output .= "Content-Type: application/x-www-form-urlencoded\r\n";
+		$output .= "Content-Length: " . strlen($postString) . "\r\n";
+		$output .= "Connection: Close\r\n\r\n";
+		$output .= isset($postString) ? $postString : '';
+
+		fwrite($fp, $output);
+		fclose($fp);
+	}
 	
 	######################################################################
 	## Following methods represent the Shopgate Merchant API's actions: ##
@@ -1560,6 +1610,7 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 		$request = array_merge($request, $parameters);
 		
 		return $this->sendRequest($request);
+
 	}
 
 	######################################################################
@@ -1623,6 +1674,20 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 		);
 		
 		return $this->sendRequest($request);
+	}
+
+	/**
+	 * @param $request
+	 *
+	 * @return bool
+	 */
+	public function triggerEvent($request)
+	{
+		try {
+			return $this->sendRequestAndForget($request);
+		} catch (Exception $e) {
+			return false;
+		}
 	}
 	
 	######################################################################
