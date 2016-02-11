@@ -35,8 +35,8 @@
  * @method                                      setOptions(array $value)
  * @method array                                getOptions()
  *
- * @method                                      setValidation(Shopgate_Model_Catalog_Validation $value)
- * @method Shopgate_Model_Catalog_Validation    getValidation()
+ * @method                                      setValidations(array $value)
+ * @method Shopgate_Model_Catalog_Validation[]  getValidations()
  *
  * @method                                      setRequired(bool $value)
  * @method bool                                 getRequired()
@@ -76,7 +76,7 @@ class Shopgate_Model_Catalog_Input extends Shopgate_Model_AbstractExport {
 		'Uid',
 		'Type',
 		'Options',
-		'Validation',
+		'Validations',
 		'Required',
 		'AdditionalPrice',
 		'SortOrder',
@@ -87,7 +87,7 @@ class Shopgate_Model_Catalog_Input extends Shopgate_Model_AbstractExport {
 	 * init default objects
 	 */
 	public function __construct() {
-		$this->setValidation(new Shopgate_Model_Catalog_Validation());
+		$this->setValidations(array());
 		$this->setOptions(array());
 	}
 
@@ -123,7 +123,9 @@ class Shopgate_Model_Catalog_Input extends Shopgate_Model_AbstractExport {
 		/**
 		 * validation
 		 */
-		$this->getValidation()->asXml($inputNode);
+		foreach ($this->getValidations() as $validationItem) {
+			$validationItem->asXml($inputNode);
+		}
 
 		return $itemNode;
 	}
