@@ -379,11 +379,13 @@ class FakeMapper
                     'payer_status' => 'verified',
                     'txn_type' => 'web_accept'
                 ),
-                'credit_card'           =>
+                'credit_card' =>
                     array(
                         'holder'        => 'Gustav diFolt',
                         'masked_number' => '************6829',
                         'type'          => 'mastercard',
+                        'expiry_year'   => 2017,
+                        'expiry_month'  => 3
                     ),
             ),
         ),
@@ -560,6 +562,9 @@ class FakeMapper
                 $map['payment_infos']['authorization_code'] = $trans->authorization_code;
                 $map['payment_infos']['md5_hash'] = $trans->md5_hash;
             }
+            if(isset($map['payment_infos']['paypal_ipn_data'])) {
+                $map['payment_infos']['paypal_ipn_data'] = Zend_Json::encode($map['payment_infos']['paypal_ipn_data']);
+            }
             
             /** @var ShopgateOrder $fakeOrder */
             $fakeOrder = $this->_getFakeOrder($map);
@@ -596,7 +601,7 @@ class FakeMapper
             $flag                    = true;
         }
         if (isset($infos['paypal_ipn_data'])) {
-            $infos['paypal_ipn_data']['payment_status'] = $paid == 0 ? 'Pending' : 'Completed';
+            $infos['paypal_ipn_data']['payment_status'] = empty($paid) ? 'Pending' : 'Completed';
             $flag                                       = true;
         }
         if (isset($map['is_paid'])) {
@@ -626,6 +631,8 @@ class FakeMapper
                 $flag                = true;
             }
         }
+        
+        $map['payment_infos'] = $infos;
         return $flag;
     }
 
