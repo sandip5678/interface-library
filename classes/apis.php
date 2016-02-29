@@ -1020,6 +1020,19 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		// set data and return response
 		if (empty($this->response)) $this->response = new ShopgatePluginApiResponseAppJson($this->trace_id);
 	}
+
+	public function fakeSetSettings()
+	{
+		return array(
+			'shop_number'       => '18055',
+			'shopgate_settings' => array(
+				array(
+					'name'  => 'shop_is_active',
+					'value' => '1'
+				)
+			)
+		);
+	}
 	
 	/**
 	 * Represents the "set_settings" action.
@@ -1028,6 +1041,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 	 * @see http://wiki.shopgate.com/Shopgate_Plugin_API_set_settings
 	 */
 	protected function setSettings() {
+		$this->params = $this->fakeSetSettings();
 		if (empty($this->params['shopgate_settings']) || !is_array($this->params['shopgate_settings'])) {
 			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_NO_SHOPGATE_SETTINGS, 'Request: '.var_export($this->params, true));
 		}
@@ -2449,6 +2463,7 @@ class ShopgateAuthenticationServiceOAuth extends ShopgateObject implements Shopg
 			'redirect_uri' => $calledScriptUrl,
 			'code' => $code,
 		);
+		Mage::log($parameters);
 		// -> setup request headers
 		$curlOpt = array(
 			CURLOPT_HEADER => false,
