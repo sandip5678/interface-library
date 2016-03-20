@@ -218,7 +218,7 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	protected $shopgate_coupons = array();
 
 	protected $items                   = array();
-	protected $tracking_get_parameters = array();
+	protected $tracking_get_parameters;
 	
 	##########
 	# Setter #
@@ -534,7 +534,7 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	 */
 	public function setTrackingGetParameters($value)
 	{
-		$this->tracking_get_parameters = (array)$value;
+		$this->tracking_get_parameters = new ShopgateTrackingParameters($value);
 	}
 	
 	
@@ -761,6 +761,171 @@ class ShopgateCart extends ShopgateCartBase {
 
 	public function accept(ShopgateContainerVisitor $v) {
 		$v->visitCart($this);
+	}
+}
+
+/**
+ * Holds a list of ShopgateTrackingParameters.
+ * Can be iterated directly.
+ */
+class ShopgateTrackingParameters implements Iterator
+{
+	/**
+	 * @param array $data - array(array('key' => 'acc', 'value' => 'x'), ...)
+	 */
+	public function __construct($data)
+	{
+		$this->setParameters($data);
+	}
+
+	/**
+	 * @var ShopgateTrackingParameter[]
+	 */
+	private $parameters;
+
+	/**
+	 * @param array $parameters - array(array('key' => 'xxx', 'value' => 'xxx'), ...)
+	 */
+	public function setParameters(array $parameters)
+	{
+		foreach ($parameters as $parameter) {
+			if (isset($parameter['key'], $parameter['value'])) {
+				$shopgateParameter  = new ShopgateTrackingParameter();
+				$this->parameters[] = $shopgateParameter
+					->setKey($parameter['key'])
+					->setValue($parameter['value']);
+			}
+		}
+	}
+
+	/**
+	 * @param $key
+	 * @return bool|ShopgateTrackingParameter
+	 */
+	public function getParameterByKey($key)
+	{
+		foreach ($this->parameters as $parameter) {
+			if ($parameter->getKey() === $key) {
+				return $parameter;
+			}
+
+		}
+		return false;
+	}
+
+	/**
+	 * @param $value
+	 * @return bool|ShopgateTrackingParameter
+	 */
+	public function getParameterByValue($value)
+	{
+		foreach ($this->parameters as $parameter) {
+			if ($parameter->getValue() === $value) {
+				return $parameter;
+			}
+
+		}
+		return false;
+	}
+
+	/** =========   Iterator Functions  =============== */
+
+	/**
+	 * Rewind function rewrite
+	 */
+	public function rewind()
+	{
+		reset($this->parameters);
+	}
+
+	/**
+	 * Current pointer rewrite
+	 *
+	 * @return mixed
+	 */
+	public function current()
+	{
+		return current($this->parameters);
+	}
+
+	/**
+	 * Next pointer rewrite
+	 *
+	 * @return mixed
+	 */
+	public function next()
+	{
+		return next($this->parameters);
+	}
+
+	/**
+	 * Key pointer rewrite
+	 *
+	 * @return mixed
+	 */
+	public function key()
+	{
+		return key($this->parameters);
+	}
+
+	/**
+	 * Validation check rewrite
+	 *
+	 * @return bool
+	 */
+	public function valid()
+	{
+		$key = $this->key();
+
+		return ($key !== null && $key !== false);
+	}
+}
+
+class ShopgateTrackingParameter
+{
+	/** @var string */
+	private $key;
+	/** @var string */
+	private $value;
+
+	/**
+	 * @return string
+	 */
+	public function getKey()
+	{
+		return $this->key;
+	}
+
+	/**
+	 * @param string $key
+	 *
+	 * @return ShopgateTrackingParameter
+	 */
+	public function setKey($key)
+	{
+		$this->key = $key;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getValue()
+	{
+		return $this->value;
+	}
+
+	/**
+	 * @param string $value
+	 *
+	 * @return ShopgateTrackingParameter
+	 */
+	public function setValue($value)
+	{
+		$this->value = $value;
+
+		return $this;
 	}
 }
 
