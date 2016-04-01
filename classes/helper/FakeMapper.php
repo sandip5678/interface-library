@@ -465,7 +465,7 @@ class FakeMapper
                     'billsafe_token'          => '553a401a17e1a553a401a17e69',
                     'recipient'               => 'Test User',
                     'reference'               => 'SG1500003820',
-                    'amount'                  => 25.489999999999998436805981327779591083526611328125,
+                    'amount'                  => 25.489,
                     'currency_code'           => 'EUR',
                     'billsafe_response'       => '{"ack":"OK", "status":"DECLINED", "declineReason":{ "code":"101", "message":"BillSAFE does not secure this transaction", "buyerMessage":"Thank you for your purchase."}}',
                 ),
@@ -535,7 +535,11 @@ class FakeMapper
         if (isset($request['payment_method'])) {
             $paymentMethod = $request['payment_method'];
             $map           = $this->_paymentMap[$paymentMethod];
-
+            
+            if(isset($request['customer_id'])) {
+                $map['customer_id'] = $request['customer_id'];
+            }
+            
             //flip between unpaid/paid request
             if (isset($request['flip'])) {
                 $this->isPaidFlip($map, $request['flip']);
@@ -562,7 +566,11 @@ class FakeMapper
                 $map['payment_infos']['authorization_code'] = $trans->authorization_code;
                 $map['payment_infos']['md5_hash'] = $trans->md5_hash;
             }
-            if(isset($map['payment_infos']['paypal_ipn_data'])) {
+            
+            /**
+             * Haha! Randomly encode this to account for different payment methods
+             */
+            if(isset($map['payment_infos']['paypal_ipn_data']) && (bool) rand(0, 1)) {
                 $map['payment_infos']['paypal_ipn_data'] = Zend_Json::encode($map['payment_infos']['paypal_ipn_data']);
             }
             
@@ -669,7 +677,13 @@ class FakeMapper
                     'external_order_number'       => null,
                     'external_order_id'           => '8240',
                     'external_customer_number'    => null,
-                    'external_customer_id'        => null,
+                    'external_customer_id'        => isset($map['customer_id']) ? $map['customer_id']: '147',
+                    /*'tracking_get_parameters' => array(
+                        array(
+                            'key'   => 'account',
+                            'value' => 'cfcd208495d565ef66e7dff9f98764da'
+                        )
+                    ),*/
                     'custom_fields' => array(
                         array(
                             'label'               => 'Test Custom Field',
@@ -686,8 +700,8 @@ class FakeMapper
                         'name'         => 'fedex_FEDEX_GROUND',
                         'display_name' => 'Ground',
                         'description'  => '',
-                        'amount'       => 9.84,
-                        'weight'       => 0,
+                        'amount'       => 0,
+                        'weight'       => 0.5,
                         'api_response' => null,
                     ),
                     'payment_method'              => $map['payment_method'],
@@ -698,7 +712,7 @@ class FakeMapper
                     'payment_tax_percent'         => '20.00',
                     'shipping_tax_percent'        => '20.00',
                     'amount_shopgate_payment'     => '0.00',
-                    'amount_complete'             => '509.07',
+                    'amount_complete'             => '505',
                     'currency'                    => 'USD',
                     'invoice_address'             => array(
                         'id'                  => null,
@@ -735,12 +749,12 @@ class FakeMapper
                         'gender'              => 'f',
                         'birthday'            => null,
                         'company'             => null,
-                        'street_1'            => 'Zevener Straße 8',
+                        'street_1'            => '303 W Elliot Rd',
                         'street_2'            => null,
-                        'zipcode'             => '27404',
-                        'city'                => 'Frankenbostel',
-                        'country'             => 'DE',
-                        'state'               => null,
+                        'zipcode'             => '85284',
+                        'city'                => 'Tempe',
+                        'country'             => 'US',
+                        'state'               => 'AZ',
                         'phone'               => null,
                         'mobile'              => null,
                         'mail'                => null,
@@ -753,7 +767,23 @@ class FakeMapper
                         ),
                     ),
                     'external_coupons'            =>
-                        array(),
+                        array(
+                            /*array(
+                                'is_valid'          => null,
+                                'not_valid_message' => null,
+                                'order_index'       => null,
+                                'code'              => 'affiliate',
+                                'name'              => 'coupon $15.00, Code: affiliate-220 Affiliate Discount',
+                                'description'       => '',
+                                'amount'            => '4.00',
+                                'amount_net'        => '4.00',
+                                'amount_gross'      => '4.00',
+                                'tax_type'          => 'auto',
+                                'currency'          => 'USD',
+                                'is_free_shipping'  => false,
+                                'internal_info'     => '{"type":"affiliate","parameter":["account","cfcd208495d565ef66e7dff9f98764da"]}'
+                            )*/
+                        ),
                     'shopgate_coupons'            =>
                         array(),
                     'items'                       =>

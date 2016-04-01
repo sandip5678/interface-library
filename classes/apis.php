@@ -662,6 +662,16 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                     "mail" => 'test@tester.com', //existing customer required
                     "payment_group" => 'SHOPGATE',
                     "payment_method" => 'SHOPGATE',
+					/*'tracking_get_parameters' => array(
+						array(
+							'key'   => 'account',
+							'value' => 'cfcd208495d565ef66e7dff9f98764da'
+						),
+						array(
+							'key'   => 'tester',
+							'value' => '123456'
+						)
+					),*/
                     "items" => 
                     array(
                         array(
@@ -722,7 +732,23 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                             'is_free_shipping' => 0
                         )
                     ),
-                    "external_coupons" => array(),
+                    "external_coupons" => array(
+						/*array(
+							'is_valid'          => null,
+							'not_valid_message' => null,
+							'order_index'       => null,
+							'code'              => 'affiliate',
+							'name'              => 'coupon $13.00, Code: affiliate-220 Affiliate Discount',
+							'description'       => '',
+							'amount'            => '13.00',
+							'amount_net'        => '13.00',
+							'amount_gross'      => '13.00',
+							'tax_type'          => 'auto',
+							'currency'          => 'USD',
+							'is_free_shipping'  => false,
+							'internal_info'     => '{"type":"affiliate","parameter":["account","cfcd208495d565ef66e7dff9f98764da"]}'
+						)*/
+					),
                     "invoice_address" => array(
                         "gender" => 'f',
                         "first_name" => 'Krystel',
