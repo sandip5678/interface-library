@@ -382,144 +382,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		if (empty($this->response)) $this->response = new ShopgatePluginApiResponseAppJson($this->trace_id);
 		$this->responseData = $responses;
 	}
-    protected function _getVkFakeOrder()
-    {
-        return array(
-            new ShopgateOrder(
-                array(
-                    'order_number'                => rand(1000000000, 9999999999),
-                    'confirm_shipping_url'        => 'https://www.shopgate.com/clickcs/1013466122/4e30fb1be239c25f3c75dbe2456dfdbd',
-                    'created_time'                => '2014-03-20T11:14:03+00:00',
-                    'is_paid'                     => 0,
-                    'payment_time'                => null,
-                    'payment_transaction_number'  => null,
-                    'payment_infos'               =>
-                        array(
-                            'shopgate_payment_name' => 'Vorkasse (Eigene Abwicklung)',
-                            'purpose'               => 'SG1501355058',
-                        ),
-                    'is_shipping_blocked'         => 0,
-                    'is_shipping_completed'       => 1,
-                    'shipping_completed_time'     => '2014-08-06T11:57:29+00:00',
-                    'is_test'                     => 0,
-                    'is_storno'                   => 0,
-                    'is_customer_invoice_blocked' => '0',
-                    'update_shipping'             => false,
-                    'update_payment'              => false,
-                    'delivery_notes'              => null,
-                    'customer_number'             => '4415490',
-                    'external_order_number'       => '100005776',
-                    'external_order_id'           => '7078',
-                    'external_customer_number'    => null,
-                    'external_customer_id'        => '6764',
-                    'mail'                        => 'paul.laubach@shopgate.com',
-                    'phone'                       => null,
-                    'mobile'                      => null,
-                    'shipping_group'              => 'OTHER',
-                    'shipping_type'               => 'PLUGINAPI',
-                    'shipping_infos'              => array(
-                        'name'         => 'tablerate_bestway',
-                        'display_name' => '',
-                        'description'  => '',
-                        'amount'       => 2.440399999999999902655645200866274535655975341796875,
-                        'weight'       => 0,
-                        'api_response' => null,
-                    ),
-                    'payment_method'              => 'PREPAY',
-                    'payment_group'               => 'PREPAY',
-                    'amount_items'                => '289.90',
-                    'amount_shipping'             => '2.90',
-                    'amount_shop_payment'         => '-28.28',
-                    'payment_tax_percent'         => '19.00',
-                    'amount_shopgate_payment'     => '0.00',
-                    'amount_complete'             => '254.52',
-                    'currency'                    => 'EUR',
-                    'invoice_address'             => array(
-                        'id'                  => null,
-                        'is_invoice_address'  => true,
-                        'is_delivery_address' => false,
-                        'first_name'          => 'Bank',
-                        'last_name'           => 'Payment',
-                        'gender'              => 'f',
-                        'birthday'            => null,
-                        'company'             => 'Shopgate',
-                        'street_1'            => 'Zevener Straße 8',
-                        'street_2'            => null,
-                        'zipcode'             => '27404',
-                        'city'                => 'Frankenbostel',
-                        'country'             => 'DE',
-                        'state'               => null,
-                        'phone'               => null,
-                        'mobile'              => null,
-                        'mail'                => null,
-                    ),
-                    'delivery_address'            => array(
-                        'id'                  => null,
-                        'is_invoice_address'  => false,
-                        'is_delivery_address' => true,
-                        'first_name'          => 'Bank',
-                        'last_name'           => 'Payment',
-                        'gender'              => 'f',
-                        'birthday'            => null,
-                        'company'             => null,
-                        'street_1'            => 'Zevener Straße 8',
-                        'street_2'            => null,
-                        'zipcode'             => '27404',
-                        'city'                => 'Frankenbostel',
-                        'country'             => 'DE',
-                        'state'               => null,
-                        'phone'               => null,
-                        'mobile'              => null,
-                        'mail'                => null,
-                    ),
-                    'external_coupons'            =>
-                        array(
-                            array(
-                                'is_valid'          => null,
-                                'not_valid_message' => null,
-                                'order_index'       => null,
-                                'code'              => 'X49F39K40',
-                                'name'              => 'Gutschein 10,00 €, Code: X49F39K40 10 € Gutschein',
-                                'description'       => 'Newsletter Gutschein',
-                                'amount'            => 10,
-                                'amount_net'        => null,
-                                'amount_gross'      => null,
-                                'tax_type'          => 'auto',
-                                'currency'          => 'EUR',
-                                'is_free_shipping'  => false,
-                                'internal_info'     => '{"coupon_id":"1","rule_id":"1"}',
-                            )
-                        ),
-                    'shopgate_coupons'            =>
-                        array(),
-                    'items'                       =>
-                        array(
-                            array(
-                                'item_number'          => '18380-18381',
-                                'item_number_public'   => '148095',
-                                'parent_item_number'   => null,
-                                'order_item_id'        => '9545103',
-                                'quantity'             => 1,
-                                'name'                 => 'Bergans Eidfjord Lady Jacket-Ink Blue/Bright Cobalt/Hot Pink(#0509FA)-XS',
-                                'unit_amount'          => '243.61',
-                                'unit_amount_with_tax' => '289.90',
-                                'tax_percent'          => '19.00',
-                                'tax_class_key'        => null,
-                                'tax_class_id'         => null,
-                                'currency'             => 'EUR',
-                                'internal_order_info'  => '{"store_view_id":"1","product_id":"18381","item_type":"simple","exchange_rate":1}',
-                                'options'              =>
-                                    array(),
-                                'inputs'               =>
-                                    array(),
-                                'attributes'           =>
-                                    array(),
-                            )
-                        )
-                )
-            )
-        );
-    }
+    
 	/**
 	 * Represents the "add_order" action.
 	 *
@@ -534,7 +397,6 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
         if (isset($this->params['mode']) && $this->params['mode'] === 'test' ) {
             $mapper = new FakeMapper();
             $orders = $mapper->getOrderFromMethod($this->params);
-            //$orders = $this->_getVkFakeOrder();
         } else {
 		    $orders = $this->merchantApi->getOrders(array('order_numbers[0]'=>$this->params['order_number'], 'with_items' => 1))->getData();
         }
@@ -568,8 +430,13 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_NO_ORDER_NUMBER);
 		}
 
-		$orders = $this->merchantApi->getOrders(array('order_numbers[0]'=>$this->params['order_number'], 'with_items' => 1))->getData();
-
+		if (isset($this->params['mode']) && $this->params['mode'] === 'test') {
+			$mapper = new FakeMapper();
+			$orders = $mapper->getOrderFromMethod($this->params);
+		} else {
+			$orders = $this->merchantApi->getOrders(array('order_numbers[0]' => $this->params['order_number'], 'with_items' => 1) )->getData();
+		}
+		
 		if (empty($orders)) {
 			throw new ShopgateLibraryException(ShopgateLibraryException::MERCHANT_API_INVALID_RESPONSE, '"order" not set. Response: '.var_export($orders, true));
 		}

@@ -577,6 +577,19 @@ class FakeMapper
             /** @var ShopgateOrder $fakeOrder */
             $fakeOrder = $this->_getFakeOrder($map);
             $fakeOrder->setItems($this->productSwitcher($fakeOrder->getItems()));
+            
+            if (isset($request['payment'])) {
+                $fakeOrder->setUpdatePayment((int)$request['payment']);
+            }
+
+            if (isset($request['shipping'])) {
+                $fakeOrder->setUpdateShipping((int)$request['shipping']);
+            }
+            
+            if (!empty($request['order_number'])) {
+                $fakeOrder->setOrderNumber((int)$request['order_number']);
+            }
+            
             return array($fakeOrder);
         }
         throw new Exception('Payment method provided was empty');
@@ -700,7 +713,7 @@ class FakeMapper
                         'name'         => 'fedex_FEDEX_GROUND',
                         'display_name' => 'Ground',
                         'description'  => '',
-                        'amount'       => 0,
+                        'amount'       => 6.849,
                         'weight'       => 0.5,
                         'api_response' => null,
                     ),
