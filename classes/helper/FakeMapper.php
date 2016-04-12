@@ -208,7 +208,7 @@ class FakeMapper
                 )
             ),
         ),
-        ShopgateCartBase::PAYONE_DBT => array(
+        ShopgateCartBase::PAYONE_DBT     => array(
             'is_paid'        => 0,
             'payment_method' => 'PAYONE_DBT',
             'payment_group'  => 'DEBIT',
@@ -363,23 +363,23 @@ class FakeMapper
                 'paypal_txn_id'         => '',
                 'paypal_ipn_track_id'   => '',
                 'paypal_ipn_data'       => array(
-                    'payment_status' => 'Pending',
-                    'txn_id' => '55P978957M513884X',
-                    'payer_id' => 'RADZRFMHXVGTA',
-                    'receiver_id' => '28BFM6WRTF46S',
-                    'verify_sign' => 'AUEfhqAqAHlSqPeWXpLjIRqawSIDAcPDcRf2yMUR0.OAurhUgihywh0O',
-                    'ipn_track_id' => 'f4d71d4945618',
-                    'invoice' => '100000016',
+                    'payment_status'         => 'Pending',
+                    'txn_id'                 => '55P978957M513884X',
+                    'payer_id'               => 'RADZRFMHXVGTA',
+                    'receiver_id'            => '28BFM6WRTF46S',
+                    'verify_sign'            => 'AUEfhqAqAHlSqPeWXpLjIRqawSIDAcPDcRf2yMUR0.OAurhUgihywh0O',
+                    'ipn_track_id'           => 'f4d71d4945618',
+                    'invoice'                => '100000016',
                     'protection_eligibility' => 'Eligible',
-                    'mc_gross' => '272.22',
-                    'address_status' => 'unconfirmed',
-                    'tax' => '0.00',
-                    'address_street' => 'blubbstra\u00dfe 10',
-                    'payment_date' => '01:42:59 Mar 10, 2015 PDT',
-                    'payer_status' => 'verified',
-                    'txn_type' => 'web_accept'
+                    'mc_gross'               => '272.22',
+                    'address_status'         => 'unconfirmed',
+                    'tax'                    => '0.00',
+                    'address_street'         => 'blubbstra\u00dfe 10',
+                    'payment_date'           => '01:42:59 Mar 10, 2015 PDT',
+                    'payer_status'           => 'verified',
+                    'txn_type'               => 'web_accept'
                 ),
-                'credit_card' =>
+                'credit_card'           =>
                     array(
                         'holder'        => 'Gustav diFolt',
                         'masked_number' => '************6829',
@@ -524,6 +524,56 @@ class FakeMapper
 
         )
     );
+    protected $shippingMap = array(
+        'DHL'   => array(
+            'shipping_group' => 'DHL',
+            'shipping_type'  => 'MANUAL',
+            'shipping_infos' => array(
+                'name'         => 'DHL Deutschland',
+                'display_name' => 'DHL Pakte gogreen',
+                'description'  => '',
+                'amount'       => '4.90',
+                'weight'       => 0,
+                'api_response' => null,
+            )
+        ),
+        'FREE'  => array(
+            'shipping_group' => 'FREE_SHIP',
+            'shipping_type'  => 'MANUAL',
+            'shipping_infos' => array(
+                'name'         => 'freeshipping_freeshipping',
+                'display_name' => 'Free Shipping',
+                'description'  => '',
+                'amount'       => '0.0',
+                'weight'       => 0,
+                'api_response' => null,
+            )
+        ),
+        'USPS'  => array(
+            'shipping_group' => 'USPS',
+            'shipping_type'  => 'PLUGINAPI',
+            'shipping_infos' => array(
+                'name'         => 'usps_1',
+                'display_name' => 'Priority Mail 2-Day',
+                'description'  => '',
+                'amount'       => '6.0',
+                'weight'       => 0,
+                'api_response' => null,
+            )
+        ),
+        'FEDEX' => array(
+            'shipping_group' => 'FEDEX',
+            'shipping_type'  => 'PLUGINAPI',
+            'shipping_infos' => array(
+                'name'         => 'fedex_FEDEX_GROUND',
+                'display_name' => 'Ground',
+                'description'  => '',
+                'amount'       => 9.84,
+                'weight'       => 0,
+                'api_response' => null,
+            ),
+        )
+    );
 
     /**
      * @param $request
@@ -535,11 +585,15 @@ class FakeMapper
         if (isset($request['payment_method'])) {
             $paymentMethod = $request['payment_method'];
             $map           = $this->_paymentMap[$paymentMethod];
-            
-            if(isset($request['customer_id'])) {
+            $shipKey       = isset($request['shipping_method'], $this->shippingMap[$request['shipping_method']])
+                ? $request['shipping_method']
+                : array_rand($this->shippingMap);
+            $map           = array_merge($map, $this->shippingMap[$shipKey]);
+
+            if (isset($request['customer_id'])) {
                 $map['customer_id'] = $request['customer_id'];
             }
-            
+
             //flip between unpaid/paid request
             if (isset($request['flip'])) {
                 $this->isPaidFlip($map, $request['flip']);
@@ -560,24 +614,25 @@ class FakeMapper
                     $map['payment_infos']['txid'] = $transId;
                 }
             } elseif ($paymentMethod === 'AUTHN_CC') {
-                $helper  = new Authorize_Handler();
-                $trans = $helper->getTransaction($map['payment_infos']['transaction_type']);
-                $map['payment_infos']['transaction_id'] = $trans->transaction_id;
+                $helper = new Authorize_Handler();
+                $trans  = $helper->getTransaction($map['payment_infos']['transaction_type']);
+
+                $map['payment_infos']['transaction_id']     = $trans->transaction_id;
                 $map['payment_infos']['authorization_code'] = $trans->authorization_code;
-                $map['payment_infos']['md5_hash'] = $trans->md5_hash;
+                $map['payment_infos']['md5_hash']           = $trans->md5_hash;
             }
-            
+
             /**
              * Haha! Randomly encode this to account for different payment methods
              */
-            if(isset($map['payment_infos']['paypal_ipn_data']) && (bool) rand(0, 1)) {
+            if (isset($map['payment_infos']['paypal_ipn_data']) && (bool)rand(0, 1)) {
                 $map['payment_infos']['paypal_ipn_data'] = Zend_Json::encode($map['payment_infos']['paypal_ipn_data']);
             }
-            
+
             /** @var ShopgateOrder $fakeOrder */
             $fakeOrder = $this->_getFakeOrder($map);
             $fakeOrder->setItems($this->productSwitcher($fakeOrder->getItems()));
-            
+
             if (isset($request['payment'])) {
                 $fakeOrder->setUpdatePayment((int)$request['payment']);
             }
@@ -585,11 +640,11 @@ class FakeMapper
             if (isset($request['shipping'])) {
                 $fakeOrder->setUpdateShipping((int)$request['shipping']);
             }
-            
+
             if (!empty($request['order_number'])) {
                 $fakeOrder->setOrderNumber((int)$request['order_number']);
             }
-            
+
             return array($fakeOrder);
         }
         throw new Exception('Payment method provided was empty');
@@ -652,7 +707,7 @@ class FakeMapper
                 $flag                = true;
             }
         }
-        
+
         $map['payment_infos'] = $infos;
         return $flag;
     }
@@ -690,14 +745,14 @@ class FakeMapper
                     'external_order_number'       => null,
                     'external_order_id'           => '8240',
                     'external_customer_number'    => null,
-                    'external_customer_id'        => isset($map['customer_id']) ? $map['customer_id']: '147',
+                    'external_customer_id'        => isset($map['customer_id']) ? $map['customer_id'] : '147',
                     /*'tracking_get_parameters' => array(
                         array(
                             'key'   => 'account',
                             'value' => 'cfcd208495d565ef66e7dff9f98764da'
                         )
                     ),*/
-                    'custom_fields' => array(
+                    'custom_fields'               => array(
                         array(
                             'label'               => 'Test Custom Field',
                             'internal_field_name' => 'test_field',
@@ -707,14 +762,14 @@ class FakeMapper
                     'mail'                        => 'test@test.com',
                     'phone'                       => null,
                     'mobile'                      => null,
-                    'shipping_group'              => 'FEDEX',
-                    'shipping_type'               => 'PLUGINAPI',
+                    'shipping_group'              => isset($map['shipping_group']) ? $map['shipping_group'] : '',
+                    'shipping_type'               => isset($map['shipping_type']) ? $map['shipping_type'] : '',
                     'shipping_infos'              => array(
-                        'name'         => 'fedex_FEDEX_GROUND',
-                        'display_name' => 'Ground',
-                        'description'  => '',
-                        'amount'       => 6.849,
-                        'weight'       => 0.5,
+                        'name'         => isset($map['shipping_infos']['name']) ? $map['shipping_infos']['name'] : '',
+                        'display_name' => isset($map['shipping_infos']['display_name']) ? $map['shipping_infos']['display_name'] : '',
+                        'description'  => isset($map['shipping_infos']['description']) ? $map['shipping_infos']['description'] : '',
+                        'amount'       => isset($map['shipping_infos']['amount']) ? $map['shipping_infos']['amount'] : '0',
+                        'weight'       => isset($map['shipping_infos']['weight']) ? $map['shipping_infos']['weight'] : 0,
                         'api_response' => null,
                     ),
                     'payment_method'              => $map['payment_method'],
@@ -745,7 +800,7 @@ class FakeMapper
                         'phone'               => null,
                         'mobile'              => null,
                         'mail'                => null,
-                        'custom_fields' => array(
+                        'custom_fields'       => array(
                             array(
                                 'label'               => 'Is house?',
                                 'internal_field_name' => 'is_house',
@@ -771,7 +826,7 @@ class FakeMapper
                         'phone'               => null,
                         'mobile'              => null,
                         'mail'                => null,
-                        'custom_fields' => array(
+                        'custom_fields'       => array(
                             array(
                                 'label'               => 'Is house?',
                                 'internal_field_name' => 'is_house',
@@ -780,8 +835,7 @@ class FakeMapper
                         ),
                     ),
                     'external_coupons'            =>
-                        array(
-                            /*array(
+                        array(/*array(
                                 'is_valid'          => null,
                                 'not_valid_message' => null,
                                 'order_index'       => null,
