@@ -644,6 +644,10 @@ class FakeMapper
             if (!empty($request['order_number'])) {
                 $fakeOrder->setOrderNumber((int)$request['order_number']);
             }
+            
+            if (!empty($request['customer_email'])) {
+                $fakeOrder->setMail($request['customer_email']);
+            }
 
             return array($fakeOrder);
         }
@@ -759,7 +763,7 @@ class FakeMapper
                             'value'               => 'test field value',
                         ),
                     ),
-                    'mail'                        => 'test@test.com',
+                    'mail'                        => isset($map['customer_email']) ? $map['customer_email'] : 'test@test.com',
                     'phone'                       => null,
                     'mobile'                      => null,
                     'shipping_group'              => isset($map['shipping_group']) ? $map['shipping_group'] : '',
