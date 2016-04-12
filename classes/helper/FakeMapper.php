@@ -524,6 +524,11 @@ class FakeMapper
 
         )
     );
+    
+    /**
+     * @var array
+     * todo: maybe hook into enabling of payment method in magento?
+     */
     protected $shippingMap = array(
         'DHL'   => array(
             'shipping_group' => 'DHL',
