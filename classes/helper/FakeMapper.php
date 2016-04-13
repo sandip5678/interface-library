@@ -543,7 +543,7 @@ class FakeMapper
             )
         ),
         'FREE'  => array(
-            'shipping_group' => 'FREE_SHIP',
+            'shipping_group' => 'OTHER',
             'shipping_type'  => 'MANUAL',
             'shipping_infos' => array(
                 'name'         => 'freeshipping_freeshipping',
@@ -551,6 +551,18 @@ class FakeMapper
                 'description'  => '',
                 'amount'       => '0.0',
                 'weight'       => 0,
+                'api_response' => null,
+            )
+        ),
+        'FLAT' => array(
+            'shipping_group' => 'OTHER',
+            'shipping_type'  => 'MANUAL',
+            'shipping_infos' => array(
+                'name'         => 'flatrate_flatrate',
+                'display_name' => 'Flat rate shipping',
+                'description'  => '',
+                'amount'       => '9.0',
+                'weight'       => 0.5,
                 'api_response' => null,
             )
         ),
