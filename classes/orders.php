@@ -45,6 +45,7 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 
 	// Paypal
 	const PAYPAL     = "PAYPAL";
+	const PPAL_PLUS  = "PPAL_PLUS";
 	const CMPTOP_PP  = "CMPTOP_PP";
 	const MASTPAY_PP = "MASTPAY_PP";
 	const PAYONE_PP  = "PAYONE_PP";
@@ -167,6 +168,7 @@ abstract class ShopgateCartBase extends ShopgateContainer {
     const AMAZON_PAYMENT = "MWS";
 
 	protected $customer_number;
+	protected $customer_ip;
 
 	protected $external_order_number;
 	protected $external_order_id;
@@ -202,8 +204,9 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	protected $external_coupons = array();
 	protected $shopgate_coupons = array();
 
-	protected $items = array();
-
+	protected $items                   = array();
+	protected $tracking_get_parameters = array();
+	
 	##########
 	# Setter #
 	##########
@@ -213,6 +216,13 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	 */
 	public function setCustomerNumber($value) {
 		$this->customer_number = $value;
+	}
+
+	/**
+	 * @param $ip - ip of the customer
+	 */
+	public function setCustomerIp($ip) {
+		$this->customer_ip = $ip;
 	}
 
 	/**
@@ -505,8 +515,16 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 
 		$this->items = $value;
 	}
-
-
+	
+	/**
+	 * @param array $value
+	 */
+	public function setTrackingGetParameters($value)
+	{
+		$this->tracking_get_parameters = (array)$value;
+	}
+	
+	
 	##########
 	# Getter #
 	##########
@@ -516,6 +534,13 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	 */
 	public function getCustomerNumber() {
 		return $this->customer_number;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getCustomerIp() {
+		return $this->customer_ip;
 	}
 
 	/**
@@ -694,6 +719,14 @@ abstract class ShopgateCartBase extends ShopgateContainer {
 	public function getItems() {
 		return $this->items;
 	}
+	
+	/**
+	 * @return array
+	 */
+	public function getTrackingGetParameters()
+	{
+		return $this->tracking_get_parameters;
+	}
 }
 
 class ShopgateCart extends ShopgateCartBase {
@@ -740,12 +773,11 @@ class ShopgateOrder extends ShopgateCartBase {
 	protected $is_storno;
 	protected $is_customer_invoice_blocked;
 
-	protected $update_shipping = false;
-	protected $update_payment = false;
+	protected $update_shipping = 0;
+	protected $update_payment = 0;
 
 	protected $delivery_notes = array();
-	protected $tracking_get_parameters = array();
-
+	
 	public function accept(ShopgateContainerVisitor $v) {
 		$v->visitOrder($this);
 	}
@@ -779,7 +811,7 @@ class ShopgateOrder extends ShopgateCartBase {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsPaid($value) {
 		$this->is_paid = $value;
@@ -812,14 +844,14 @@ class ShopgateOrder extends ShopgateCartBase {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsShippingBlocked($value) {
 		$this->is_shipping_blocked = $value;
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsShippingCompleted($value) {
 		$this->is_shipping_completed = $value;
@@ -843,35 +875,35 @@ class ShopgateOrder extends ShopgateCartBase {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsTest($value) {
 		$this->is_test = $value;
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsStorno($value) {
 		$this->is_storno = $value;
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsCustomerInvoiceBlocked($value) {
 		$this->is_customer_invoice_blocked = $value;
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setUpdatePayment($value) {
 		$this->update_payment = $value;
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setUpdateShipping($value) {
 		$this->update_shipping = $value;
@@ -906,15 +938,10 @@ class ShopgateOrder extends ShopgateCartBase {
 
 		$this->delivery_notes = $value;
 	}
-
-	/**
-	 * @param array $value
-	 */
-	public function setTrackingGetParameters($value) {
-		$this->tracking_get_parameters = (array) $value;
-	}
-
-
+	
+	
+	
+	
 	##########
 	# Getter #
 	##########
@@ -966,10 +993,10 @@ class ShopgateOrder extends ShopgateCartBase {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsPaid() {
-		return (bool)$this->is_paid;
+		return (int)$this->is_paid;
 	}
 
 	/**
@@ -1005,17 +1032,17 @@ class ShopgateOrder extends ShopgateCartBase {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsShippingBlocked() {
-		return (bool)$this->is_shipping_blocked;
+		return (int)$this->is_shipping_blocked;
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsShippingCompleted() {
-		return (bool)$this->is_shipping_completed;
+		return (int)$this->is_shipping_completed;
 	}
 
 	/**
@@ -1044,39 +1071,39 @@ class ShopgateOrder extends ShopgateCartBase {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsTest() {
-		return (bool)$this->is_test;
+		return (int)$this->is_test;
 	}
 
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsStorno() {
-		return (bool)$this->is_storno;
+		return (int)$this->is_storno;
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsCustomerInvoiceBlocked() {
-		return (bool)$this->is_customer_invoice_blocked;
+		return (int)$this->is_customer_invoice_blocked;
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getUpdatePayment() {
-		return (bool)$this->update_payment;
+		return (int)$this->update_payment;
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getUpdateShipping() {
-		return (bool)$this->update_shipping;
+		return (int)$this->update_shipping;
 	}
 
 	/**
@@ -1085,13 +1112,8 @@ class ShopgateOrder extends ShopgateCartBase {
 	public function getDeliveryNotes() {
 		return $this->delivery_notes;
 	}
-
-	/**
-	 * @return array
-	 */
-	public function getTrackingGetParameters() {
-		return $this->tracking_get_parameters;
-	}
+	
+	
 }
 
 class ShopgateOrderItem extends ShopgateContainer {
@@ -1891,28 +1913,28 @@ class ShopgateShippingInfo extends ShopgateContainer {
 
 class ShopgateDeliveryNote extends ShopgateContainer {
 	// shipping groups
-	const DHL = "DHL"; // DHL
+	const DHL        = "DHL";        // DHL
 	const DHLEXPRESS = "DHLEXPRESS"; // DHLEXPRESS
-	const DP = "DP"; // Deutsche Post
-	const DPD = "DPD"; // Deutscher Paket Dienst
-	const FEDEX = "FEDEX"; // FedEx
-	const GLS = "GLS"; // GLS
-	const HLG = "HLG"; // Hermes
-	const OTHER = "OTHER"; // Anderer Lieferant
-	const TNT = "TNT"; // TNT
-	const TOF = "TOF"; // Trnas-o-Flex
-	const UPS = "UPS"; // UPS
-	const USPS = "USPS"; // USPS
+	const DP         = "DP";         // Deutsche Post
+	const DPD        = "DPD";        // Deutscher Paket Dienst
+	const FEDEX      = "FEDEX";      // FedEx
+	const GLS        = "GLS";        // GLS
+	const HLG        = "HLG";        // Hermes
+	const OTHER      = "OTHER";      // Anderer Lieferant
+	const TNT        = "TNT";        // TNT
+	const TOF        = "TOF";        // Trnas-o-Flex
+	const UPS        = "UPS";        // UPS
+	const USPS       = "USPS";       // USPS
 
 	// shipping types
-	const MANUAL = "MANUAL";
+	const MANUAL      = "MANUAL";
 	const USPS_API_V1 = "USPS_API_V1";
-	const UPS_API_V1 = "UPS_API_V1";
+	const UPS_API_V1  = "UPS_API_V1";
 
-	protected $shipping_service_id = ShopgateDeliveryNote::DHL;
+	protected $shipping_service_id   = null;
 	protected $shipping_service_name = "";
-	protected $tracking_number = "";
-	protected $shipping_time = null;
+	protected $tracking_number       = "";
+	protected $shipping_time         = null;
 
 	##########
 	# Setter #
@@ -2071,7 +2093,7 @@ abstract class ShopgateCoupon extends ShopgateContainer {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsFreeShipping($value) {
 		$this->is_free_shipping = $value;
@@ -2154,7 +2176,7 @@ abstract class ShopgateCoupon extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsFreeShipping() {
 		return $this->is_free_shipping;
@@ -2613,7 +2635,7 @@ class ShopgateCartItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsBuyable($value) {
 		$this->is_buyable = $value;
@@ -2751,10 +2773,10 @@ class ShopgateCartItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsBuyable() {
-		return $this->is_buyable;
+		return (int)$this->is_buyable;
 	}
 
 	/**

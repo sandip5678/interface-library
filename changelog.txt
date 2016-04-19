@@ -1,9 +1,52 @@
+'''Version 2.9.42'''
+* fixed an issue with home page infinite redirect loop
+* fixed a bug in processing the user agent blacklist used for mobile redirect
+* moved ShopgateOrder::$tracking_get_parameters and its getter & setter to ShopgateCartBase
+
+'''Version 2.9.41'''
+* meta tags and mobile header script won't be displayed anymore for inactive shops when using Shopgate_Helper_Redirect_MobileRedirect
+
+'''Version 2.9.40'''
+* added better escaping for the mobile redirect of search queries
+* added customer ip address getter/setter in order object
+* fixed issue with curly brace regex for jsHeader template
+* started unit test structure
+* removed PHP 4 style constructors from vendor classes as of http://php.net/manual/de/migration70.deprecated.php
+
+'''Version 2.9.39'''
+* adjusted type-hints to API documentations
+
+'''Version 2.9.38'''
+* minor bug fixes
+
+'''Version 2.9.37'''
+* added outputting open graph and other tags with the mobile redirect if activated in the configuration
+* added a replacement class tree for ShopgateMobileRedirect
+* ShopgateMobileRedirect is now deprecated
+
+'''Version 2.9.36'''
+* added a fallback in case that json_encode returns false (failure)
+* added new constant ShopgateLibraryException::CART_ITEM_INVALID_PRODUCT_COMBINATION
+* added a fallback in case that json_encode or json_decode return false (failure)
+* added escaping to the mobile redirect of search queries
+
+'''Version 2.9.35'''
+* improved logging of Exception messages
+* deprecated methods now disable themselves when called but not implemented
+
+'''Version 2.9.34'''
+* the method ShopgatePlugin::redeemCoupons() is now deprecated and not abstract anymore
+
+'''Version 2.9.33'''
+* changed the initial value of the ShopgateDeliveryNote::$shipping_service_id entry to null
+* added payment method constant for Paypal Plus
+
 '''Version 2.9.32'''
 * amount_complete getter is now returning the correct field
 
 '''Version 2.9.31'''
-* added ShopgateShippingInfo:$amount_net and $amount_gross properties, getters and setters
-* ShopgateShippingInfo:$amount, getter and setter are now deprecated
+* added ShopgateShippingInfo::$amount_net and $amount_gross properties, getters and setters
+* ShopgateShippingInfo::$amount, getter and setter are now deprecated
 
 '''Version 2.9.30'''
 * amount_complete is now being set correctly for get_orders
@@ -15,7 +58,7 @@
 * XML export: fixed a bug that lead to unwanted occurrences of 'xmlns=""' in the XML
 
 '''Version 2.9.27'''
-* XML export: omit empty subnodes if they are defined as optional by the XSD
+* XML export: omit empty sub nodes if they are defined as optional by the XSD
 
 '''Version 2.9.26'''
 * added constants for order item types
@@ -33,7 +76,7 @@
 * added sort order for options and option values
 
 '''Version 2.9.22'''
-* CSV exports: the methods ShopgatePlugin::createCategoriesCsv(), ::createItemsCsv() und ::createReviewsCsv() are now deprecated and not abstract anymore
+* CSV exports: the methods ShopgatePlugin::createCategoriesCsv(), ::createItemsCsv() and ::createReviewsCsv() are now deprecated and not abstract anymore
 * removed German changelog
 * ShopgateMerchantApi::cancelOrder(): changed default value of parameter "$cancelCompleteOrder" from false to true
 

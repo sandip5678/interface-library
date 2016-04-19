@@ -61,7 +61,7 @@ class ShopgateCategory extends ShopgateContainer {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsActive($value) {
 		$this->is_active = $value;
@@ -108,10 +108,10 @@ class ShopgateCategory extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsActive() {
-		return $this->is_active;
+		return (int)$this->is_active;
 	}
 }
 
@@ -290,7 +290,7 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsFreeShipping($value) {
 		$this->is_free_shipping = $value;
@@ -360,7 +360,7 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setUseStock($value) {
 		$this->use_stock = $value;
@@ -374,7 +374,7 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsHighlight($value) {
 		$this->is_highlight = $value;
@@ -388,7 +388,7 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsAvailable($value) {
 		$this->is_available = $value;
@@ -402,7 +402,7 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setHasImage($value) {
 		$this->has_image = $value;
@@ -416,28 +416,28 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsNotOrderable($value) {
 		$this->is_not_orderable = $value;
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsMarketplace($value) {
 		$this->is_marketplace = $value;
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsActive($value) {
 		$this->is_active = $value;
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsAutoUpdate($value) {
 		$this->is_auto_update = $value;
@@ -703,7 +703,7 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsFreeShipping() {
 		return $this->is_free_shipping;
@@ -773,10 +773,10 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getUseStock() {
-		return $this->use_stock;
+		return (int)$this->use_stock;
 	}
 
 	/**
@@ -787,10 +787,10 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsHighlight() {
-		return $this->is_highlight;
+		return (int)$this->is_highlight;
 	}
 
 	/**
@@ -801,10 +801,10 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsAvailable() {
-		return $this->is_available;
+		return (int)$this->is_available;
 	}
 
 	/**
@@ -815,10 +815,10 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getHasImage() {
-		return $this->has_image;
+		return (int)$this->has_image;
 	}
 
 	/**
@@ -829,31 +829,31 @@ class ShopgateItem extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsNotOrderable() {
-		return (bool) $this->is_not_orderable;
+		return (int)$this->is_not_orderable;
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsMarketplace() {
-		return $this->is_marketplace;
+		return (int)$this->is_marketplace;
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsActive() {
-		return $this->is_active;
+		return (int)$this->is_active;
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsAutoUpdate() {
-		return $this->is_auto_update;
+		return (int)$this->is_auto_update;
 	}
 
 	/**
@@ -1198,7 +1198,7 @@ class ShopgateItemInput extends ShopgateContainer {
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsRequired($value) {
 		$this->is_required = $value;
@@ -1245,10 +1245,10 @@ class ShopgateItemInput extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getIsRequired() {
-		return $this->is_required;
+		return (int)$this->is_required;
 	}
 
 	public function accept(ShopgateContainerVisitor $v) {

@@ -213,7 +213,7 @@ class ShopgateCustomer extends ShopgateContainer {
 	}
 	
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setNewsletterSubscription($value) {
 		$this->newsletter_subscription = $value;
@@ -367,10 +367,10 @@ class ShopgateCustomer extends ShopgateContainer {
 	}
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	public function getNewsletterSubscription() {
-		return (bool) $this->newsletter_subscription;
+		return (int) $this->newsletter_subscription;
 	}
 
 	/**
@@ -504,22 +504,22 @@ class ShopgateAddress extends ShopgateContainer {
 	 * @param int $value ShopgateAddress::BOTH or ShopgateAddress::INVOICE or ShopgateAddress::DELIVERY
 	 */
 	public function setAddressType($value) {
-		$this->is_invoice_address  = (bool) ($value & self::INVOICE);
-		$this->is_delivery_address = (bool) ($value & self::DELIVERY);
+		$this->is_invoice_address  = (int) (bool) ($value & self::INVOICE);
+		$this->is_delivery_address = (int) (bool) ($value & self::DELIVERY);
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsInvoiceAddress($value) {
-		$this->is_invoice_address = (bool) $value;
+		$this->is_invoice_address = (int) $value;
 	}
 
 	/**
-	 * @param bool $value
+	 * @param int $value
 	 */
 	public function setIsDeliveryAddress($value) {
-		$this->is_delivery_address = (bool) $value;
+		$this->is_delivery_address = (int) $value;
 	}
 
 	/**
@@ -673,14 +673,14 @@ class ShopgateAddress extends ShopgateContainer {
 	}
 
 	/**
-	* @return bool
+	* @return int
 	*/
-	public function getIsInvoiceAddress() { return (bool) $this->is_invoice_address; }
+	public function getIsInvoiceAddress() { return (int) $this->is_invoice_address; }
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
-	public function getIsDeliveryAddress() { return (bool) $this->is_delivery_address; }
+	public function getIsDeliveryAddress() { return (int) $this->is_delivery_address; }
 
 	/**
 	 * @return int ShopgateAddress::BOTH or ShopgateAddress::INVOICE or ShopgateAddress::DELIVERY
