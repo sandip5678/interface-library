@@ -67,7 +67,8 @@ class Shopgate_Model_Catalog_Category extends Shopgate_Model_AbstractExport {
 		'setDeeplink',
 		'setIsAnchor',
 		'setImage',
-		'setIsActive');
+		'setIsActive',
+	);
 
 	/**
 	 * define allowed methods
@@ -82,17 +83,13 @@ class Shopgate_Model_Catalog_Category extends Shopgate_Model_AbstractExport {
 		'Image',
 		'IsActive',
 		'Deeplink',
-		'IsAnchor');
+		'IsAnchor',
+	);
 
 	/**
-	 * init default object
+	 * nothing to do here
 	 */
 	public function __construct() {
-		$this->setData(
-			array(
-				'image' => new Shopgate_Model_Media_Image()
-			)
-		);
 	}
 
 	/**
@@ -106,17 +103,16 @@ class Shopgate_Model_Catalog_Category extends Shopgate_Model_AbstractExport {
 		 */
 		$categoryNode = $itemNode->addChild('category');
 		$categoryNode->addAttribute('uid', $this->getUid());
-		$categoryNode->addAttribute('sort_order', $this->getSortOrder());
+		$categoryNode->addAttribute('sort_order', (int)$this->getSortOrder());
 		$categoryNode->addAttribute('parent_uid', $this->getParentUid() ? $this->getParentUid() : null);
-		$categoryNode->addAttribute('is_active', $this->getIsActive());
-		$categoryNode->addAttribute('is_anchor', $this->getIsAnchor());
+		$categoryNode->addAttribute('is_active', (int)$this->getIsActive());
+		$categoryNode->addAttribute('is_anchor', (int)$this->getIsAnchor());
 		$categoryNode->addChildWithCDATA('name', $this->getName());
 		$categoryNode->addChildWithCDATA('deeplink', $this->getDeeplink());
-
-		/**
-		 * image
-		 */
-		$this->getImage()->asXml($categoryNode);
+		
+		if ($this->getImage()) {
+			$this->getImage()->asXml($categoryNode);
+		}
 
 		return $itemNode;
 	}
