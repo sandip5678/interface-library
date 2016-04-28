@@ -519,88 +519,150 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                 "shop_number"                          => 18055,
                 "Shop.framework_export_blocked_orders" => '1',
                 "trace_id"                             => 'sma-102775728',
-                "cart" =>
-                array(
-                    "customer_number" => 4666725,
-                    "external_customer_number" => '',
-                    "external_customer_id" => '',
-                    "external_customer_group" => '',
-                    "external_customer_group_id" => '',
-                    "mail" => 'test@tester.com', //existing customer required
-                    "payment_group" => 'SHOPGATE',
-                    "payment_method" => 'SHOPGATE',
-					/*'tracking_get_parameters' => array(
-						array(
-							'key'   => 'account',
-							'value' => 'cfcd208495d565ef66e7dff9f98764da'
-						),
-						array(
-							'key'   => 'tester',
-							'value' => '123456'
-						)
-					),*/
-                    "items" => 
+                "cart"                                 =>
                     array(
-                        array(
-                            "item_id" => 24195039,
-                            "item_number" => 554,
-                            "item_number_public" => null,
-                            "parent_item_number" => '',
-                            "quantity" => 1,
-                            "unit_amount_net" => 2.5,
-                            "unit_amount_with_tax" => 3,
-                            "unit_amount" => 2.5,
-                            "name" => 'Swiss Movement Sports Watch',
-                            "tax_percent" => 20.00,
-                            "tax_class" => 241269,
-                            "currency" => 'EUR',
-                            "internal_order_info" => '{
+                        "customer_number"            => 4666725,
+                        "external_customer_number"   => '',
+                        "external_customer_id"       => '',
+                        "external_customer_group"    => '',
+                        "external_customer_group_id" => '',
+                        "mail"                       => 'test@tester.com', //existing customer required
+                        "payment_group"              => 'SHOPGATE',
+                        "payment_method"             => 'SHOPGATE',
+                        /*'tracking_get_parameters' => array(
+                            array(
+                                'key'   => 'account',
+                                'value' => 'cfcd208495d565ef66e7dff9f98764da'
+                            ),
+                            array(
+                                'key'   => 'tester',
+                                'value' => '123456'
+                            )
+                        ),*/
+                        "items"                      =>
+                            array(
+                                array(
+                                    "item_id"                            => 24195039,
+                                    "item_number"                        => 554,
+                                    "item_number_public"                 => null,
+                                    "parent_item_number"                 => '',
+                                    "quantity"                           => 1,
+                                    "unit_amount_net"                    => 2.5,
+                                    "unit_amount_with_tax"               => 3,
+                                    "unit_amount"                        => 2.5,
+                                    "name"                               => 'Swiss Movement Sports Watch',
+                                    "tax_percent"                        => 20.00,
+                                    "tax_class"                          => 241269,
+                                    "currency"                           => 'EUR',
+                                    "internal_order_info"                => '{
                                 "store_view_id":"1",
-                                "product_id":"554",
+                                "product_id":"422-297",
+                                "item_type":"simple",
+                                "exchange_rate":1}',
+                                    "additional_shipping_costs_per_unit" => 0,
+                                    "is_free_shipping"                   => '',
+                                    "attributes"                         => Array(),
+                                    "inputs"                             => Array(),
+                                    "options"                            => Array(),
+                                    "shopgate_cart_item_id"              => 22621889
+                                ),
+                               /*array(
+                                    "item_id"                            => 24195039,
+                                    "item_number"                        => '422-297',
+                                    "item_number_public"                 => null,
+                                    "parent_item_number"                 => '',
+                                    "quantity"                           => 1,
+                                    "unit_amount_net"                    => 2.5,
+                                    "unit_amount_with_tax"               => 3,
+                                    "unit_amount"                        => 2.5,
+                                    "name"                               => 'Swiss Movement Sports Watch',
+                                    "tax_percent"                        => 20.00,
+                                    "tax_class"                          => 241269,
+                                    "currency"                           => 'EUR',
+                                    "internal_order_info"                => '{
+                                "store_view_id":"1",
+                                "product_id":"422-297",
                                 "item_type":"simple",
                                 "exchange_rate":1}', //product_id that exists
-                            "additional_shipping_costs_per_unit" => 0,
-                            "is_free_shipping" => '',
-                            "attributes" => Array(),
-                            "inputs" => Array(),
-                            "options" => Array(),
-                            "shopgate_cart_item_id" => 22621889
-                        )
-                    ),
-                    "shopgate_coupons" => array(
-                        array(
-                            'code'             => 'TEST_CODE',
-                            'name'             => 'Coupon Name',
-                            'description'      => 'Description',
-                            'order_index'      => '1',
-                            'amount_net'       => 10.00,
-                            'currency'         => 'USD',
-                            'internal_info'    => '{"coupon_id":"1"}',
-                            'is_free_shipping' => 0
+                                    "additional_shipping_costs_per_unit" => 0,
+                                    "is_free_shipping"                   => '',
+                                    "attributes"                         => Array(
+                                        array(
+                                            'name'  => 'Color',
+                                            'value' => 'Charcoal'
+                                        ),
+                                        array(
+                                            'name'  => 'Occasion',
+                                            'value' => 'Career'
+                                        ),
+                                        array(
+                                            'name'  => 'Type',
+                                            'value' => 'Skirts'
+                                        ),
+                                        array(
+                                            'name'  => 'Size',
+                                            'value' => '2'
+                                        ),
+                                        array(
+                                            'name'  => 'Length',
+                                            'value' => 'Knee Length'
+                                        ),
+                                        array(
+                                            'name'  => 'Gender',
+                                            'value' => 'Female'
+                                        ),
+                                    ),
+                                    "inputs"                             => Array(),
+                                    "options"                            => Array(
+                                        array(
+                                            'name'          => 'Color',
+                                            'value'         => 'Charcoal',
+                                            'option_number' => '92',
+                                            'value_number'  => '17',
+                                        ),
+                                        array(
+                                            'name'          => 'Size',
+                                            'value'         => '2',
+                                            'option_number' => '180',
+                                            'value_number'  => '76',
+                                        ),
+                                    ),
+                                    "shopgate_cart_item_id"              => 22621889
+                                ),*/
+                            ),
+                        "shopgate_coupons"           => array(
+                            array(
+                                'code'             => 'TEST_CODE',
+                                'name'             => 'Coupon Name',
+                                'description'      => 'Description',
+                                'order_index'      => '1',
+                                'amount_net'       => 10.00,
+                                'currency'         => 'USD',
+                                'internal_info'    => '{"coupon_id":"1"}',
+                                'is_free_shipping' => 0
+                            ),
+                            array(
+                                'code'             => 'TEST_CODE',
+                                'name'             => 'Coupon Name 2',
+                                'description'      => 'Description',
+                                'order_index'      => '1',
+                                'amount_net'       => 10.00,
+                                'currency'         => 'USD',
+                                'internal_info'    => '{"coupon_id":"2"}',
+                                'is_free_shipping' => 0
+                            ),
+                            array(
+                                'code'             => 'kittencoupon',
+                                'name'             => 'Coupon Name 2',
+                                'description'      => 'Description',
+                                'order_index'      => '1',
+                                'amount_net'       => 15.00,
+                                'currency'         => 'USD',
+                                'internal_info'    => '{"coupon_id":"3"}',
+                                'is_free_shipping' => 0
+                            )
                         ),
-                        array(
-                            'code'             => 'TEST_CODE',
-                            'name'             => 'Coupon Name 2',
-                            'description'      => 'Description',
-                            'order_index'      => '1',
-                            'amount_net'       => 10.00,
-                            'currency'         => 'USD',
-                            'internal_info'    => '{"coupon_id":"2"}',
-                            'is_free_shipping' => 0
-                        ),
-                        array(
-                            'code'        => 'kittencoupon',
-                            'name'        => 'Coupon Name 2',
-                            'description' => 'Description',
-                            'order_index' => '1',
-                            'amount_net'  => 15.00,
-                            'currency'         => 'USD',
-                            'internal_info'    => '{"coupon_id":"3"}',
-                            'is_free_shipping' => 0
-                        )
-                    ),
-                    "external_coupons" => array(
-						/*array(
+                        "external_coupons"           => array(/*array(
 							'is_valid'          => null,
 							'not_valid_message' => null,
 							'order_index'       => null,
@@ -615,50 +677,51 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 							'is_free_shipping'  => false,
 							'internal_info'     => '{"type":"affiliate","parameter":["account","cfcd208495d565ef66e7dff9f98764da"]}'
 						)*/
-					),
-                    "invoice_address" => array(
-                        "gender" => 'f',
-                        "first_name" => 'Krystel',
-                        "last_name" => 'Mbarga',
-                        "birthday" => '',
-                        "company" => '',
-                        "street_1" => '7 cours de larche guedon',
-                        "street_2" => '',
-                        "city" => 'Torcy',
-                        "zipcode" => '77200',
-                        "country" => 'FR',
-                        "state" => ''
-                    ),
-                    "delivery_address" => array(
-                        "gender" => 'f',
-                        "first_name" => 'Krystel',
-                        "last_name" => 'Mbarga',
-                        "birthday" => '',
-                        "company" => '',
-                        "street_1" => '7 cours de larche guedon',
-                        "street_2" => '',
-                        "city" => 'Torcy',
-                        "zipcode" => '77200',
-                        "country" => 'FR',
-                        "state" => ''
-                    ),
-                    "internal_cart_info" => '',
-                    "currency" => 'EUR',
-                    "amount_shipping" => 5.00,
-                    "shipping_group" => 'OTHER',
-                    "shipping_type" => 'PLUGINAPI',
-                    "shipping_infos" => array(
-                        "name" => 'socolissimosimplicite_socolissimosimplicite',
-                        "display_name" => 'So Colissimo',
-                        "description" => '',
-                        "amount" => 4.16,
-                        "weight" => 0,
-                        "internal_shipping_info" => '',
-                        "api_response" => '',
-                    ),
-                )
+                        ),
+                        "invoice_address"            => array(
+                            "gender"     => 'f',
+                            "first_name" => 'Krystel',
+                            "last_name"  => 'Mbarga',
+                            "birthday"   => '',
+                            "company"    => '',
+                            "street_1"   => '7 cours de larche guedon',
+                            "street_2"   => '',
+                            "city"       => 'Torcy',
+                            "zipcode"    => '77200',
+                            "country"    => 'FR',
+                            "state"      => ''
+                        ),
+                        "delivery_address"           => array(
+                            "gender"     => 'f',
+                            "first_name" => 'Krystel',
+                            "last_name"  => 'Mbarga',
+                            "birthday"   => '',
+                            "company"    => '',
+                            "street_1"   => '7 cours de larche guedon',
+                            "street_2"   => '',
+                            "city"       => 'Torcy',
+                            "zipcode"    => '77200',
+                            "country"    => 'FR',
+                            "state"      => ''
+                        ),
+                        "internal_cart_info"         => '',
+                        "currency"                   => 'EUR',
+                        "amount_shipping"            => 5.00,
+                        "shipping_group"             => 'OTHER',
+                        "shipping_type"              => 'PLUGINAPI',
+                        "shipping_infos"             => array(
+                            "name"                   => 'socolissimosimplicite_socolissimosimplicite',
+                            "display_name"           => 'So Colissimo',
+                            "description"            => '',
+                            "amount"                 => 4.16,
+                            "weight"                 => 0,
+                            "internal_shipping_info" => '',
+                            "api_response"           => '',
+                        ),
+                    )
             );
-	}
+    }
+    
 	/**
 	 * Represents the "check_cart" action.
 	 *

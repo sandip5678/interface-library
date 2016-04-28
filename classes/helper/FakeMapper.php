@@ -521,16 +521,28 @@ class FakeMapper
                             'bank_country_id' => 'de',
                         ),
                 )
-
-        )
+        ),
+        ShopgateCartBase::ACCRD_INV      => array(
+            'is_paid'        => 0,
+            'payment_method' => ShopgateCartBase::ACCRD_INV,
+            'payment_group'  => 'INVOICE',
+            'customer_name'  => 'Accarda Invoice',
+            'payment_infos'  =>
+                array(
+                    'shopgate_payment_name' => 'Rechnung (Accarda)',
+                    'status'                => '1',
+                    'accarda_order_id'      => '5778676',
+                    'accarda_auth_id'       => '191348',
+                )
+        ),
     );
-    
+
     /**
      * @var array
      * todo: maybe hook into enabling of payment method in magento?
      */
     protected $shippingMap = array(
-        'DHL'   => array(
+        'DHL'    => array(
             'shipping_group' => 'DHL',
             'shipping_type'  => 'MANUAL',
             'shipping_infos' => array(
@@ -542,7 +554,7 @@ class FakeMapper
                 'api_response' => null,
             )
         ),
-        'FREE'  => array(
+        'FREE'   => array(
             'shipping_group' => 'OTHER',
             'shipping_type'  => 'MANUAL',
             'shipping_infos' => array(
@@ -554,7 +566,7 @@ class FakeMapper
                 'api_response' => null,
             )
         ),
-        'FLAT' => array(
+        'FLAT'   => array(
             'shipping_group' => 'OTHER',
             'shipping_type'  => 'MANUAL',
             'shipping_infos' => array(
@@ -566,7 +578,7 @@ class FakeMapper
                 'api_response' => null,
             )
         ),
-        'USPS'  => array(
+        'USPS'   => array(
             'shipping_group' => 'USPS',
             'shipping_type'  => 'PLUGINAPI',
             'shipping_infos' => array(
@@ -578,7 +590,7 @@ class FakeMapper
                 'api_response' => null,
             )
         ),
-        'FEDEX' => array(
+        'FEDEX'  => array(
             'shipping_group' => 'FEDEX',
             'shipping_type'  => 'PLUGINAPI',
             'shipping_infos' => array(
@@ -589,7 +601,32 @@ class FakeMapper
                 'weight'       => 0,
                 'api_response' => null,
             ),
-        )
+        ),
+        'MATRIX' => array(
+            'shipping_group' => 'OTHER',
+            'shipping_type'  => 'PLUGINAPI',
+            'shipping_infos' => array(
+                'name'         => 'matrixrate_matrixrate_1',
+                'display_name' => 'Matrix (Rate1)',
+                'description'  => '',
+                'amount'       => 4.099,
+                'weight'       => 0,
+                'api_response' => null,
+            ),
+        ),
+        'SWISS'  => array(
+            'shipping_group' => 'SWISSPOST',
+            'shipping_type'  => 'MANUAL',
+            'shipping_infos' => array(
+                'name'                   => 'Schweizerische Post',
+                'display_name'           => 'Schweizerische Post',
+                'description'            => '',
+                'amount'                 => 7.95001,
+                'weight'                 => 0,
+                'api_response'           => null,
+                'internal_shipping_info' => null,
+            ),
+        ),
     );
 
     /**
@@ -661,7 +698,7 @@ class FakeMapper
             if (!empty($request['order_number'])) {
                 $fakeOrder->setOrderNumber((int)$request['order_number']);
             }
-            
+
             if (!empty($request['customer_email'])) {
                 $fakeOrder->setMail($request['customer_email']);
             }
@@ -797,11 +834,11 @@ class FakeMapper
                     'payment_group'               => $map['payment_group'],
                     'amount_items'                => '139.95',
                     'amount_shipping'             => '4.90',
-                    'amount_shop_payment'         => '5.00',
+                    'amount_shop_payment'         => '0.00',
                     'payment_tax_percent'         => '20.00',
                     'shipping_tax_percent'        => '20.00',
                     'amount_shopgate_payment'     => '0.00',
-                    'amount_complete'             => '505',
+                    'amount_complete'             => '500',
                     'currency'                    => 'USD',
                     'invoice_address'             => array(
                         'id'                  => null,
@@ -898,48 +935,73 @@ class FakeMapper
                                     array(),
                             ),
                             /*array(
-                                'item_number'          => '162',
+                                'item_number'          => '422-297',
                                 'item_number_public'   => '162',
                                 'parent_item_number'   => null,
                                 'order_item_id'        => '4399299',
                                 'quantity'             => 1,
-                                'name'                 => 'Swiss Movement Sports Watch',
+                                'name'                 => 'Essex Pencil Shirt',
                                 'unit_amount'          => '59.99',
                                 'unit_amount_with_tax' => '59.99',
                                 'tax_percent'          => '0.00',
                                 'tax_class_key'        => null,
                                 'tax_class_id'         => null,
                                 'currency'             => 'USD',
-                                'internal_order_info'  => '{"product_id":162}',
+                                'internal_order_info'  => '{"product_id":"422-297", "item_type": "simple"}',
+                                'options'              =>
+                                    array(),
+                                'inputs'               =>
+                                    array(),
+                                'attributes'           =>
+                                    array(
+                                        array(
+                                            'name'  => 'Color',
+                                            'value' => 'Charcoal'
+                                        ),
+                                        array(
+                                            'name'  => 'Occasion',
+                                            'value' => 'Career'
+                                        ),
+                                        array(
+                                            'name'  => 'Type',
+                                            'value' => 'Skirts'
+                                        ),
+                                        array(
+                                            'name'  => 'Size',
+                                            'value' => '2'
+                                        ),
+                                        array(
+                                            'name'  => 'Length',
+                                            'value' => 'Knee Length'
+                                        ),
+                                        array(
+                                            'name'  => 'Gender',
+                                            'value' => 'Female'
+                                        ),
+                                    ),
+                            ),*/
+                            /*array(
+                                'item_number'          => 'TOMTAILOR_COUPON',
+                                'item_number_public'   => 'TOMTAILOR_COUPON',
+                                'parent_item_number'   => null,
+                                'order_item_id'        => 0,
+                                'quantity'             => 1,
+                                'type'                 => ShopgateOrderItem::TYPE_SHOPGATE_COUPON,
+                                'name'                 => 'Coupon (Code: TOMTAILOR)',
+                                'unit_amount'          => '-5.00',
+                                'unit_amount_with_tax' => '0',
+                                'tax_percent'          => '0',
+                                'tax_class_key'        => null,
+                                'tax_class_id'         => null,
+                                'currency'             => 'USD',
+                                'internal_order_info'  => null,
                                 'options'              =>
                                     array(),
                                 'inputs'               =>
                                     array(),
                                 'attributes'           =>
                                     array(),
-                            ),/*
-                             /*array(
-                                 'item_number'          => 'TOMTAILOR_COUPON',
-                                 'item_number_public'   => 'TOMTAILOR_COUPON',
-                                 'parent_item_number'   => null,
-                                 'order_item_id'        => 0,
-                                 'quantity'             => 1,
-                                 'type'                 => ShopgateOrderItem::TYPE_SHOPGATE_COUPON,
-                                 'name'                 => 'Coupon (Code: TOMTAILOR)',
-                                 'unit_amount'          => '-5.00',
-                                 'unit_amount_with_tax' => '0',
-                                 'tax_percent'          => '0',
-                                 'tax_class_key'        => null,
-                                 'tax_class_id'         => null,
-                                 'currency'             => 'USD',
-                                 'internal_order_info'  => null,
-                                 'options'              =>
-                                     array(),
-                                 'inputs'               =>
-                                     array(),
-                                 'attributes'           =>
-                                     array(),
-                             ),*/
+                            ),*/
                         )
                 )
             );
