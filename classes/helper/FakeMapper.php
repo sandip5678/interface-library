@@ -834,7 +834,7 @@ class FakeMapper
                     'payment_group'               => $map['payment_group'],
                     'amount_items'                => '139.95',
                     'amount_shipping'             => '4.90',
-                    'amount_shop_payment'         => '0.00',
+                    'amount_shop_payment'         => '2.18',
                     'payment_tax_percent'         => '20.00',
                     'shipping_tax_percent'        => '20.00',
                     'amount_shopgate_payment'     => '0.00',
