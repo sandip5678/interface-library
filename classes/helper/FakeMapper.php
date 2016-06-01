@@ -535,6 +535,23 @@ class FakeMapper
                     'accarda_auth_id'       => '191348',
                 )
         ),
+        ShopgateCartBase::KLARNA_INV => array(
+            'is_paid'        => 0,
+            'payment_method' => ShopgateCartBase::KLARNA_INV,
+            'payment_group'  => 'INVOICE',
+            'customer_name'  => 'Klarna Invoice',
+            'payment_infos'  =>
+                array(
+                    'shopgate_payment_name'     => 'Rechnung (Klarna)',
+                    'pclass'                    => '-1',
+                    'pno'                       => '17111994',
+                    'eid'                       => '49145',
+                    'reservation_status'        => '1',
+                    'reservation_number'        => '2299123360',
+                    'activation_invoice_number' => '',
+                    'invoice_pdf_url'           => null,
+                )
+        )
     );
 
     /**
