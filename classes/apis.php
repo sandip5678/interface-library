@@ -528,11 +528,11 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                 "cart"                                 =>
                     array(
                         "customer_number"            => 4666725,
-                        "external_customer_number"   => '',
+                        "external_customer_number"   => '139',
                         "external_customer_id"       => '',
                         "external_customer_group"    => '',
                         "external_customer_group_id" => '',
-                        "mail"                       => 'test@tester.com', //existing customer required
+                        "mail"                       => 'test@test.com', //existing customer required
                         "payment_group"              => 'SHOPGATE',
                         "payment_method"             => 'SHOPGATE',
                         /*'tracking_get_parameters' => array(
@@ -562,7 +562,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                                     "currency"                           => 'EUR',
                                     "internal_order_info"                => '{
                                 "store_view_id":"1",
-                                "product_id":"422-297",
+                                "product_id":"554",
                                 "item_type":"simple",
                                 "exchange_rate":1}',
                                     "additional_shipping_costs_per_unit" => 0,
@@ -686,32 +686,32 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                         ),
                         "invoice_address"            => array(
                             "gender"     => 'f',
-                            "first_name" => 'Krystel',
-                            "last_name"  => 'Mbarga',
+                            "first_name" => 'Tester1',
+                            "last_name"  => 'Test1',
                             "birthday"   => '',
                             "company"    => '',
-                            "street_1"   => '7 cours de larche guedon',
+                            "street_1"   => '16 NE 19th Street\'',
                             "street_2"   => '',
-                            "city"       => 'Torcy',
-                            "zipcode"    => '77200',
-                            "country"    => 'FR',
-                            "state"      => ''
+                            "city"       => 'Bellevue',
+                            "zipcode"    => '98008',
+                            "country"    => 'US',
+                            "state"      => 'US-WA'
                         ),
                         "delivery_address"           => array(
                             "gender"     => 'f',
-                            "first_name" => 'Krystel',
-                            "last_name"  => 'Mbarga',
+                            "first_name" => 'Tester2',
+                            "last_name"  => 'Test2',
                             "birthday"   => '',
                             "company"    => '',
-                            "street_1"   => '7 cours de larche guedon',
+                            "street_1"   => '16 NE 19th Street',
                             "street_2"   => '',
-                            "city"       => 'Torcy',
-                            "zipcode"    => '77200',
-                            "country"    => 'FR',
-                            "state"      => ''
+                            "city"       => 'Bellevue',
+                            "zipcode"    => '98008',
+                            "country"    => 'US',
+                            "state"      => 'US-WA'
                         ),
                         "internal_cart_info"         => '',
-                        "currency"                   => 'EUR',
+                        "currency"                   => 'USD',
                         "amount_shipping"            => 5.00,
                         "shipping_group"             => 'OTHER',
                         "shipping_type"              => 'PLUGINAPI',
