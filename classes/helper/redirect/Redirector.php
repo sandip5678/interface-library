@@ -95,7 +95,7 @@ class Shopgate_Helper_Redirect_Redirector implements Shopgate_Helper_Redirect_Re
 	
 	public function redirect($url, $sendVary = true)
 	{
-		if ($this->settingsManager->isRedirectDisabled() && !$this->settingsManager->isMobileHeaderDisabled()) {
+		if ($this->settingsManager->isRedirectDisabled()) {
 			$this->settingsManager->setCookie();
 			
 			return;
@@ -112,12 +112,9 @@ class Shopgate_Helper_Redirect_Redirector implements Shopgate_Helper_Redirect_Re
 		header("Location: " . $url, true, 301);
 		exit;
 	}
-	
-	/**
-	 * @return bool
-	 */
-	protected function isMobile()
+
+	public function isMobile()
 	{
-		return preg_match($this->keywordManager->toRegEx(), $this->userAgent);
+		return (bool) preg_match($this->keywordManager->toRegEx(), $this->userAgent);
 	}
 }

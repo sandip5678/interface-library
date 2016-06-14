@@ -408,7 +408,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
         }
         
 		if (empty($orders)) {
-			throw new ShopgateLibraryException(ShopgateLibraryException::MERCHANT_API_INVALID_RESPONSE, '"orders" not set. Response: '.var_export($orders, true));
+			throw new ShopgateLibraryException(ShopgateLibraryException::MERCHANT_API_INVALID_RESPONSE, '"orders" not set or empty. Response: '.var_export($orders, true));
 		}
 		if (count($orders) > 1) {
 			throw new ShopgateLibraryException(ShopgateLibraryException::MERCHANT_API_INVALID_RESPONSE, 'more than one order in response. Response: '.var_export($orders, true));
@@ -444,7 +444,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		}
 		
 		if (empty($orders)) {
-			throw new ShopgateLibraryException(ShopgateLibraryException::MERCHANT_API_INVALID_RESPONSE, '"order" not set. Response: '.var_export($orders, true));
+			throw new ShopgateLibraryException(ShopgateLibraryException::MERCHANT_API_INVALID_RESPONSE, '"order" not set or empty. Response: '.var_export($orders, true));
 		}
 
 		if (count($orders) > 1) {
@@ -1952,7 +1952,7 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 		
 		// check and reorganize the data of the SMA response
 		$data = $response->getData();
-		if (empty($data['orders']) || !is_array($data['orders'])) {
+		if (!isset($data['orders']) || !is_array($data['orders'])) {
 			throw new ShopgateLibraryException(ShopgateLibraryException::MERCHANT_API_INVALID_RESPONSE, '"orders" is not set or not an array. Response: '.var_export($data, true));
 		}
 		
@@ -2043,7 +2043,7 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 		
 		// check and reorganize the data of the SMA response
 		$data = $response->getData();
-		if (empty($data['items']) || !is_array($data['items'])) {
+		if (!isset($data['items']) || !is_array($data['items'])) {
 			throw new ShopgateLibraryException(ShopgateLibraryException::MERCHANT_API_INVALID_RESPONSE, '"items" is not set or not an array. Response: '.var_export($data, true));
 		}
 		
@@ -2126,7 +2126,7 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 		
 		// check and reorganize the data of the SMA response
 		$data = $response->getData();
-		if (empty($data['categories']) || !is_array($data['categories'])) {
+		if (!isset($data['categories']) || !is_array($data['categories'])) {
 			throw new ShopgateLibraryException(ShopgateLibraryException::MERCHANT_API_INVALID_RESPONSE, '"categories" is not set or not an array. Response: '.var_export($data, true));
 		}
 		
@@ -2538,7 +2538,7 @@ abstract class ShopgatePluginApiResponse extends ShopgateObject {
 	}
 	
 	public function setData($data) {
-		$this->data = $data;
+		$this->data = $this->arrayToUtf8($data, ShopgateObject::$sourceEncodings);
 	}
 	
 	abstract public function send();
