@@ -23,6 +23,9 @@
  */
 
 require_once('AuthorizeAPI/autoload.php');
+require_once ('AuthorizeAPI/lib/shared/AuthorizeNetRequest.php');
+require_once('AuthorizeAPI/lib/shared/AuthorizeNetResponse.php');
+require_once('AuthorizeAPI/lib/AuthorizeNetAIM.php');
 
 class Authorize_Handler
 {
