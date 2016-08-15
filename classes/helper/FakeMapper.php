@@ -601,6 +601,20 @@ class FakeMapper
                 'api_response' => null,
             )
         ),
+        'UPS' => array(
+            'shipping_group' => 'UPS',
+            'shipping_type'  => 'PLUGINAPI',
+            'shipping_infos' => array(
+                'name'         => 'ups_GND',
+                'display_name' => 'Ground',
+                'description'  => '',
+                'amount'       => 12.099,
+                'amount_net'   => 11.17999,
+                'amount_gross' => 12.099,
+                'weight'       => 0,
+                'api_response' => null,
+            )
+        ),
         'USPS'   => array(
             'shipping_group' => 'USPS',
             'shipping_type'  => 'PLUGINAPI',
@@ -714,7 +728,6 @@ class FakeMapper
                 $map['payment_infos']['paypal_ipn_data'] = Zend_Json::encode($map['payment_infos']['paypal_ipn_data']);
             }
 
-            /** @var ShopgateOrder $fakeOrder */
             $fakeOrder = $this->_getFakeOrder($map);
             $fakeOrder->setItems($this->productSwitcher($fakeOrder->getItems()));
 
@@ -803,10 +816,12 @@ class FakeMapper
 
     /**
      * @param $map
-     * @return array
+     *
+     * @return ShopgateOrder
      */
     protected function _getFakeOrder($map)
     {
+
         return
             new ShopgateOrder(
                 array(
@@ -835,12 +850,20 @@ class FakeMapper
                     'external_order_id'           => '8240',
                     'external_customer_number'    => null,
                     'external_customer_id'        => isset($map['customer_id']) ? $map['customer_id'] : '147',
-                    /*'tracking_get_parameters' => array(
+                    'tracking_get_parameters' => array(
+                        array(
+                            'key'   => 'userID',
+                            'value' => '178'
+                        ),
+                        array(
+                            'key'   => 'sscid',
+                            'value' => 'test2'
+                        ),
                         array(
                             'key'   => 'account',
                             'value' => 'cfcd208495d565ef66e7dff9f98764da'
-                        )
-                    ),*/
+                        ),
+                    ),
                     'custom_fields'               => array(
                         array(
                             'label'               => 'Test Custom Field',
@@ -931,15 +954,13 @@ class FakeMapper
                                 'not_valid_message' => null,
                                 'order_index'       => null,
                                 'code'              => 'affiliate',
-                                'name'              => 'coupon $15.00, Code: affiliate-220 Affiliate Discount',
+                                'name'              => 'Affiliate Discount',
                                 'description'       => '',
-                                'amount'            => '4.00',
-                                'amount_net'        => '4.00',
-                                'amount_gross'      => '4.00',
+                                'amount'            => '13',
                                 'tax_type'          => 'auto',
                                 'currency'          => 'USD',
                                 'is_free_shipping'  => false,
-                                'internal_info'     => '{"type":"affiliate","parameter":["account","cfcd208495d565ef66e7dff9f98764da"]}'
+                                'internal_info'     => "{\"parameter\":{\"account\":\"cfcd208495d565ef66e7dff9f98764da\"}}"
                             )*/
                         ),
                     'shopgate_coupons'            =>
