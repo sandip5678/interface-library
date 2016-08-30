@@ -11,7 +11,7 @@
 ###################################################################################
 # define constants
 ###################################################################################
-define("SHOPGATE_LIBRARY_VERSION", "2.9.44");
+define("SHOPGATE_LIBRARY_VERSION", "2.9.50");
 define('SHOPGATE_LIBRARY_ENCODING' , 'UTF-8');
 define('SHOPGATE_BASE_DIR', realpath(dirname(__FILE__).'/../'));
 
@@ -215,6 +215,7 @@ class ShopgateLibraryException extends Exception {
 	
 	const REGISTER_FAILED_TO_ADD_USER = 220;
 	const REGISTER_USER_ALREADY_EXISTS = 221;
+	const REGISTER_MISSING_FIELDS = 222;
 	
 	// Cart Item Errors
 	const CART_ITEM_OUT_OF_STOCK = 300;
@@ -224,6 +225,7 @@ class ShopgateLibraryException extends Exception {
 	const CART_ITEM_REQUESTED_QUANTITY_UNDER_MINIMUM_QUANTITY = 304;
 	const CART_ITEM_REQUESTED_QUANTITY_OVER_MAXIMUM_QUANTITY = 305;
     const CART_ITEM_INVALID_PRODUCT_COMBINATION = 306;
+	const CART_ITEM_PRODUCT_NOT_ALLOWED = 307;
 
 	//Helper class exception
 	const SHOPGATE_HELPER_FUNCTION_NOT_FOUND_EXCEPTION = 310;
@@ -322,6 +324,7 @@ class ShopgateLibraryException extends Exception {
 		
 		self::REGISTER_FAILED_TO_ADD_USER => 'failed to add user',
 		self::REGISTER_USER_ALREADY_EXISTS => 'the given username already exists',
+		self::REGISTER_MISSING_FIELDS => 'data fields are missing',
 
 		// Cart Item Errors
 		self::CART_ITEM_OUT_OF_STOCK => 'product is not in stock',
@@ -331,6 +334,7 @@ class ShopgateLibraryException extends Exception {
 		self::CART_ITEM_REQUESTED_QUANTITY_UNDER_MINIMUM_QUANTITY => 'requested quantity is lower than required minimum quantity',
 		self::CART_ITEM_REQUESTED_QUANTITY_OVER_MAXIMUM_QUANTITY => 'requested quantity is higher than allowed maximum quantity',
         self::CART_ITEM_INVALID_PRODUCT_COMBINATION => 'products can not be ordered together',
+		self::CART_ITEM_PRODUCT_NOT_ALLOWED => 'product not allowed in cart constellation',
 		
 		// Authentication errors
 		self::AUTHENTICATION_FAILED => 'authentication failed',
@@ -443,6 +447,8 @@ class ShopgateLibraryException extends Exception {
 	/**
 	 * Builds the message that will be logged to the error log.
 	 *
+	 * @param bool $appendAdditionalInformation
+	 * 
 	 * @return string
 	 */
 	protected function buildLogMessage($appendAdditionalInformation = true) {
@@ -1332,45 +1338,83 @@ abstract class ShopgateObject {
 				? $string
 				: $this->convertEncoding($string, $destinationEncoding, SHOPGATE_LIBRARY_ENCODING, $useIconv);
 	}
-
+	
 	/**
-	 * Encodes the values inside an array from a given encoding to UTF-8 recursively.
+	 * Encodes the values of an array, object or string from a given encoding to UTF-8 recursively.
 	 *
-	 * @param array|string $array The array to encode.
-	 * @param string|string[] $sourceEncoding The (possible) encoding(s) of $string.
-	 * @param bool $force Set this true to enforce encoding even if the source encoding is already UTF-8.
-	 * @param bool $useIconv True to use iconv instead of mb_convert_encoding even if the mb library is present.
-	 * @return array|string $utf8Array The UTF-8 encoded array.
+	 * If the subject is an array, the values will be encoded, keys will be preserved.
+	 * If the subject is an object, all accessible properties' values will be encoded.
+	 * If the subject is a string, it will simply be encoded.
+	 * If the subject is anything else, it will be returned as is.
+	 *
+	 * @param mixed           $subject        The subject to encode
+	 * @param string|string[] $sourceEncoding The (possible) encoding(s) of $string
+	 * @param bool            $force          Set this true to enforce encoding even if the source encoding is already UTF-8
+	 * @param bool            $useIconv       True to use iconv instead of mb_convert_encoding even if the mb library is present
+	 *
+	 * @return mixed UTF-8 encoded $subject
 	 */
-	public function arrayToUtf8($array, $sourceEncoding = 'ISO-8859-15', $force = false, $useIconv = false) {
-		if (is_array($array)) {
-			$utf8Array = array();
-			foreach ($array as $key => $value) {
-				$utf8Array[$key] = $this->arrayToUtf8($value, $sourceEncoding, $force, $useIconv);
+	public function recursiveToUtf8($subject, $sourceEncoding = 'ISO-8859-15', $force = false, $useIconv = false) {
+		if (is_array($subject)) {
+			/** @var array $subject */
+			foreach ($subject as $key => $value) {
+				$subject[$key] = $this->recursiveToUtf8($value, $sourceEncoding, $force, $useIconv);
 			}
-			return $utf8Array;
+			
+			return $subject;
+		} elseif (is_object($subject)) {
+			/** @var \stdClass $subject */
+			$objectVars = get_object_vars($subject);
+			foreach ($objectVars as $property => $value) {
+				$subject->{$property} = $this->recursiveToUtf8($value, $sourceEncoding, $force, $useIconv);
+			}
+			
+			return $subject;
+		} elseif (is_string($subject)) {
+			/** @var string $subject */
+			return $this->stringToUtf8($subject, $sourceEncoding, $force, $useIconv);
 		}
-		return $this->stringToUtf8($array, $sourceEncoding, $force, $useIconv);
+		
+		return $subject;
 	}
-
+	
 	/**
-	 * Decodes the values inside an array from UTF-8 to a given encoding recursively.
+	 * Decodes the values of an array, object or string from UTF-8 to a given encoding recursively
 	 *
-	 * @param array|string $utf8Array The array to decode.
-	 * @param string $destinationEncoding The desired encoding of the return value.
-	 * @param bool $force Set this true to enforce encoding even if the destination encoding is set to UTF-8.
-	 * @param bool $useIconv True to use iconv instead of mb_convert_encoding even if the mb library is present.
-	 * @return array|string $array The UTF-8 decoded array.
+	 * If the subject is an array, the values will be decoded, keys will be preserved.
+	 * If the subject is an object, all accessible properties' values will be decoded.
+	 * If the subject is a string, it will simply be decoded.
+	 * If the subject is anything else, it will be returned as is.
+	 *
+	 * @param mixed  $subject             The subject to decode
+	 * @param string $destinationEncoding The desired encoding of the return value
+	 * @param bool   $force               Set this true to enforce encoding even if the destination encoding is set to UTF-8
+	 * @param bool   $useIconv            True to use iconv instead of mb_convert_encoding even if the mb library is present
+	 *
+	 * @return mixed UTF-8 decoded $subject
 	 */
-	public function arrayFromUtf8($utf8Array, $destinationEncoding = 'ISO-8859-15', $force = false, $useIconv = false) {
-		if (is_array($utf8Array)) {
-			$array = array();
-			foreach ($utf8Array as $key => $value) {
-				$array[$key] = $this->arrayFromUtf8($value, $destinationEncoding, $force, $useIconv);
+	public function recursiveFromUtf8($subject, $destinationEncoding = 'ISO-8859-15', $force = false, $useIconv = false) {
+		if (is_array($subject)) {
+			/** @var array $subject */
+			foreach ($subject as $key => $value) {
+				$subject[$key] = $this->recursiveFromUtf8($value, $destinationEncoding, $force, $useIconv);
 			}
-			return $array;
+			
+			return $subject;
+		} elseif (is_object($subject)) {
+			/** @var \stdClass $subject */
+			$objectVars = get_object_vars($subject);
+			foreach ($objectVars as $property => $value) {
+				$subject->{$property} = $this->recursiveFromUtf8($value, $destinationEncoding, $force, $useIconv);
+			}
+			
+			return $subject;
+		} elseif (is_string($subject)) {
+			/** @var string $subject */
+			return $this->stringFromUtf8($subject, $destinationEncoding, $force, $useIconv);
 		}
-		return $this->stringFromUtf8($utf8Array, $destinationEncoding, $force, $useIconv);
+		
+		return $subject;
 	}
 	
 	/**
@@ -1853,6 +1897,8 @@ abstract class ShopgatePlugin extends ShopgateObject {
 	}
 
 	/**
+	 * @param mixed[] $item
+	 * 
 	 * @deprecated Use ShopgatePlugin::addItemRow(), ::addCategoryRow() or ::addReviewRow().
 	 */
 	protected final function addItem($item) {
@@ -3157,6 +3203,7 @@ class ShopgateContainerUtf8Visitor implements ShopgateContainerVisitor {
 	const MODE_ENCODE = 1;
 	const MODE_DECODE = 2;
 
+	/** @var ShopgateContainer */
 	protected $firstObject;
 	protected $object;
 	protected $mode;
