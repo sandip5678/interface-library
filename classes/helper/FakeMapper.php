@@ -988,7 +988,7 @@ class FakeMapper
                                 'attributes'           =>
                                     array(),
                             ),
-                            /*array(
+                            array(
                                 'item_number'          => '422-297',
                                 'item_number_public'   => '162',
                                 'parent_item_number'   => null,
@@ -1001,7 +1001,7 @@ class FakeMapper
                                 'tax_class_key'        => null,
                                 'tax_class_id'         => null,
                                 'currency'             => 'USD',
-                                'internal_order_info'  => '{"product_id":"422-297", "item_type": "simple"}',
+                                'internal_order_info'  => '{"product_id":"297", "item_type": "simple"}',
                                 'options'              =>
                                     array(),
                                 'inputs'               =>
@@ -1033,7 +1033,7 @@ class FakeMapper
                                             'value' => 'Female'
                                         ),
                                     ),
-                            ),*/
+                            ),
                             /*array(
                                 'item_number'          => 'TOMTAILOR_COUPON',
                                 'item_number_public'   => 'TOMTAILOR_COUPON',
