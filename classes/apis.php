@@ -482,6 +482,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 	 * @see http://wiki.shopgate.com/Shopgate_Plugin_API_redeem_coupons
 	 */
 	protected function redeemCoupons() {
+        $this->params = $this->_fakeCheckCart();
 		if (!isset($this->params['cart'])) {
 			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_NO_CART);
 		}
@@ -533,8 +534,8 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                         "external_customer_group"    => '',
                         "external_customer_group_id" => '',
                         "mail"                       => 'affiliate@shopgate.com', //existing customer required
-                        "payment_group"              => 'SHOPGATE',
-                        "payment_method"             => 'SHOPGATE',
+                        "payment_group"              => 'PREPAY',
+                        "payment_method"             => 'PREPAY',
                         'tracking_get_parameters' => array(
                             array(
                                 'key'   => 'account',

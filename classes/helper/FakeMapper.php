@@ -551,6 +551,53 @@ class FakeMapper
                     'activation_invoice_number' => '',
                     'invoice_pdf_url'           => null,
                 )
+        ),
+        ShopgateCartBase::PPAL_PLUS => array(
+            'is_paid' => 0,
+            'payment_method' => ShopgateCartBase::PPAL_PLUS,
+            'payment_group'  => 'PAYPAL',
+            'customer_name' => 'PayPal Plus',
+            'payment_infos' =>
+                array(
+                    'payment_transaction_id' => '4D936081VF397150U',
+                    'token'                  => 'EC-2C431999WG1806635',
+                    'payment_id'             => 'PAY-35664540GC456724DK7VNAGI',
+                    'status'         => 'completed',
+                    'payer_id'       => 'V59R6M9JH4YQE',
+                    'payer_email'    => 's.ruedebusch@gmx.net',
+                    'receipt_id'     => '3804010768338643',
+                    'receiver_email' => 'willkommen@die-kinderschuhseite.de',
+                    'payer' => array(
+                        'payment_method' => 'paypal',
+                            'status'         => 'UNVERIFIED',
+                            'payer_info'     =>
+                                array(
+                                    'email'            => 's.ruedebusch@gmx.net',
+                                    'first_name'       => 'Sarah',
+                                    'last_name'        => 'Rüdebusch',
+                                    'payer_id'         => 'V59R6M9JH4YQE',
+                                    'shipping_address' =>
+                                        array(
+                                            'recipient_name' => 'Sarah Rüdebusch',
+                                            'line1'          => 'Pullerweg 18',
+                                            'city'           => 'Meerbusch',
+                                            'state'          => '',
+                                            'postal_code'    => '40670',
+                                            'country_code'   => 'DE',
+                                        ),
+                                    'country_code'     => 'DE',
+                                    'billing_address'  =>
+                                        array(
+                                            'line1'        => 'Pullerweg 18',
+                                            'line2'        => '',
+                                            'city'         => 'Meerbusch',
+                                            'state'        => '',
+                                            'postal_code'  => '40670',
+                                            'country_code' => 'DE',
+                                        ),
+                                ),
+                        ),
+                )
         )
     );
 
@@ -619,7 +666,7 @@ class FakeMapper
             'shipping_group' => 'USPS',
             'shipping_type'  => 'PLUGINAPI',
             'shipping_infos' => array(
-                'name'         => 'usps_1',
+                'name'         => 'usps_16',
                 'display_name' => 'Priority Mail 2-Day',
                 'description'  => '',
                 'amount'       => '6.0',
