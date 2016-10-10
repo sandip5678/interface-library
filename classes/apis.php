@@ -577,112 +577,43 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                                     "options"                            => Array(),
                                     "shopgate_cart_item_id"              => 22621889
                                 ),
-                               /*array(
-                                    "item_id"                            => 24195039,
-                                    "item_number"                        => '422-297',
-                                    "item_number_public"                 => null,
-                                    "parent_item_number"                 => '',
-                                    "quantity"                           => 1,
-                                    "unit_amount_net"                    => 2.5,
-                                    "unit_amount_with_tax"               => 3,
-                                    "unit_amount"                        => 2.5,
-                                    "name"                               => 'Swiss Movement Sports Watch',
-                                    "tax_percent"                        => 20.00,
-                                    "tax_class"                          => 241269,
-                                    "currency"                           => 'EUR',
-                                    "internal_order_info"                => '{
+                               array(
+                                   "item_id"                            => 24195039,
+                                   "item_number"                        => 400,
+                                   "item_number_public"                 => null,
+                                   "parent_item_number"                 => '',
+                                   "quantity"                           => 1,
+                                   "unit_amount_net"                    => 2.5,
+                                   "unit_amount_with_tax"               => 3,
+                                   "unit_amount"                        => 2.5,
+                                   "name"                               => 'Compact mp3 player',
+                                   "tax_percent"                        => 20.00,
+                                   "tax_class"                          => 241269,
+                                   "currency"                           => 'EUR',
+                                   "internal_order_info"                => '{
                                 "store_view_id":"1",
-                                "product_id":"422-297",
+                                "product_id":"400",
                                 "item_type":"simple",
-                                "exchange_rate":1}', //product_id that exists
-                                    "additional_shipping_costs_per_unit" => 0,
-                                    "is_free_shipping"                   => '',
-                                    "attributes"                         => Array(
-                                        array(
-                                            'name'  => 'Color',
-                                            'value' => 'Charcoal'
-                                        ),
-                                        array(
-                                            'name'  => 'Occasion',
-                                            'value' => 'Career'
-                                        ),
-                                        array(
-                                            'name'  => 'Type',
-                                            'value' => 'Skirts'
-                                        ),
-                                        array(
-                                            'name'  => 'Size',
-                                            'value' => '2'
-                                        ),
-                                        array(
-                                            'name'  => 'Length',
-                                            'value' => 'Knee Length'
-                                        ),
-                                        array(
-                                            'name'  => 'Gender',
-                                            'value' => 'Female'
-                                        ),
-                                    ),
-                                    "inputs"                             => Array(),
-                                    "options"                            => Array(
-                                        array(
-                                            'name'          => 'Color',
-                                            'value'         => 'Charcoal',
-                                            'option_number' => '92',
-                                            'value_number'  => '17',
-                                        ),
-                                        array(
-                                            'name'          => 'Size',
-                                            'value'         => '2',
-                                            'option_number' => '180',
-                                            'value_number'  => '76',
-                                        ),
-                                    ),
-                                    "shopgate_cart_item_id"              => 22621889
-                                ),*/
+                                "exchange_rate":1}',
+                                   "additional_shipping_costs_per_unit" => 0,
+                                   "is_free_shipping"                   => '',
+                                   "attributes"                         => Array(),
+                                   "inputs"                             => Array(),
+                                   "options"                            => Array(),
+                                ),
                             ),
                         "shopgate_coupons"           => array(
-                            array(
-                                'code'             => 'TEST_CODE',
-                                'name'             => 'Coupon Name',
-                                'description'      => 'Description',
-                                'order_index'      => '1',
-                                'amount_net'       => 10.00,
-                                'currency'         => 'USD',
-                                'internal_info'    => '{"coupon_id":"1"}',
-                                'is_free_shipping' => 0
-                            ),
-                            array(
-                                'code'             => 'TEST_CODE',
-                                'name'             => 'Coupon Name 2',
-                                'description'      => 'Description',
-                                'order_index'      => '1',
-                                'amount_net'       => 10.00,
-                                'currency'         => 'USD',
-                                'internal_info'    => '{"coupon_id":"2"}',
-                                'is_free_shipping' => 0
-                            ),
-                            array(
-                                'code'             => 'kittencoupon',
-                                'name'             => 'Coupon Name 2',
-                                'description'      => 'Description',
-                                'order_index'      => '1',
-                                'amount_net'       => 15.00,
-                                'currency'         => 'USD',
-                                'internal_info'    => '{"coupon_id":"3"}',
-                                'is_free_shipping' => 0
-                            )
                         ),
                         "external_coupons"           => array(array(
 							'is_valid'          => null,
 							'not_valid_message' => null,
 							'order_index'       => null,
-							'code'              => 'affiliate',
+							'code'              => 'CNDFREESHIP',
 							'name'              => 'coupon $13.00, Code: affiliate-220 Affiliate Discount',
 							'description'       => '',
-							'amount'            => '13.00',
-							'amount_net'        => '13.00',
-							'amount_gross'      => '13.00',
+							'amount'            => '',
+							'amount_net'        => '',
+							'amount_gross'      => '',
 							'tax_type'          => 'auto',
 							'currency'          => 'USD',
 							'is_free_shipping'  => false,
