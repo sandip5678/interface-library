@@ -753,7 +753,7 @@ class FakeMapper
             }
 
             //Transaction ID creators
-            if (strpos($paymentMethod, 'PAYONE') !== false) {
+            if (strpos($paymentMethod, 'PAYONE') !== false && class_exists('Mage')) {
                 $helper  = new Payone_Handler();
                 $transId = $helper->getTransactionId($paymentMethod, $map['payment_infos']);
                 if ($transId) {
@@ -772,7 +772,7 @@ class FakeMapper
              * Haha! Randomly encode this to account for different payment methods
              */
             if (isset($map['payment_infos']['paypal_ipn_data']) && (bool)rand(0, 1)) {
-                $map['payment_infos']['paypal_ipn_data'] = Zend_Json::encode($map['payment_infos']['paypal_ipn_data']);
+                $map['payment_infos']['paypal_ipn_data'] = json_encode($map['payment_infos']['paypal_ipn_data']);
             }
 
             $fakeOrder = $this->_getFakeOrder($map);
@@ -1137,8 +1137,11 @@ class FakeMapper
      */
     protected function productSwitcher($items)
     {
+        if (!class_exists('Mage')) {
+            return $items;
+        }
         /** @var ShopgateOrderItem $item */
-        $item = $items[0]; //grab first item
+        $item = $items[0];
         if ($item instanceof ShopgateOrderItem) {
             /** @var StdClass $decode */
             $decode               = json_decode($item->getInternalOrderInfo(), true);
