@@ -609,24 +609,59 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                                    "inputs"                             => Array(),
                                    "options"                            => Array(),
                                 ),
+                                array(
+                                    "item_id"                            => 24195039,
+                                    "item_number"                        => "135-49",
+                                    "item_number_public"                 => null,
+                                    "parent_item_number"                 => '',
+                                    "quantity"                           => 1,
+                                    "unit_amount_net"                    => 2.5,
+                                    "unit_amount_with_tax"               => 3,
+                                    "unit_amount"                        => 2.5,
+                                    "name"                               => 'Swiss Movement Sports Watch',
+                                    "tax_percent"                        => 20.00,
+                                    "tax_class"                          => 241269,
+                                    "currency"                           => 'EUR',
+                                    "internal_order_info"                => '{
+                                "store_view_id":"1",
+                                "product_id":"49",
+                                "item_type":"configurable",
+                                "exchange_rate":1}',
+                                    "additional_shipping_costs_per_unit" => 0,
+                                    "is_free_shipping"                   => '',
+                                    "attributes"                         => Array(
+                                        array(
+                                            "name"  => "Shoe Size",
+                                            "value" => "9"
+                                        ),
+                                        array(
+                                            "name"  => "Gender",
+                                            "value" => "Women"
+                                        )
+                                    ),
+                                    "inputs"                             => Array(),
+                                    "options"                            => Array(),
+                                    "shopgate_cart_item_id"              => 22621889
+                                )
                             ),
                         "shopgate_coupons"           => array(
                         ),
-                        "external_coupons"           => array(array(
-							'is_valid'          => null,
-							'not_valid_message' => null,
-							'order_index'       => null,
-							'code'              => 'CNDFREESHIP',
-							'name'              => 'coupon $13.00, Code: affiliate-220 Affiliate Discount',
-							'description'       => '',
-							'amount'            => '',
-							'amount_net'        => '',
-							'amount_gross'      => '',
-							'tax_type'          => 'auto',
-							'currency'          => 'USD',
-							'is_free_shipping'  => false,
-							'internal_info'     => '{"type":"affiliate","parameter":["account","123"]}' //cfcd208495d565ef66e7dff9f98764da
-						)
+                        "external_coupons"           => array(
+                            array(
+                                'is_valid'          => null,
+                                'not_valid_message' => null,
+                                'order_index'       => null,
+                                'code'              => 'CNDFREESHIP',
+                                'name'              => 'coupon $13.00, Code: affiliate-220 Affiliate Discount',
+                                'description'       => '',
+                                'amount'            => '',
+                                'amount_net'        => '',
+                                'amount_gross'      => '',
+                                'tax_type'          => 'auto',
+                                'currency'          => 'USD',
+                                'is_free_shipping'  => false,
+                                'internal_info'     => '{"type":"affiliate","parameter":["account","123"]}' //cfcd208495d565ef66e7dff9f98764da
+                            )
                         ),
                         "invoice_address"            => array(
                             "gender"     => 'f',
