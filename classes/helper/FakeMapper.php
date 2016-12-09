@@ -535,7 +535,7 @@ class FakeMapper
                     'accarda_auth_id'       => '191348',
                 )
         ),
-        ShopgateCartBase::KLARNA_INV => array(
+        ShopgateCartBase::KLARNA_INV     => array(
             'is_paid'        => 0,
             'payment_method' => ShopgateCartBase::KLARNA_INV,
             'payment_group'  => 'INVOICE',
@@ -552,51 +552,51 @@ class FakeMapper
                     'invoice_pdf_url'           => null,
                 )
         ),
-        ShopgateCartBase::PPAL_PLUS => array(
-            'is_paid' => 0,
+        ShopgateCartBase::PPAL_PLUS      => array(
+            'is_paid'        => 0,
             'payment_method' => ShopgateCartBase::PPAL_PLUS,
             'payment_group'  => 'PAYPAL',
-            'customer_name' => 'PayPal Plus',
-            'payment_infos' =>
+            'customer_name'  => 'PayPal Plus',
+            'payment_infos'  =>
                 array(
                     'payment_transaction_id' => '4D936081VF397150U',
                     'token'                  => 'EC-2C431999WG1806635',
                     'payment_id'             => 'PAY-35664540GC456724DK7VNAGI',
-                    'status'         => 'completed',
-                    'payer_id'       => 'V59R6M9JH4YQE',
-                    'payer_email'    => 's.ruedebusch@gmx.net',
-                    'receipt_id'     => '3804010768338643',
-                    'receiver_email' => 'willkommen@die-kinderschuhseite.de',
-                    'payer' => array(
+                    'status'                 => 'completed',
+                    'payer_id'               => 'V59R6M9JH4YQE',
+                    'payer_email'            => 's.ruedebusch@gmx.net',
+                    'receipt_id'             => '3804010768338643',
+                    'receiver_email'         => 'willkommen@die-kinderschuhseite.de',
+                    'payer'                  => array(
                         'payment_method' => 'paypal',
-                            'status'         => 'UNVERIFIED',
-                            'payer_info'     =>
-                                array(
-                                    'email'            => 's.ruedebusch@gmx.net',
-                                    'first_name'       => 'Sarah',
-                                    'last_name'        => 'Rüdebusch',
-                                    'payer_id'         => 'V59R6M9JH4YQE',
-                                    'shipping_address' =>
-                                        array(
-                                            'recipient_name' => 'Sarah Rüdebusch',
-                                            'line1'          => 'Pullerweg 18',
-                                            'city'           => 'Meerbusch',
-                                            'state'          => '',
-                                            'postal_code'    => '40670',
-                                            'country_code'   => 'DE',
-                                        ),
-                                    'country_code'     => 'DE',
-                                    'billing_address'  =>
-                                        array(
-                                            'line1'        => 'Pullerweg 18',
-                                            'line2'        => '',
-                                            'city'         => 'Meerbusch',
-                                            'state'        => '',
-                                            'postal_code'  => '40670',
-                                            'country_code' => 'DE',
-                                        ),
-                                ),
-                        ),
+                        'status'         => 'UNVERIFIED',
+                        'payer_info'     =>
+                            array(
+                                'email'            => 's.ruedebusch@gmx.net',
+                                'first_name'       => 'Sarah',
+                                'last_name'        => 'Rüdebusch',
+                                'payer_id'         => 'V59R6M9JH4YQE',
+                                'shipping_address' =>
+                                    array(
+                                        'recipient_name' => 'Sarah Rüdebusch',
+                                        'line1'          => 'Pullerweg 18',
+                                        'city'           => 'Meerbusch',
+                                        'state'          => '',
+                                        'postal_code'    => '40670',
+                                        'country_code'   => 'DE',
+                                    ),
+                                'country_code'     => 'DE',
+                                'billing_address'  =>
+                                    array(
+                                        'line1'        => 'Pullerweg 18',
+                                        'line2'        => '',
+                                        'city'         => 'Meerbusch',
+                                        'state'        => '',
+                                        'postal_code'  => '40670',
+                                        'country_code' => 'DE',
+                                    ),
+                            ),
+                    ),
                 )
         )
     );
@@ -648,7 +648,7 @@ class FakeMapper
                 'api_response' => null,
             )
         ),
-        'UPS' => array(
+        'UPS'    => array(
             'shipping_group' => 'UPS',
             'shipping_type'  => 'PLUGINAPI',
             'shipping_infos' => array(
@@ -723,6 +723,7 @@ class FakeMapper
 
     /**
      * @param $request
+     *
      * @return array
      * @throws Exception
      */
@@ -794,6 +795,14 @@ class FakeMapper
                 $fakeOrder->setMail($request['customer_email']);
             }
 
+            $addressData = $this->getAddress($request['address_country']);
+            $delivery    = $fakeOrder->getDeliveryAddress()->toArray();
+            $delivery    = array_merge($delivery, $addressData);
+            $fakeOrder->setDeliveryAddress($delivery);
+            $invoice  = $fakeOrder->getInvoiceAddress()->toArray();
+            $invoice = array_merge($invoice, $addressData);
+            $fakeOrder->setInvoiceAddress($invoice);
+
             return array($fakeOrder);
         }
         throw new Exception('Payment method provided was empty');
@@ -805,6 +814,7 @@ class FakeMapper
      *
      * @param     $map
      * @param int $paid
+     *
      * @return bool
      */
     protected function isPaidFlip(&$map, $paid = 0)
@@ -858,6 +868,7 @@ class FakeMapper
         }
 
         $map['payment_infos'] = $infos;
+
         return $flag;
     }
 
@@ -897,7 +908,7 @@ class FakeMapper
                     'external_order_id'           => '8240',
                     'external_customer_number'    => null,
                     'external_customer_id'        => isset($map['customer_id']) ? $map['customer_id'] : '147',
-                    'tracking_get_parameters' => array(
+                    'tracking_get_parameters'     => array(
                         array(
                             'key'   => 'userID',
                             'value' => '178'
@@ -983,7 +994,7 @@ class FakeMapper
                         'zipcode'             => '85284',
                         'city'                => 'Tempe',
                         'country'             => 'US',
-                        'state'               => 'AZ',
+                        'state'               => 'US-AZ',
                         'phone'               => null,
                         'mobile'              => null,
                         'mail'                => null,
@@ -1125,6 +1136,7 @@ class FakeMapper
                 $calls[] = $this->_getFakeOrder($map);
             }
         }
+
         return $calls;
     }
 
@@ -1133,6 +1145,7 @@ class FakeMapper
      * based on magento version
      *
      * @param $items array
+     *
      * @return array
      */
     protected function productSwitcher($items)
@@ -1149,6 +1162,7 @@ class FakeMapper
             $item->setInternalOrderInfo(json_encode($decode));
             $items[0] = $item;
         }
+
         return $items;
     }
 
@@ -1165,6 +1179,33 @@ class FakeMapper
         } elseif ($helper->getIsMagentoVersionLower('1.9.0.0')) {
             return '16';
         }
+
         return '554';
+    }
+
+    /**
+     * @param null $type - "DE" or "US"
+     *
+     * @return array
+     */
+    protected function getAddress($type = 'US')
+    {
+        if ($type === 'DE') {
+            return array(
+                'street_1' => 'Zevener Straße 8',
+                'zipcode'  => '27404',
+                'city'     => 'Frankenbostel',
+                'country'  => 'DE',
+                'state'    => null,
+            );
+        }
+
+        return array(
+            'street_1' => '303 W Elliot Rd',
+            'zipcode'  => '85284',
+            'city'     => 'Tempe',
+            'country'  => 'US',
+            'state'    => 'US-AZ',
+        );
     }
 }
