@@ -27,27 +27,28 @@
 class Payone_Handler
 {
     /**
-     * @param $paymentMethod
+     * @param string $paymentMethod
+     *
      * @return string
      */
     protected function _getType($paymentMethod)
     {
         switch ($paymentMethod) {
-            case 'PAYONE_CC':
+            case ShopgateOrder::PAYONE_CC:
                 return Payone_Enum_ClearingType::CREDITCARD;
-            case 'PAYONE_PP':
+            case ShopgateOrder::PAYONE_PP:
                 return Payone_Enum_ClearingType::WALLET;
-            case 'PAYONE_DBT':
+            case ShopgateOrder::PAYONE_DBT:
                 return Payone_Enum_ClearingType::DEBITPAYMENT;
-            case 'PAYONE_SUE':
-            case 'PAYONE_IDL':
-            case 'PAYONE_GP':
+            case ShopgateOrder::PAYONE_SUE:
+            case ShopgateOrder::PAYONE_IDL:
+            case ShopgateOrder::PAYONE_GP:
                 return Payone_Enum_ClearingType::ONLINEBANKTRANSFER;
-            case 'PAYONE_PRP':
+            case ShopgateOrder::PAYONE_PRP:
                 return Payone_Enum_ClearingType::ADVANCEPAYMENT;
-            case 'PAYONE_KLV':
+            case ShopgateOrder::PAYONE_KLV:
                 return Payone_Enum_ClearingType::FINANCING;
-            case 'PAYONE_INV':
+            case ShopgateOrder::PAYONE_INV:
             default:
                 return Payone_Enum_ClearingType::INVOICE;
         }
@@ -55,6 +56,25 @@ class Payone_Handler
 
     /**
      * @param $paymentMethod
+     *
+     * @return string
+     */
+    public function getBankTransferType($paymentMethod)
+    {
+        switch ($paymentMethod) {
+            case ShopgateOrder::PAYONE_GP:
+                return Payone_Api_Enum_OnlinebanktransferType::GIROPAY; //DE
+            case ShopgateOrder::PAYONE_IDL:
+                return Payone_Api_Enum_OnlinebanktransferType::IDEAL; //NL
+            case ShopgateOrder::PAYONE_SUE:
+            default:
+                return Payone_Api_Enum_OnlinebanktransferType::INSTANT_MONEY_TRANSFER; //DE, AT, CH, NL
+        }
+    }
+
+    /**
+     * @param $paymentMethod
+     *
      * @return int
      */
     public function getTransactionId($paymentMethod, $paymentInfo)
@@ -99,14 +119,23 @@ class Payone_Handler
         $request->setIntegratorVersion('1.9.1.1');
         $request->setPersonalData($personalData);
         $request->setDeliveryData($deliveryData);
-        
-        if($clearingType === Payone_Enum_ClearingType::DEBITPAYMENT){
+
+        if ($clearingType === Payone_Enum_ClearingType::DEBITPAYMENT) {
             $bankData = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_DebitPayment();
             $bankData->setBankcountry('DE');
             $bankData->setBankaccount($paymentInfo['bank_account']['bank_account_number']);
             $bankData->setBankcode($paymentInfo['bank_account']['bank_code']);
             //$bankData->setBic($paymentInfo['bank_account']['bic']); //not supported in v3.1.6
             //$bankData->setIban($paymentInfo['bank_account']['iban']);
+            $request->setPayment($bankData);
+        } elseif ($clearingType === Payone_Enum_ClearingType::ONLINEBANKTRANSFER) {
+            $bankData = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_OnlineBankTransfer();
+            $bankData->setBankcountry('DE');
+            $bankData->setOnlinebanktransfertype($this->getBankTransferType($paymentMethod));
+            $bankData->setIban($paymentInfo['bank_account']['iban']);
+            $bankData->setBic($paymentInfo['bank_account']['bic']);
+            $bankData->setSuccessurl(Mage::helper('payone_core/url')->getSuccessUrl());
+            $bankData->setErrorurl(Mage::helper('payone_core/url')->getErrorUrl());
             $request->setPayment($bankData);
         }
 
