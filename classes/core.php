@@ -24,7 +24,7 @@
 ###################################################################################
 # define constants
 ###################################################################################
-define("SHOPGATE_LIBRARY_VERSION", "2.9.53");
+define("SHOPGATE_LIBRARY_VERSION", "2.9.60");
 define('SHOPGATE_LIBRARY_ENCODING' , 'UTF-8');
 define('SHOPGATE_BASE_DIR', realpath(dirname(__FILE__).'/../'));
 
@@ -239,6 +239,7 @@ class ShopgateLibraryException extends Exception {
 	const CART_ITEM_REQUESTED_QUANTITY_OVER_MAXIMUM_QUANTITY = 305;
     const CART_ITEM_INVALID_PRODUCT_COMBINATION = 306;
 	const CART_ITEM_PRODUCT_NOT_ALLOWED = 307;
+	const CART_ITEM_SILENT_UPDATE = 308;
 
 	//Helper class exception
 	const SHOPGATE_HELPER_FUNCTION_NOT_FOUND_EXCEPTION = 310;
@@ -348,6 +349,7 @@ class ShopgateLibraryException extends Exception {
 		self::CART_ITEM_REQUESTED_QUANTITY_OVER_MAXIMUM_QUANTITY => 'requested quantity is higher than allowed maximum quantity',
         self::CART_ITEM_INVALID_PRODUCT_COMBINATION => 'products can not be ordered together',
 		self::CART_ITEM_PRODUCT_NOT_ALLOWED => 'product not allowed in cart constellation',
+		self::CART_ITEM_SILENT_UPDATE => '',
 
 		// Authentication errors
 		self::AUTHENTICATION_FAILED => 'authentication failed',
@@ -403,16 +405,6 @@ class ShopgateLibraryException extends Exception {
 			parent::__construct($message, $code, $previous);
 		} else {
 			parent::__construct($message, $code);
-		}
-
-		// Log the error
-		$logMessage = $this->buildLogMessage($appendAdditionalInformationToLog);
-		if (empty($writeLog)) {
-			$this->message .= ' (logging disabled for this message)';
-		} else {
-			if (ShopgateLogger::getInstance()->log($code.' - '.$logMessage) === false) {
-				$this->message .= ' (unable to log)';
-			}
 		}
 	}
 
@@ -598,351 +590,6 @@ class ShopgateMerchantApiException extends Exception {
 }
 
 /**
- * Global class (Singleton) to manage log files.
- *
- * @author Shopgate GmbH, 35510 Butzbach, DE
- */
-class ShopgateLogger {
-	const LOGTYPE_ACCESS = 'access';
-	const LOGTYPE_REQUEST = 'request';
-	const LOGTYPE_ERROR = 'error';
-	const LOGTYPE_DEBUG = 'debug';
-
-	const OBFUSCATION_STRING = 'XXXXXXXX';
-	const REMOVED_STRING = '<removed>';
-
-	/**
-	 * @var bool
-	 */
-	private $debug;
-
-	/**
-	 * @var string
-	 */
-	private $memoryAnalyserLoggingSizeUnit;
-
-	/**
-	 * @var string[] Names of the fields that should be obfuscated on logging.
-	 */
-	private $obfuscationFields;
-
-	/**
-	 * @var string Names of the fields that should be removed from logging.
-	 */
-	private $removeFields;
-
-	/**
-	 * @var mixed[]
-	 */
-	private $files = array(
-			self::LOGTYPE_ACCESS => array('path' => '', 'handle' => null, 'mode' => 'a+'),
-			self::LOGTYPE_REQUEST => array('path' => '', 'handle' => null, 'mode' => 'a+'),
-			self::LOGTYPE_ERROR => array('path' => '', 'handle' => null, 'mode' => 'a+'),
-			self::LOGTYPE_DEBUG => array('path' => '', 'handle' => null, 'mode' => 'w+'),
-	);
-
-	/**
-	 * @var ShopgateLogger
-	 */
-	private static $singleton;
-
-	private function __construct() {
-		$this->debug = false;
-		$this->memoryAnalyserLoggingSizeUnit = 'MB';
-		$this->obfuscationFields = array('pass');
-		$this->removeFields = array('cart');
-	}
-
-
-	/**
-	 * @param string $accessLogPath
-	 * @param string $requestLogPath
-	 * @param string $errorLogPath
-	 * @param string $debugLogPath
-	 * @return ShopgateLogger
-	 */
-	public static function getInstance($accessLogPath = null, $requestLogPath = null, $errorLogPath = null, $debugLogPath = null) {
-		if (empty(self::$singleton)) {
-			self::$singleton = new self();
-
-			// fall back to default log paths if none are specified
-			if (empty($accessLogPath))  $accessLogPath  = SHOPGATE_BASE_DIR.DS.'temp'.DS.'logs'.DS.ShopgateConfigInterface::SHOPGATE_FILE_PREFIX.'access.log';
-			if (empty($requestLogPath)) $requestLogPath = SHOPGATE_BASE_DIR.DS.'temp'.DS.'logs'.DS.ShopgateConfigInterface::SHOPGATE_FILE_PREFIX.'request.log';
-			if (empty($errorLogPath))   $errorLogPath   = SHOPGATE_BASE_DIR.DS.'temp'.DS.'logs'.DS.ShopgateConfigInterface::SHOPGATE_FILE_PREFIX.'error.log';
-			if (empty($debugLogPath))   $debugLogPath   = SHOPGATE_BASE_DIR.DS.'temp'.DS.'logs'.DS.ShopgateConfigInterface::SHOPGATE_FILE_PREFIX.'debug.log';
-		}
-
-		// set log file paths if requested
-		self::$singleton->setLogFilePaths($accessLogPath, $requestLogPath, $errorLogPath, $debugLogPath);
-
-		return self::$singleton;
-	}
-
-	/**
-	 * Sets the paths to the log files.
-	 *
-	 * @param string $accessLogPath
-	 * @param string $requestLogPath
-	 * @param string $errorLogPath
-	 * @param string $debugLogPath
-	 */
-	public function setLogFilePaths($accessLogPath, $requestLogPath, $errorLogPath, $debugLogPath) {
-		if (!empty($accessLogPath)) {
-			$this->files[self::LOGTYPE_ACCESS]['path'] = $accessLogPath;
-		}
-
-		if (!empty($requestLogPath)) {
-			$this->files[self::LOGTYPE_REQUEST]['path'] = $requestLogPath;
-		}
-
-		if (!empty($errorLogPath)) {
-			$this->files[self::LOGTYPE_ERROR]['path'] = $errorLogPath;
-		}
-
-		if (!empty($debugLogPath)) {
-			$this->files[self::LOGTYPE_DEBUG]['path'] = $debugLogPath;
-		}
-	}
-
-	/**
-	 * Enables logging messages to debug log file.
-	 */
-	public function enableDebug() {
-		$this->debug = true;
-	}
-
-	/**
-	 * Disables logging messages to debug log file.
-	 */
-	public function disableDebug() {
-		$this->debug = false;
-	}
-
-	/**
-	 * @return true if logging messages to debug log file is enabled, false otherwise.
-	 */
-	public function isDebugEnabled() {
-		return $this->debug;
-	}
-
-	/**
-	 * Sets the unit in which the memory usage logger outputs its values in
-	 * @param string $sizeUnit ('MB', 'BYTES', 'GB', 'KB', ...)
-	 */
-	public function setMemoryAnalyserLoggingSizeUnit($sizeUnit) {
-		switch(strtoupper(trim($sizeUnit))) {
-			case 'GB':
-			case 'GIGABYTE':
-			case 'GIGABYTES':
-				$this->memoryAnalyserLoggingSizeUnit = 'GB';
-				break;
-			case 'MB':
-			case 'MEGABYTE':
-			case 'MEGABYTES':
-				$this->memoryAnalyserLoggingSizeUnit = 'MB';
-				break;
-			case 'KB':
-			case 'KILOBYTE':
-			case 'KILOBYTES':
-				$this->memoryAnalyserLoggingSizeUnit = 'KB';
-				break;
-// 			case 'BYTES':
-// 			case 'BYTE':
-			default:
-				$this->memoryAnalyserLoggingSizeUnit = 'BYTES';
-				break;
-		}
-	}
-
-	/**
-	 * returns the unit in which the memory usage logger outputs its values in
-	 * @return string
-	 */
-	public function getMemoryAnalyserLoggingSizeUnit() {
-		return $this->memoryAnalyserLoggingSizeUnit;
-	}
-
-	/**
-	 * Logs a message to the according log file.
-	 *
-	 * This produces a log entry of the form<br />
-	 * <br />
-	 * [date] [time]: [message]\n<br />
-	 * <br />
-	 * to the selected log file. If an unknown log type is passed the message will be logged to the error log file.<br />
-	 * <br />
-	 * Logging to LOGTYPE_DEBUG only is done after $this->enableDebug() has been called and $this->disableDebug() has not
-	 * been called after that. The debug log file will be truncated on opening by default. To prevent this call
-	 * $this->keepDebugLog(true).
-	 *
-	 * @param string $msg The error message.
-	 * @param string $type The log type, that would be one of the ShopgateLogger::LOGTYPE_* constants.
-	 * @return bool True on success, false on error.
-	 */
-	public function log($msg, $type = self::LOGTYPE_ERROR) {
-		// build log message
-		$msg = gmdate('d-m-Y H:i:s: ').$msg."\n";
-
-		// determine log file type and append message
-		switch (strtolower($type)) {
-			// write to error log if type is unknown
-			default: $type = self::LOGTYPE_ERROR;
-
-			// allowed types:
-			case self::LOGTYPE_ERROR:
-			case self::LOGTYPE_ACCESS:
-			case self::LOGTYPE_REQUEST:
-			case self::LOGTYPE_DEBUG:
-		}
-
-		// if debug logging is requested but not activated, simply return
-		if (($type === self::LOGTYPE_DEBUG) && !$this->debug) {
-			return true;
-		}
-
-		// open log files if necessary
-		if (!$this->openLogFileHandle($type)) {
-			return false;
-		}
-
-
-		// try to log
-		$success = false;
-		if (fwrite($this->files[$type]['handle'], $msg) !== false) {
-			$success = true;
-		}
-
-		return $success;
-	}
-
-	/**
-	 * Set the file handler mode to a+ (keep) or to w+ (reverse) the debug log file
-	 *
-	 * @param bool $keep
-	 */
-	public function keepDebugLog($keep) {
-		if ($keep)
-			$this->files[self::LOGTYPE_DEBUG]["mode"]  = "a+";
-		else
-			$this->files[self::LOGTYPE_DEBUG]["mode"]  = "w+";
-	}
-
-	/**
-	 * Returns the requested number of lines of the requested log file's end.
-	 *
-	 * @param string $type The log file to be read
-	 * @param int $lines Number of lines to return
-	 * @return string The requested log file content
-	 * @throws ShopgateLibraryException
-	 * @see http://tekkie.flashbit.net/php/tail-functionality-in-php
-	 */
-	public function tail($type = self::LOGTYPE_ERROR, $lines = 20) {
-		if (!isset($this->files[$type])) {
-			throw new ShopgateLibraryException(ShopgateLibraryException::PLUGIN_API_UNKNOWN_LOGTYPE, 'Type: '.$type);
-		}
-
-		if (!$this->openLogFileHandle($type)) {
-			throw new ShopgateLibraryException(ShopgateLibraryException::INIT_LOGFILE_OPEN_ERROR, 'Type: '.$type);
-		}
-
-		if (empty($lines)) {
-			$lines = 20;
-		}
-
-		$handle = $this->files[$type]['handle'];
-		$lineCounter = $lines;
-		$pos = -2;
-		$beginning = false;
-		$text = '';
-
-		while ($lineCounter > 0) {
-			$t = '';
-			while ($t !== "\n") {
-				if (@fseek($handle, $pos, SEEK_END) == -1) {
-					$beginning = true;
-					break;
-				}
-				$t = @fgetc($handle);
-				$pos--;
-			}
-
-			$lineCounter--;
-			if ($beginning) @rewind($handle);
-			$text = @fgets($handle).$text;
-			if ($beginning) break;
-		}
-
-		return $text;
-	}
-
-	/**
-	 * Adds field names to the list of fields that should be obfuscated in the logs.
-	 *
-	 * @param string[] $fieldNames
-	 */
-	public function addObfuscationFields(array $fieldNames) {
-		$this->obfuscationFields = array_merge($fieldNames, $this->obfuscationFields);
-	}
-
-	/**
-	 * Adds field names to the list of fields that should be removed from the logs.
-	 *
-	 * @param string[] $fieldNames
-	 */
-	public function addRemoveFields(array $fieldNames) {
-		$this->removeFields = array_merge($fieldNames, $this->removeFields);
-	}
-
-	/**
-	 * Function to prepare the parameters of an API request for logging.
-	 *
-	 * Strips out critical request data like the password of a get_customer request.
-	 *
-	 * @param mixed[] $data The incoming request's parameters.
-	 * @return string The cleaned parameters as string ready to log.
-	 */
-	public function cleanParamsForLog($data) {
-		foreach ($data as $key => &$value) {
-			if (in_array($key, $this->obfuscationFields)) {
-				$value = self::OBFUSCATION_STRING;
-			}
-
-			if (in_array($key, $this->removeFields)) {
-				$value = self::REMOVED_STRING;
-			}
-		}
-
-		return print_r($data, true);
-	}
-
-	/**
-	 * Opens log file handles for the requested log type if necessary.
-	 *
-	 * Already opened file handles will not be opened again.
-	 *
-	 * @param string $type The log type, that would be one of the ShopgateLogger::LOGTYPE_* constants.
-	 * @return bool true if opening succeeds or the handle is already open; false on error.
-	 */
-	protected function openLogFileHandle($type) {
-		// don't open file handle if already open
-		if (!empty($this->files[$type]['handle'])) {
-			return true;
-		}
-
-		// set the file handle
-		$this->files[$type]['handle'] = @fopen($this->files[$type]['path'], $this->files[$type]['mode']);
-
-		// if log files are not writeable continue silently to the next handle
-		// TODO: This seems a bit too silent... How could we get notice of the error?
-		if ($this->files[$type]['handle'] === false) {
-			return false;
-		}
-
-		return true;
-	}
-}
-
-/**
  * Builds the Shopgate Library object graphs for different purposes.
  *
  * @author Shopgate GmbH, 35510 Butzbach, DE
@@ -952,6 +599,9 @@ class ShopgateBuilder {
 	 * @var ShopgateConfigInterface
 	 */
 	protected $config;
+    
+    /** @var Shopgate_Helper_Logging_Strategy_LoggingInterface */
+    protected $logging;
 
 	/**
 	 * Loads configuration and initializes the ShopgateLogger class.
@@ -967,7 +617,97 @@ class ShopgateBuilder {
 
 		// set up logger
 		ShopgateLogger::getInstance($this->config->getAccessLogPath(), $this->config->getRequestLogPath(), $this->config->getErrorLogPath(), $this->config->getDebugLogPath());
+        
+        // set up logging strategy
+        /** @noinspection PhpDeprecationInspection */
+        $this->logging  = ShopgateLogger::getInstance()->getLoggingStrategy();
+        
+        // set error reporting
+        $errorReporting = $this->determineErrorReporting($_REQUEST);
+        $this->setErrorReporting($errorReporting);
+        
+        // enable debug logging if requested
+        if (!empty($_REQUEST['debug_log'])) {
+            $this->enableDebug(true);
+        }
+
+        // set custom error and exception handlers if requested
+        if (!empty($_REQUEST['use_errorhandler'])) {
+            $this->enableErrorHandler($errorReporting);
+        }
+        
+        // register shutdown function if requested
+        if (!empty($_REQUEST['use_shutdown_handler'])) {
+            $this->enableShutdownFunction();
+        }
+        
+        // set memory logging size unit; default to MB
+        $this->setMemoryLoggingSizeUnit(isset($_REQUEST['memory_logging_unit'])
+            ? $_REQUEST['memory_logging_unit']
+            : 'MB'
+        );
 	}
+    
+	public function enableErrorHandler($errorReporting = 32767)
+    {
+        set_error_handler(
+            array(
+                new Shopgate_Helper_Error_Handling_ErrorHandler($this->buildStackTraceGenerator(), $this->logging),
+                'handle',
+            ),
+            $errorReporting
+        );
+        
+        set_exception_handler(array(
+            new Shopgate_Helper_Error_Handling_ExceptionHandler($this->buildStackTraceGenerator(), $this->logging),
+            'handle'
+        ));
+        
+        $logFileHandler = @fopen($this->config->getErrorLogPath(), 'a');
+        @fclose($logFileHandler);
+        @chmod($this->config->getErrorLogPath(), 0777);
+        @chmod($this->config->getErrorLogPath(), 0755);
+        @error_reporting(E_ALL ^ E_DEPRECATED);
+        @ini_set('log_errors', 1);
+        @ini_set('error_log', $this->config->getErrorLogPath());
+        @ini_set('ignore_repeated_errors', 1);
+        @ini_set('html_errors', 0);
+    }
+    
+    public function enableShutdownFunction()
+    {
+        register_shutdown_function(array(
+            new Shopgate_Helper_Error_Handling_ShutdownHandler(
+                $this->logging,
+                new Shopgate_Helper_Error_Handling_Shutdown_Handler_LastErrorProvider()
+            ),
+            'handle'
+        ));
+    }
+    
+    public function enableDebug($keepDebugLog)
+    {
+        // todo call to $this->logging once ShopgateLogger has been removed
+        
+        /** @noinspection PhpDeprecationInspection */
+        ShopgateLogger::getInstance()->enableDebug();
+    
+        /** @noinspection PhpDeprecationInspection */
+        ShopgateLogger::getInstance()->keepDebugLog($keepDebugLog);
+    }
+    
+    public function setErrorReporting($errorReporting = 0)
+    {
+        error_reporting($errorReporting);
+        ini_set('display_errors', (version_compare(PHP_VERSION, '5.2.4', '>=')) ? 'stdout' : true);
+    }
+    
+    public function setMemoryLoggingSizeUnit($unit = 'MB')
+    {
+        // todo call to $this->logging once ShopgateLogger has been removed
+        /** @noinspection PhpDeprecationInspection */
+        ShopgateLogger::getInstance()->setMemoryAnalyserLoggingSizeUnit($unit);
+    }
 
 	/**
 	 * Builds the Shopgate Library object graph for a given ShopgatePlugin object.
@@ -1002,7 +742,7 @@ class ShopgateBuilder {
 		}
 		// -> PluginAPI auth service (currently the plugin API supports only one auth service)
 		$spaAuthService = new ShopgateAuthenticationServiceShopgate($this->config->getCustomerNumber(), $this->config->getApikey());
-		$pluginApi = new ShopgatePluginApi($this->config, $spaAuthService, $merchantApi, $plugin);
+		$pluginApi = new ShopgatePluginApi($this->config, $spaAuthService, $merchantApi, $plugin, null, $this->buildStackTraceGenerator(), $this->logging);
 
 		if ($this->config->getExportConvertEncoding()) {
 			array_splice(ShopgateObject::$sourceEncodings, 1, 0, $this->config->getEncoding());
@@ -1047,6 +787,16 @@ class ShopgateBuilder {
 		$plugin->setPluginApi($pluginApi);
 		$plugin->setBuffer($fileBuffer);
 	}
+    
+    /**
+     * @return Shopgate_Helper_Logging_Stack_Trace_GeneratorDefault
+     */
+	public function buildStackTraceGenerator() {
+        return new Shopgate_Helper_Logging_Stack_Trace_GeneratorDefault(
+            ShopgateLogger::getInstance()->getObfuscator(),
+            new Shopgate_Helper_Logging_Stack_Trace_NamedParameterProviderReflection()
+        );
+    }
 
 	/**
 	 * Builds the Shopgate Library object graph for ShopgateMerchantApi and returns the instance.
@@ -1228,6 +978,25 @@ class ShopgateBuilder {
 
 		return new Shopgate_Helper_Redirect_Type_Http($redirector);
 	}
+    
+    /**
+     * @param array $request The request parameters.
+     *
+     * @return int
+     */
+    private function determineErrorReporting($request)
+    {
+        // determine desired error reporting (default to 0)
+        $errorReporting = (isset($request['error_reporting'])) ? $request['error_reporting'] : 0;
+        
+        // determine error reporting for the current stage (custom, pg => E_ALL; the previously requested otherwise)
+        $serverTypesAdvancedErrorLogging = array('custom', 'pg');
+        $errorReporting                  = (isset($serverTypesAdvancedErrorLogging[$this->config->getServer()]))
+            ? 32767
+            : $errorReporting;
+        
+        return $errorReporting;
+    }
 }
 
 /**
@@ -2847,7 +2616,7 @@ abstract class ShopgatePlugin extends ShopgateObject {
 	 *
 	 * @see http://developer.shopgate.com/plugin_api/system_information/clear_cache
 	 */
-	protected function clearCache() {
+    public function clearCache() {
 		return array();
 	}
 }
@@ -3265,6 +3034,7 @@ interface ShopgateContainerVisitor {
 	public function visitCustomer(ShopgateCustomer $c);
 	public function visitAddress(ShopgateAddress $a);
 	public function visitCart(ShopgateCart $c);
+    public function visitClient(ShopgateClient $c);
 	public function visitOrder(ShopgateOrder $o);
 	public function visitExternalOrder(ShopgateExternalOrder $o);
 	public function visitExternalOrderTax(ShopgateExternalOrderTax $t);
@@ -3431,6 +3201,18 @@ class ShopgateContainerUtf8Visitor implements ShopgateContainerVisitor {
 			$this->object = null;
 		}
 	}
+
+    public function visitClient(ShopgateClient $c) {
+        $properties = $c->buildProperties();
+        $this->iterateSimpleProperties($properties);
+
+        // create new object with utf-8 en- / decoded data
+        try {
+            $this->object = new ShopgateClient($properties);
+        } catch (ShopgateLibraryException $e) {
+            $this->object = null;
+        }
+    }
 
 	public function visitOrder(ShopgateOrder $o) {
 		// get properties
@@ -3977,6 +3759,11 @@ class ShopgateContainerToArrayVisitor implements ShopgateContainerVisitor {
 
 		$this->array = $properties;
 	}
+
+    public function visitClient(ShopgateClient $c) {
+        // get properties and iterate (no complex types in ShopgateClient objects)
+        $this->array = $this->iterateSimpleProperties($c->buildProperties());
+    }
 
 	public function visitOrder(ShopgateOrder $o) {
 		// get properties
