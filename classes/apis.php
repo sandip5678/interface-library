@@ -69,19 +69,33 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 	 * @var string The trace ID of the incoming request.
 	 */
 	protected $trace_id;
-	
-	public function __construct(
+    
+    /**
+     * @var Shopgate_Helper_Logging_Stack_Trace_GeneratorInterface
+     */
+    protected $stackTraceGenerator;
+    
+    /**
+     * @var Shopgate_Helper_Logging_Strategy_LoggingInterface
+     */
+    protected $logging;
+    
+    public function __construct(
 			ShopgateConfigInterface $config,
 			ShopgateAuthenticationServiceInterface $authService,
 			ShopgateMerchantApiInterface $merchantApi,
 			ShopgatePlugin $plugin,
-			ShopgatePluginApiResponse $response = null
+			ShopgatePluginApiResponse $response = null,
+			Shopgate_Helper_Logging_Stack_Trace_GeneratorInterface $stackTraceGenerator = null,
+			Shopgate_Helper_Logging_Strategy_LoggingInterface $logging = null
 	) {
 		$this->config = $config;
 		$this->authService = $authService;
 		$this->merchantApi = $merchantApi;
 		$this->plugin = $plugin;
 		$this->response = $response;
+		$this->stackTraceGenerator = $stackTraceGenerator;
+		$this->logging = $logging;
 		$this->responseData = array();
 		$this->preventResponseOutput = false;
 		
@@ -139,7 +153,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		
 		// log incoming request
 		$this->log(
-			'process ID: '. $processId . ' parameters: ' 
+			'process ID: '. $processId . ' parameters: '
 			. ShopgateLogger::getInstance()->cleanParamsForLog($data), ShopgateLogger::LOGTYPE_ACCESS
 		);
 		
@@ -154,42 +168,6 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 		try {
 			if (!in_array($this->params['action'], $this->authlessActionWhitelist)) {
 				$this->authService->checkAuthentication();
-			}
-			
-			// set error handler to Shopgate's handler if requested
-			if (!empty($this->params['use_errorhandler'])) {
-				set_error_handler('ShopgateErrorHandler');
-				$this->setEnablePrintErrorsToLog($this->config->getErrorLogPath());
-			}
-			
-			if (!empty($this->params['use_shutdown_handler'])) {
-				register_shutdown_function('ShopgateShutdownHandler');
-			}
-			
-			// enable debugging if requested
-			if (!empty($this->params['debug_log'])) {
-				ShopgateLogger::getInstance()->enableDebug();
-				ShopgateLogger::getInstance()->keepDebugLog(!empty($this->params['keep_debug_log']));
-			}
-			
-			// enable error reporting if requested or running on development environment
-			if (
-				!empty($this->params['error_reporting'])
-				|| in_array($this->config->getServer(), array('custom', 'pg'))
-			) {
-				if (!isset($this->params['error_reporting'])) {
-					$this->params['error_reporting'] = 32767; // equivalent to E_ALL before PHP 5.4
-				}
-				error_reporting($this->params['error_reporting']);
-				ini_set('display_errors', (version_compare(PHP_VERSION, '5.2.4', '>=')) ? 'stdout' : true);
-			}
-			
-			// memory logging size unit setup
-			if (!empty($this->params['memory_logging_unit'])) {
-				ShopgateLogger::getInstance()->setMemoryAnalyserLoggingSizeUnit($this->params['memory_logging_unit']);
-			} else {
-				// MB by default if none is set
-				ShopgateLogger::getInstance()->setMemoryAnalyserLoggingSizeUnit('MB');
 			}
 			
 			// check if the request is for the correct shop number or an adapter-plugin
@@ -248,10 +226,18 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 			$message  = get_class($e) . " with code: {$e->getCode()} and message: '{$e->getMessage()}'";
 			
 			// new ShopgateLibraryException to build proper error message and perform logging
-			$se = new ShopgateLibraryException($message, null, false, true, $e);
-			$error = $se->getCode();
-			$errortext = $se->getMessage();
+			$e = new ShopgateLibraryException($message, null, false, true, $e);
+			$error = $e->getCode();
+			$errortext = $e->getMessage();
 		}
+		
+		// build stack trace if generator is available
+        $stackTrace = (!empty($e) && !empty($this->stackTraceGenerator))
+            ? $this->stackTraceGenerator->generate($e)
+            : '';
+        
+        // log error if there is any
+        $this->logApiError($errortext, $stackTrace);
 		
 		// print out the response
 		if (!empty($error)) {
@@ -1198,8 +1184,11 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 	 */
 	/** @noinspection PhpUnusedPrivateMethodInspection */
 	private function clearCache() {
-	
-		$files = array();
+		$files = $this->plugin->clearCache();
+		if (!is_array($files)) {
+			$files = array();
+		}
+
 		$files[] = $this->config->getRedirectKeywordCachePath();
 		$files[] = $this->config->getRedirectSkipKeywordCachePath();
 	
@@ -1420,29 +1409,38 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
 
 		return $meta;
 	}
-
-	/**
-	 * enable error reporting to show exeption on request
-	 */
-	private function setEnableErrorReporting() {
-		@error_reporting(E_ERROR | E_CORE_ERROR | E_USER_ERROR);
-		@ini_set('display_errors', 1);
-	}
-
-	/**
-	 * @param $errorFile
-	 */
-	private function setEnablePrintErrorsToLog($errorFile) {
-		$logFileHandler = @fopen($errorFile, 'a');
-		@fclose($logFileHandler);
-		@chmod($errorFile,0777);
-		@chmod($errorFile,0755);
-		@error_reporting(E_ALL ^ E_DEPRECATED);
-		@ini_set('log_errors', 1);
-		@ini_set('error_log', $errorFile);
-		@ini_set('ignore_repeated_errors', 1);
-		@ini_set('html_errors', 0);
-	}
+    
+    /**
+     * enable error reporting to show exeption on request
+     */
+    private function setEnableErrorReporting()
+    {
+        @error_reporting(E_ERROR | E_CORE_ERROR | E_USER_ERROR);
+        @ini_set('display_errors', 1);
+    }
+    
+    /**
+     * @param string $stackTrace
+     * @param string $errortext
+     */
+    private function logApiError($errortext, $stackTrace)
+    {
+        if (empty($stackTrace) && empty($errortext)) {
+            return;
+        }
+        
+        if (!empty($this->logging)) {
+            $this->logging->log(
+                $errortext,
+                Shopgate_Helper_Logging_Strategy_LoggingInterface::LOGTYPE_ERROR,
+                $stackTrace
+            );
+        } else {
+            ShopgateLogger::getInstance()
+                          ->log($errortext . ' ### Stack trace omitted due to use of deprecated ShopgateLogger.')
+            ;
+        }
+    }
 }
 
 class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiInterface {
@@ -1502,7 +1500,7 @@ class ShopgateMerchantApi extends ShopgateObject implements ShopgateMerchantApiI
 	 *
 	 * @throws ShopgateLibraryException in case the connection can't be established, the response is invalid or an error occured.
 	 * @throws ShopgateMerchantApiException
-	 * 
+	 *
 	 * @return ShopgateMerchantApiResponse The response object.
 	 **/
 	protected function sendRequest($parameters = array(), $curlOptOverride = array()) {
@@ -2184,6 +2182,7 @@ class ShopgatePluginApiResponseTextPlain extends ShopgatePluginApiResponse {
 	public function send() {
 		header('HTTP/1.0 200 OK');
 		header('Content-Type: text/plain; charset=UTF-8');
+		header('Content-Length: ' . strlen($this->data));
 		echo $this->data;
 		exit;
 	}
@@ -2199,14 +2198,18 @@ class ShopgatePluginApiResponseAppJson extends ShopgatePluginApiResponse {
 		$data['error_text'] = $this->error_text;
 		$data['trace_id'] = $this->trace_id;
 		$data['shopgate_library_version'] = $this->version;
+		
 		if (!empty($this->pluginVersion)) {
 			$data['plugin_version'] = $this->pluginVersion;
 		}
+		
 		$this->data = array_merge($data, $this->data);
-
+		$jsonEncodedData = $this->jsonEncode($this->data);
+		
 		header("HTTP/1.0 200 OK");
 		header("Content-Type: application/json");
-		echo $this->jsonEncode($this->data);
+		header('Content-Length: ' . strlen($jsonEncodedData));
+		echo $jsonEncodedData;
 	}
 }
 
@@ -2264,6 +2267,7 @@ class ShopgatePluginApiResponseTextCsvExport extends ShopgatePluginApiResponseEx
 	protected function getHeaders() {
 		return array(
 				'Content-Type: text/csv',
+				'Content-Length: ' . filesize($this->data),
 				'Content-Disposition: attachment; filename="'.basename($this->data).'"',
 		);
 	}
@@ -2276,6 +2280,7 @@ class ShopgatePluginApiResponseAppXmlExport extends ShopgatePluginApiResponseExp
 	protected function getHeaders() {
 		return array(
 				'Content-Type: application/xml',
+				'Content-Length: ' . filesize($this->data),
 				'Content-Disposition: attachment; filename="'.basename($this->data).'"',
 		);
 	}
@@ -2288,10 +2293,11 @@ class ShopgatePluginApiResponseAppJsonExport extends ShopgatePluginApiResponseEx
 	protected function getHeaders() {
 		return array(
 				'Content-Type: application/json',
+				'Content-Length: ' . filesize($this->data),
 				'Content-Disposition: attachment; filename="'.basename($this->data).'"',
 		);
 	}
-		}
+}
 		
 class ShopgatePluginApiResponseAppGzipExport extends ShopgatePluginApiResponseExport {
 	protected function getHeaders() {
