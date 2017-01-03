@@ -907,6 +907,9 @@ class FakeMapper
                     'external_order_number'       => null,
                     'external_order_id'           => '8240',
                     'external_customer_number'    => null,
+                    'client' => array(
+                        'type' => 'mobilesite'
+                    ),
                     'external_customer_id'        => isset($map['customer_id']) ? $map['customer_id'] : '147',
                     'tracking_get_parameters'     => array(
                         array(
@@ -1011,14 +1014,14 @@ class FakeMapper
                                 'is_valid'          => null,
                                 'not_valid_message' => null,
                                 'order_index'       => null,
-                                'code'              => 'affiliate',
+                                'code'              => 'TYPE-TEST',
                                 'name'              => 'Affiliate Discount',
                                 'description'       => '',
                                 'amount'            => '13',
                                 'tax_type'          => 'auto',
                                 'currency'          => 'USD',
                                 'is_free_shipping'  => false,
-                                'internal_info'     => "{\"parameter\":{\"account\":\"cfcd208495d565ef66e7dff9f98764da\"}}"
+                                'internal_info'     => "{'coupon_id': '51'}"
                             )*/
                         ),
                     'shopgate_coupons'            =>
@@ -1039,14 +1042,11 @@ class FakeMapper
                                 'tax_class_id'         => null,
                                 'currency'             => 'USD',
                                 'internal_order_info'  => '{"product_id":554}',
-                                'options'              =>
-                                    array(),
-                                'inputs'               =>
-                                    array(),
-                                'attributes'           =>
-                                    array(),
+                                'options'              => array(),
+                                'inputs'               => array(),
+                                'attributes'           => array(),
                             ),
-                            array(
+                            /*array(
                                 'item_number'          => '422-297',
                                 'item_number_public'   => '162',
                                 'parent_item_number'   => null,
@@ -1059,11 +1059,9 @@ class FakeMapper
                                 'tax_class_key'        => null,
                                 'tax_class_id'         => null,
                                 'currency'             => 'USD',
-                                'internal_order_info'  => '{"product_id":"297", "item_type": "simple"}',
-                                'options'              =>
-                                    array(),
-                                'inputs'               =>
-                                    array(),
+                                'internal_order_info'  => '{"product_id":"297", "item_type": "configurable"}',
+                                'options'              => array(),
+                                'inputs'               => array(),
                                 'attributes'           =>
                                     array(
                                         array(
@@ -1091,7 +1089,7 @@ class FakeMapper
                                             'value' => 'Female'
                                         ),
                                     ),
-                            ),
+                            ),*/
                             /*array(
                                 'item_number'          => 'TOMTAILOR_COUPON',
                                 'item_number_public'   => 'TOMTAILOR_COUPON',

@@ -544,6 +544,9 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                                 'value' => '12345'
                             )
                         ),
+                        'client' => array(
+                            'type' => 'mobilesite'
+                        ),
                         "items"                      =>
                             array(
                                 array(
@@ -559,11 +562,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                                     "tax_percent"                        => 20.00,
                                     "tax_class"                          => 241269,
                                     "currency"                           => 'EUR',
-                                    "internal_order_info"                => '{
-                                "store_view_id":"1",
-                                "product_id":"554",
-                                "item_type":"simple",
-                                "exchange_rate":1}',
+                                    "internal_order_info"                => '{"product_id":"554","item_type":"simple"}',
                                     "additional_shipping_costs_per_unit" => 0,
                                     "is_free_shipping"                   => '',
                                     "attributes"                         => Array(),
@@ -584,11 +583,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                                    "tax_percent"                        => 20.00,
                                    "tax_class"                          => 241269,
                                    "currency"                           => 'EUR',
-                                   "internal_order_info"                => '{
-                                "store_view_id":"1",
-                                "product_id":"400",
-                                "item_type":"simple",
-                                "exchange_rate":1}',
+                                   "internal_order_info"                => '{"product_id":"400", "item_type":"simple"}',
                                    "additional_shipping_costs_per_unit" => 0,
                                    "is_free_shipping"                   => '',
                                    "attributes"                         => Array(),
@@ -596,39 +591,49 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                                    "options"                            => Array(),
                                 ),
                                 array(
-                                    "item_id"                            => 24195039,
-                                    "item_number"                        => "135-49",
-                                    "item_number_public"                 => null,
-                                    "parent_item_number"                 => '',
-                                    "quantity"                           => 1,
-                                    "unit_amount_net"                    => 2.5,
-                                    "unit_amount_with_tax"               => 3,
-                                    "unit_amount"                        => 2.5,
-                                    "name"                               => 'Swiss Movement Sports Watch',
-                                    "tax_percent"                        => 20.00,
-                                    "tax_class"                          => 241269,
-                                    "currency"                           => 'EUR',
-                                    "internal_order_info"                => '{
-                                "store_view_id":"1",
-                                "product_id":"49",
-                                "item_type":"configurable",
-                                "exchange_rate":1}',
-                                    "additional_shipping_costs_per_unit" => 0,
-                                    "is_free_shipping"                   => '',
-                                    "attributes"                         => Array(
+                                    'item_number'          => '422-297',
+                                    'item_number_public'   => '162',
+                                    'parent_item_number'   => null,
+                                    'order_item_id'        => '4399299',
+                                    'quantity'             => 1,
+                                    'name'                 => 'Essex Pencil Shirt',
+                                    'unit_amount'          => '59.99',
+                                    'unit_amount_with_tax' => '59.99',
+                                    'tax_percent'          => '0.00',
+                                    'tax_class_key'        => null,
+                                    'tax_class_id'         => null,
+                                    'currency'             => 'USD',
+                                    'internal_order_info'  => '{"product_id":"297", "item_type": "configurable"}',
+                                    'options'              => array(),
+                                    'inputs'               => array(),
+                                    'attributes'           =>
                                         array(
-                                            "name"  => "Shoe Size",
-                                            "value" => "9"
+                                            array(
+                                                'name'  => 'Color',
+                                                'value' => 'Charcoal'
+                                            ),
+                                            array(
+                                                'name'  => 'Occasion',
+                                                'value' => 'Career'
+                                            ),
+                                            array(
+                                                'name'  => 'Type',
+                                                'value' => 'Skirts'
+                                            ),
+                                            array(
+                                                'name'  => 'Size',
+                                                'value' => '2'
+                                            ),
+                                            array(
+                                                'name'  => 'Length',
+                                                'value' => 'Knee Length'
+                                            ),
+                                            array(
+                                                'name'  => 'Gender',
+                                                'value' => 'Female'
+                                            ),
                                         ),
-                                        array(
-                                            "name"  => "Gender",
-                                            "value" => "Women"
-                                        )
-                                    ),
-                                    "inputs"                             => Array(),
-                                    "options"                            => Array(),
-                                    "shopgate_cart_item_id"              => 22621889
-                                )
+                                ),
                             ),
                         "shopgate_coupons"           => array(
                         ),
@@ -637,7 +642,7 @@ class ShopgatePluginApi extends ShopgateObject implements ShopgatePluginApiInter
                                 'is_valid'          => null,
                                 'not_valid_message' => null,
                                 'order_index'       => null,
-                                'code'              => 'CNDFREESHIP',
+                                'code'              => 'TYPE-TEST',
                                 'name'              => 'coupon $13.00, Code: affiliate-220 Affiliate Discount',
                                 'description'       => '',
                                 'amount'            => '',
