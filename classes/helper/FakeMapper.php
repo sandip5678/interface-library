@@ -432,6 +432,19 @@ class FakeMapper
                     'shopgate_payment_name' => 'Invoice Payment',
                 ),
         ),
+        ShopgateCartBase::DEBIT => array(
+            'is_paid'        => 0,
+            'payment_method' => 'DEBIT',
+            'payment_group'  => 'DEBIT',
+            'customer_name'  => 'Direct Debit',
+            'payment_infos'  => array(
+                'shopgate_payment_name' => 'Bankkonto (Lastschrift)',
+                'bank_account_holder'   => 'Name Lastname',
+                'bank_name'             => 'Bank Name',
+                'iban'                  => 'CH100023000A109822346',
+                'bic'                   => 'VBMHDE5F',
+            ),
+        ),
         ShopgateCartBase::SHOPGATE       => array(
             'is_paid'        => 0,
             'payment_method' => 'SHOPGATE',
